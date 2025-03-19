@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Poppins, sans-serif;
+}
+
+@layer components {
+  .input-field {
+    @apply mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-slate-900 dark:text-white;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-indigo-700 dark:hover:bg-indigo-800;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-gray-500 text-white rounded-md hover:bg-gray-600;
+  }
+
+  .form-container {
+    @apply max-w-xl w-[90%] mx-auto absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 bg-white dark:bg-slate-900 shadow-xl rounded-lg mt-10;
+  }
+
+  .form-title {
+    @apply text-3xl font-semibold text-center text-gray-700 dark:text-gray-200 mb-8;
+  }
+
+  .form-label {
+    @apply text-lg text-gray-600 dark:text-gray-300;
+  }
+}
+
+
+/* src/index.css */
+.sticky {
+  position: sticky;
+}
+
+.release-animation {
+  transform: translateY(220px);
+}
+
+.top-7 {
+  top: 20px;
+}
+
+@media (max-width: 768px) {
+  .sticky {
+    position: static;
+  }
+  .release-animation {
+    animation: none;
+  }
+}
+
+
+/* TypewriterEffect.css */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.typewriter-text {
+  display: inline-block;
+  overflow: hidden;
+  border-right: 2px solid white;
+  white-space: nowrap;
+  animation: typewriter 4s steps(40) 1s 1 normal both, blink 500ms steps(40) infinite normal;
+}
+
+
+.imgSelecte {
+  user-select: none;
+}
