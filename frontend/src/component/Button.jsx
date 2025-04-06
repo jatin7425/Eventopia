@@ -12,7 +12,7 @@ export const ButtonArrow = ({
   return (
     <div className="z-[9]">
       <button
-        className={`relative flex items-center gap-8 px-7 pt-4 pb-3 mt-5 pr-[4vw] rounded-full uppercase font-['Founders_Grotesk'] transition-all duration-300 ease-in-out group ${bgColor} ${textColor}`}
+        className={`relative flex items-center gap-8 px-7 pt-4 pb-3 pr-[4vw] rounded-full uppercase font-['Founders_Grotesk'] transition-all duration-300 ease-in-out group ${bgColor} ${textColor}`}
       >
         {title}
 

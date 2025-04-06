@@ -6,6 +6,7 @@ import { CgProfile } from "react-icons/cg";
 import "locomotive-scroll/dist/locomotive-scroll.css";
 import { motion, useAnimation } from "framer-motion";
 import { ThemeToggle } from "./ToggleTheme";
+import { ButtonArrow } from "./Button.jsx";
 
 
 export const NavBar = ({ homeLink, aniDelay }) => {
@@ -134,9 +135,9 @@ export const NavBar = ({ homeLink, aniDelay }) => {
               <>
                 <Link
                   to={"/auth"}
-                  className="px-6 py-3 rounded-xl text-white bg-blue-600 transition-all hover:bg-blue-700"
+                  className=" "
                 >
-                  Login
+                  <ButtonArrow title={"Login"} bgColor={"bg-blue-600"} circleBg={"bg-white"}  />
                 </Link>
                 <button
                   button
