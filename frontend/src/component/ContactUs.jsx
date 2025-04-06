@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ButtonArrow } from './Button';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const ContactUs = () => {
     const [isFixed, setIsFixed] = useState(false);
@@ -16,15 +17,15 @@ const ContactUs = () => {
         className="bg-white dark:bg-[#1a1a1a] px-20 py-7 pt-20 w-full"
       >
         <div className="grid sm:grid-cols-2 dark:bg-zinc-800 px-10 py-7 rounded-lg items-center gap-16 my-6 mx-auto max-w-1/2">
-          <div>
+          <div className="flex flex-col items-start gap-4 ">
             <h1 className="md:text-4xl text-3xl font-extrabold">Let's Talk</h1>
-            <p className="mt-6">
+            <p className="mt-3">
               Have some big idea or brand to develop and need help? Then reach
               out we'd love to hear about your project and provide help.
             </p>
-            <div className="mt-12">
+            <div className="">
               <h2 className="text-xl font-semibold">Email</h2>
-              <ul className="mt-4">
+              <ul className="mt-2">
                 <li className="flex items-center">
                   <div className="bg-[#e6e6e6cf] h-10 w-10 rounded-full flex items-center justify-center shrink-0">
                     <svg
@@ -47,9 +48,9 @@ const ContactUs = () => {
                 </li>
               </ul>
             </div>
-            <div className="mt-12">
+            <div className="">
               <h2 className="text-xl font-semibold">Socials</h2>
-              <ul className="flex mt-4 space-x-4">
+              <ul className="flex mt-2 space-x-4">
                 <li className="bg-[#e6e6e6cf] h-10 w-10 rounded-full flex items-center justify-center shrink-0">
                   <a href="javascript:void(0)">
                     <svg
@@ -81,7 +82,10 @@ const ContactUs = () => {
                 </li>
               </ul>
             </div>
+
+            
           </div>
+
           <form className="ml-auo space-y-4">
             <input
               type="text"

@@ -14,6 +14,7 @@ import ProductCollection from './component/ProductCard/ProductCollection';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import CartComponent from './component/Carts/CartComponent';
+import AIChatSupport from './component/AIChat/AIChatSupport';
 
 
 const App = () => {
@@ -28,7 +29,7 @@ const App = () => {
     >
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/adminPanel" element={<AdminPanelPage/>} />
+        <Route path="/adminPanel" element={<AdminPanelPage />} />
         <Route path="/" element={<WelcomePage />} />
         <Route path="/user/:page" element={<ProfileDashboard />} />
         <Route path="/resetPassword" element={<PasswordReset />} />
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/vendorCollection" element={<VendorCollection />} />
         <Route path="/productCollection/:id" element={<ProductCollection />} />
         <Route path="/subscriptionPage" element={<SubscriptionPage />} />
+        <Route path="/aichatbot" element={<AIChatSupport />} />
       </Routes>
       <Toaster />
     </div>

@@ -23,6 +23,9 @@ function WelcomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [footerRef, footerInView] = useInView({ threshold: 0.2 });
 
+
+  const { isLoggedin, user } = useAuth();
+
   useEffect(() => {
     // Simulate loading
     setTimeout(() => {
@@ -51,6 +54,24 @@ function WelcomePage() {
       <div className="bg-[#f8f9ff] dark:bg-[#1a1a1a] dark:text-white text-black text-[15px]">
         {/* <HeaderSection /> */}
         <NavBar homeLink="#home" aniDelay={1.6} />
+
+        <div className="fixed z-40 bottom-10 right-10 flex items-center justify-end p-4">
+          <div className="shadow-lg rounded-lg bg-white dark:bg-gray-800 transition duration-300">
+            {isLoggedin ? (
+              <Link to={"/aichatbot"} className="block">
+                <button className="px-4 pt-3 pb-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                  <h1 className="text-lg font-bold ">🤖 AI Support Assistant</h1>
+                </button>
+              </Link>
+            ) : (
+              <Link to={"/auth"} className="block">
+                <button className="px-4 pt-3 pb-1 bg-gray-600 hover:bg-gray-600 text-white rounded-lg">
+                  <h1 className="text-lg font-bold ">🤖 AI Support Assistant</h1>
+                </button>
+              </Link>
+            )}
+          </div>
+        </div>
 
         <LandingSection />
 
@@ -195,13 +216,13 @@ const LandingSection = () => {
       ref={scrollRef}
     >
       <div className="px-4 sm:px-10 overflow-hidden">
-        <motion.img
+        {/* <motion.img
           src="https://readymadeui.com/bg-effect.svg"
           className="absolute inset-0 w-full h-full"
           initial={{ opacity: 1, scale: 0.7, x: 0, y: -35 }}
           animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
           transition={{ duration: 1 }}
-        />
+        /> */}
         <motion.div className="pt-16 max-w-4xl mx-auto text-center relative z-10 flex items-center flex-col justify-center overflow-hidden ">
           <motion.h1
             className="text-6xl font-extrabold mt-40 mb-10 "
