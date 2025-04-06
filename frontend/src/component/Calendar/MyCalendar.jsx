@@ -69,15 +69,15 @@ const MyCalendar = () => {
     const startDay = monthStart.getDay();
     
     return (
-      <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-slate-700">
+      <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-zinc-700">
         {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(day => (
-          <div key={day} className="bg-white dark:bg-slate-800 p-2 text-center text-sm font-medium dark:text-white">
+          <div key={day} className="bg-white dark:bg-zinc-800 p-2 text-center text-sm font-medium dark:text-white">
             {day}
           </div>
         ))}
         
         {Array(startDay).fill(null).map((_,i) => (
-          <div key={`empty-${i}`} className="bg-white dark:bg-slate-800 min-h-[100px]" />
+          <div key={`empty-${i}`} className="bg-white dark:bg-zinc-800 min-h-[100px]" />
         ))}
         
         {daysInMonth.map(day => {
@@ -85,13 +85,13 @@ const MyCalendar = () => {
           return (
             <div
               key={day}
-              className={`bg-white dark:bg-slate-800 min-h-[100px] p-2 border-t border-gray-100 dark:border-slate-700
+              className={`bg-white dark:bg-zinc-800 min-h-[100px] p-2 border-t border-gray-100 dark:border-zinc-700
                 ${!isSameMonth(day, currentDate) ? 'opacity-50' : ''}`}
             >
               <div className="flex justify-between items-center">
                 <span className={`text-sm ${
                   isToday(day) ? 
-                  'bg-blue-500 text-white rounded-full px-2 py-1' : 
+                  'bg-blue-500 text-white rounded-full px-2 pt-1' : 
                   'dark:text-white'
                 }`}>
                   {format(day, 'd')}
@@ -121,16 +121,16 @@ const MyCalendar = () => {
     });
 
     return (
-      <div className="flex-1 grid grid-cols-7 gap-px bg-gray-200 dark:bg-slate-700">
+      <div className="flex-1 grid grid-cols-7 gap-px bg-gray-200 dark:bg-zinc-700">
         {weekDays.map(day => (
-          <div key={day} className="bg-white dark:bg-slate-800">
+          <div key={day} className="bg-white dark:bg-zinc-800">
             <div className={`p-2 text-sm ${isSameMonth(day, currentDate) ? 
-              'text-gray-800 dark:text-white' : 'text-gray-400 dark:text-slate-500'}`}>
+              'text-gray-800 dark:text-white' : 'text-gray-400 dark:text-zinc-500'}`}>
               {format(day, 'EEE d')}
             </div>
             <div className="relative h-[1200px]">
               {Array.from({ length: 24 }, (_,i) => i).map(hour => (
-                <div key={hour} className="h-[50px] border-t border-gray-100 dark:border-slate-700" />
+                <div key={hour} className="h-[50px] border-t border-gray-100 dark:border-zinc-700" />
               ))}
               {events.filter(e => isSameDay(new Date(e.start), day)).map(event => {
                 const start = new Date(event.start);
@@ -160,54 +160,62 @@ const MyCalendar = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-slate-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-zinc-900">
       <div className="max-w-7xl mx-auto p-4">
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setCurrentDate(new Date())}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+              className="px-4 pt-3 pb-2 bg-blue-500 text-white rounded-lg"
             >
-              Today
+              <span className="">Today</span>
             </button>
             <button
-              onClick={() => setCurrentDate(
-                viewMode === 'month' ? subMonths(currentDate, 1) : subWeeks(currentDate, 1)
-              )}
-              className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full dark:text-white"
+              onClick={() =>
+                setCurrentDate(
+                  viewMode === "month"
+                    ? subMonths(currentDate, 1)
+                    : subWeeks(currentDate, 1)
+                )
+              }
+              className="p-2 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full dark:text-white"
             >
               ←
             </button>
             <button
-              onClick={() => setCurrentDate(
-                viewMode === 'month' ? addMonths(currentDate, 1) : addWeeks(currentDate, 1)
-              )}
-              className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full dark:text-white"
+              onClick={() =>
+                setCurrentDate(
+                  viewMode === "month"
+                    ? addMonths(currentDate, 1)
+                    : addWeeks(currentDate, 1)
+                )
+              }
+              className="p-2 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full dark:text-white"
             >
               →
             </button>
-            <span className="text-xl font-semibold dark:text-white">
-              {format(currentDate, 'MMMM yyyy')}
+            <span className="text-xl font-semibold dark:text-white pt-3 pb-2">
+              {format(currentDate, "MMMM yyyy")}
             </span>
           </div>
-          
+
           <div className="flex gap-2 ml-auto">
             <button
-              onClick={() => setSelectedTab('calendar')}
-              className={`px-4 py-2 rounded-lg ${
-                selectedTab === 'calendar' 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-200 dark:bg-slate-700 dark:text-white'
+              onClick={() => setSelectedTab("calendar")}
+              className={`px-4 pt-3 pb-2 rounded-lg ${
+                selectedTab === "calendar"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
               }`}
             >
               Calendar
             </button>
             <button
-              onClick={() => setSelectedTab('event')}
-              className={`px-4 py-2 rounded-lg ${
-                selectedTab === 'event' 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-200 dark:bg-slate-700 dark:text-white'
+              onClick={() => setSelectedTab("event")}
+              className={`px-4 pt-3 pb-2 rounded-lg ${
+                selectedTab === "event"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
               }`}
             >
               Add Event
@@ -215,61 +223,73 @@ const MyCalendar = () => {
           </div>
         </div>
 
-        {selectedTab === 'calendar' ? (
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden">
-            <div className="flex gap-4 p-4 border-b dark:border-slate-700">
-              {['Day','Week','Month'].map(view => (
+        {selectedTab === "calendar" ? (
+          <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg overflow-hidden">
+            <div className="flex gap-4 p-4 border-b dark:border-zinc-700">
+              {["Day", "Week", "Month"].map((view) => (
                 <button
                   key={view}
                   onClick={() => setViewMode(view.toLowerCase())}
-                  className={`px-4 py-2 rounded-lg ${
+                  className={`px-4 pt-3 pb-2 rounded-lg ${
                     viewMode === view.toLowerCase()
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 dark:bg-slate-700 dark:text-white'
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
                   }`}
                 >
                   {view}
                 </button>
               ))}
             </div>
-            
-            {viewMode === 'month' ? renderMonthView() : renderWeekView()}
+
+            {viewMode === "month" ? renderMonthView() : renderWeekView()}
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-6 dark:text-white">Create Event</h2>
+          <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold mb-6 dark:text-white">
+              Create Event
+            </h2>
             <div className="grid gap-4">
               <input
                 type="text"
                 placeholder="Event title"
                 value={newEvent.title}
-                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                className="p-2 border rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, title: e.target.value })
+                }
+                className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
               />
               <input
                 type="date"
                 value={newEvent.date}
-                onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                className="p-2 border rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, date: e.target.value })
+                }
+                className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
               />
               <div className="grid grid-cols-2 gap-4">
                 <input
                   type="time"
                   value={newEvent.startTime}
-                  onChange={(e) => setNewEvent({ ...newEvent, startTime: e.target.value })}
-                  className="p-2 border rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, startTime: e.target.value })
+                  }
+                  className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                 />
                 <input
                   type="time"
                   value={newEvent.endTime}
-                  onChange={(e) => setNewEvent({ ...newEvent, endTime: e.target.value })}
-                  className="p-2 border rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, endTime: e.target.value })
+                  }
+                  className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                 />
               </div>
               <select
                 value={newEvent.priority}
-                onChange={(e) => setNewEvent({ ...newEvent, priority: e.target.value })}
-                className="p-2 border rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, priority: e.target.value })
+                }
+                className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
               >
                 <option value="low">Low Priority</option>
                 <option value="medium">Medium Priority</option>
@@ -277,7 +297,7 @@ const MyCalendar = () => {
               </select>
               <button
                 onClick={handleAddEvent}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                className="px-4 pt-3 pb-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
               >
                 Create Event
               </button>

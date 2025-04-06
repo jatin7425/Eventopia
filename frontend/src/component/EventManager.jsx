@@ -12,6 +12,7 @@ import { useEventCart } from "../store/eventCartContext";
 import { Plus, ShoppingCart, ClipboardList, Users } from "lucide-react";
 import { set } from "lodash";
 import MyCalendar from "./Calendar/MyCalendar";
+import InvitationManager from "./MyEventsComponent/InvitationManager";
 
 const EventManager = ({}) => {
   const dropdownRef = useRef(null);
@@ -383,26 +384,7 @@ const EventManager = ({}) => {
         {/* Main Content Section */}
 
         {attendeesOption && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="w-full h-fit border border-zinc-500 rounded-lg  overflow-hidden"
-          >
-            <div className="flex max-md:flex-col-reverse items-center justify-between gap-5 ">
-              <div className="w-full h-fit flex">
-                <div className="w-full min-h-[20vw] bg-zinc-100 dark:bg-zinc-800 border-r px-4 py-2 ">
-                  Accept
-                </div>
-                <div className="w-full min-h-[20vw] bg-zinc-100 dark:bg-zinc-800 border-r px-4 py-2 ">
-                  Not Response
-                </div>
-                <div className="w-full min-h-[20vw] bg-zinc-100 dark:bg-zinc-800 px-4 py-2 ">
-                  Decline
-                </div>
-              </div>
-            </div>
-          </motion.div>
+         <InvitationManager/>
         )}
 
         {addTodoOption && (
@@ -447,6 +429,9 @@ const EventManager = ({}) => {
     </div>
   );
 };
+
+
+
 
 const CategoryDropdown = ({
   categories,
