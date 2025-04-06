@@ -366,19 +366,7 @@ const EventManager = ({}) => {
           </span>
 
           {/* Todo Button */}
-          <span onClick={handleAddTodoOption}>
-            <ButtonBtmUp
-              title={"View Todo"}
-              icon={<ClipboardList size={18} />}
-              bgColor="bg-blue-600"
-              textColor="text-white"
-              hoverBgColor="bg-blue-700"
-              rounded="rounded-lg"
-              w="w-32"
-              h="h-10"
-              onClick={() => setaddTodoOption(!addTodoOption)}
-            />
-          </span>
+          
         </div>
 
         {/* Main Content Section */}

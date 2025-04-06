@@ -114,50 +114,94 @@ const MyCalendar = () => {
     );
   };
 
-  const renderWeekView = () => {
-    const weekDays = eachDayOfInterval({
-      start: startOfWeek(currentDate, { weekStartsOn: 0 }),
-      end: endOfWeek(currentDate, { weekStartsOn: 0 })
-    });
+ const renderWeekView = () => {
+   const weekDays = eachDayOfInterval({
+     start: startOfWeek(currentDate, { weekStartsOn: 0 }),
+     end: endOfWeek(currentDate, { weekStartsOn: 0 }),
+   });
 
-    return (
-      <div className="flex-1 grid grid-cols-7 gap-px bg-gray-200 dark:bg-zinc-700">
-        {weekDays.map(day => (
-          <div key={day} className="bg-white dark:bg-zinc-800">
-            <div className={`p-2 text-sm ${isSameMonth(day, currentDate) ? 
-              'text-gray-800 dark:text-white' : 'text-gray-400 dark:text-zinc-500'}`}>
-              {format(day, 'EEE d')}
-            </div>
-            <div className="relative h-[1200px]">
-              {Array.from({ length: 24 }, (_,i) => i).map(hour => (
-                <div key={hour} className="h-[50px] border-t border-gray-100 dark:border-zinc-700" />
-              ))}
-              {events.filter(e => isSameDay(new Date(e.start), day)).map(event => {
-                const start = new Date(event.start);
-                const end = new Date(event.end);
-                const top = (start.getHours() + start.getMinutes()/60) * 50;
-                const height = ((end - start) / (1000 * 60 * 60)) * 50;
-                
-                return (
-                  <div
-                    key={event.id}
-                    className={`absolute left-1 right-1 ${getPriorityColor(event.priority)} 
-                      rounded p-1 text-white text-sm cursor-pointer`}
-                    style={{ top: `${top}px`, height: `${height}px` }}
-                  >
-                    {event.title}
-                    <div className="text-xs opacity-75">
-                      {format(start, 'HH:mm')} - {format(end, 'HH:mm')}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
+   return (
+     <div className="flex flex-row">
+       {/* Time Column */}
+       <div className="flex flex-col w-[120px] bg-gray-100 dark:bg-zinc-800 border-r border-gray-300 dark:border-zinc-700">
+         <div
+           className={`p-2 text-start text-sm border-t border-gray-100 dark:border-zinc-700 `}
+         >
+           Time Stamp
+         </div>
+         {Array.from({ length: 24 }, (_, i) => {
+           const startHour = String(i).padStart(2, "0");
+           const endHour = String(i + 1).padStart(2, "0");
+           return (
+             <div className="">
+               <div
+                 key={i}
+                 className="h-[50px] flex items-start px-2 text-xs text-gray-600 dark:text-zinc-400 border-t border-gray-100 dark:border-zinc-700 pt-5"
+               >
+                 {`${startHour}:00 - ${endHour}:00`}
+               </div>
+             </div>
+           );
+         })}
+       </div>
+
+       {/* Week Grid */}
+       <div className="flex-1 grid grid-cols-7 gap-px bg-gray-200 dark:bg-zinc-700">
+         {weekDays.map((day) => (
+           <div key={day} className="bg-white dark:bg-zinc-800">
+             {/* Date Header */}
+             <div
+               className={`p-2 text-sm ${
+                 isSameMonth(day, currentDate)
+                   ? "text-gray-800 dark:text-white"
+                   : "text-gray-400 dark:text-zinc-500"
+               }`}
+             >
+               {format(day, "EEE d")}
+             </div>
+
+             {/* Hourly Slots */}
+             <div className="relative h-[1200px]">
+               {Array.from({ length: 24 }, (_, i) => (
+                 <div
+                   key={i}
+                   className="h-[50px] border-t border-gray-100 dark:border-zinc-700"
+                 />
+               ))}
+               {/* Events */}
+               {events
+                 .filter((e) => isSameDay(new Date(e.start), day))
+                 .map((event) => {
+                   const start = new Date(event.start);
+                   const end = new Date(event.end);
+                   const top =
+                     (start.getHours() + start.getMinutes() / 60) * 50;
+                   const height = ((end - start) / (1000 * 60 * 60)) * 50;
+
+                   return (
+                     <div
+                       key={event.id}
+                       className={`absolute left-1 right-1 ${getPriorityColor(
+                         event.priority
+                       )} rounded p-1 text-white text-sm cursor-pointer`}
+                       style={{ top: `${top}px`, height: `${height}px` }}
+                     >
+                       {event.title}
+                       <div className="text-xs opacity-75">
+                         {format(start, "HH:mm")} - {format(end, "HH:mm")}
+                       </div>
+                     </div>
+                   );
+                 })}
+             </div>
+           </div>
+         ))}
+       </div>
+     </div>
+   );
+ };
+
+
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-zinc-900">

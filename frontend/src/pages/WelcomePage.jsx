@@ -23,7 +23,6 @@ function WelcomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [footerRef, footerInView] = useInView({ threshold: 0.2 });
 
-
   const { isLoggedin, user } = useAuth();
 
   useEffect(() => {
@@ -55,23 +54,33 @@ function WelcomePage() {
         {/* <HeaderSection /> */}
         <NavBar homeLink="#home" aniDelay={1.6} />
 
-        <div className="fixed z-40 bottom-10 right-10 flex items-center justify-end p-4">
+        {/* 🤖 AI Support Assistant */}
+        <motion.div
+          initial={{ opacity: 0, y:-10 }}
+          animate={{ opacity: 1, y:0 }}
+          transition={{ duration: 1, delay:3 }}
+          className="fixed z-40 bottom-7 right-7 flex items-center justify-end p-4"
+        >
           <div className="shadow-lg rounded-lg bg-white dark:bg-gray-800 transition duration-300">
             {isLoggedin ? (
               <Link to={"/aichatbot"} className="block">
                 <button className="px-4 pt-3 pb-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-                  <h1 className="text-lg font-bold ">🤖 AI Support Assistant</h1>
+                  <h1 className="text-lg font-bold ">
+                    🤖 AI Support Assistant
+                  </h1>
                 </button>
               </Link>
             ) : (
               <Link to={"/auth"} className="block">
                 <button className="px-4 pt-3 pb-1 bg-gray-600 hover:bg-gray-600 text-white rounded-lg">
-                  <h1 className="text-lg font-bold ">🤖 AI Support Assistant</h1>
+                  <h1 className="text-lg font-bold ">
+                    🤖 AI Support Assistant
+                  </h1>
                 </button>
               </Link>
             )}
           </div>
-        </div>
+        </motion.div>
 
         <LandingSection />
 
@@ -206,8 +215,6 @@ const LandingSection = () => {
   const imgRef = useRef(null);
   const buttonRef = useRef(null);
   const scrollRef = useRef(null);
-
-
 
   return (
     <motion.div
@@ -460,7 +467,9 @@ const FeaturesSection = () => {
               <div className="dark:text-black">{item.icon}</div>
               <div>
                 <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="font-['Founders_Grotesk_Condensed']">{item.discription}</p>
+                <p className="font-['Founders_Grotesk_Condensed']">
+                  {item.discription}
+                </p>
               </div>
             </motion.div>
           ))}
