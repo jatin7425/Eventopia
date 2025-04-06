@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useEvent } from "../../store/eventContext";
 
-const InvitationManager = () => {
+const InvitationManager = ({ event }) => {
+  const { addAttendiesToEvent, attendeeStatsdets, attendeeStats, addedAttendee } = useEvent();
   const [activeTab, setActiveTab] = useState("invite");
   const [attendees, setAttendees] = useState([]);
   const [newAttendee, setNewAttendee] = useState({ name: "", email: "" });
@@ -11,41 +13,22 @@ const InvitationManager = () => {
     location: "Conference Room A",
   });
 
-  // Sample initial data
+  const fetchAttendees = async (eventId) => {
+    try {
+      const attendee = await attendeeStats(eventId);
+      console.log(attendee); // now you'll see the real data
+      setAttendees(attendee.attendees); // if you want to store it in state
+    } catch (err) {
+      console.error('Error fetching attendees:', err);
+    }
+  };
+
+  console.log(event._id);
   useEffect(() => {
-    setAttendees([
-      {
-        id: 1,
-        name: "John Doe",
-        email: "john@example.com",
-        status: "accepted",
-      },
-      {
-        id: 2,
-        name: "Jane Smith",
-        email: "jane@example.com",
-        status: "declined",
-      },
-      {
-        id: 3,
-        name: "Bob Johnson",
-        email: "bob@example.com",
-        status: "pending",
-      },
-      {
-        id: 4,
-        name: "Alice Brown",
-        email: "alice@example.com",
-        status: "accepted",
-      },
-      {
-        id: 5,
-        name: "Charlie Wilson",
-        email: "charlie@example.com",
-        status: "pending",
-      },
-    ]);
-  }, []);
+    if (event._id) {
+      fetchAttendees(event._id); // call the async function
+    }
+  }, [event._id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,20 +37,17 @@ const InvitationManager = () => {
 
   const addAttendee = () => {
     if (newAttendee.name && newAttendee.email) {
-      const newAtt = {
-        id: Date.now(),
-        name: newAttendee.name,
-        email: newAttendee.email,
-        status: "pending",
-      };
-      setAttendees([...attendees, newAtt]);
+      addAttendiesToEvent(event?._id, newAttendee)
+      fetchAttendees(event?._id)
       setNewAttendee({ name: "", email: "" });
     }
   };
 
   const filteredAttendees = (status) => {
-    return attendees.filter((attendee) => attendee.status === status);
+    return attendees.filter((attendee) => attendee.status.toLowerCase() === status);
   };
+
+  console.log(filteredAttendees("pending"))
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -91,21 +71,19 @@ const InvitationManager = () => {
             <div className="flex space-x-2">
               <button
                 onClick={() => setActiveTab("invite")}
-                className={`px-4 pt-2 pb-1 rounded-md ${
-                  activeTab === "invite"
-                    ? "bg-blue-500 text-white"
-                    : "bg-zinc-300 dark:bg-zinc-600"
-                }`}
+                className={`px-4 pt-2 pb-1 rounded-md ${activeTab === "invite"
+                  ? "bg-blue-500 text-white"
+                  : "bg-zinc-300 dark:bg-zinc-600"
+                  }`}
               >
                 Invite
               </button>
               <button
                 onClick={() => setActiveTab("responses")}
-                className={`px-4 pt-2 pb-1 rounded-md ${
-                  activeTab === "responses"
-                    ? "bg-blue-500 text-white"
-                    : "bg-zinc-300 dark:bg-zinc-600"
-                }`}
+                className={`px-4 pt-2 pb-1 rounded-md ${activeTab === "responses"
+                  ? "bg-blue-500 text-white"
+                  : "bg-zinc-300 dark:bg-zinc-600"
+                  }`}
               >
                 Responses
               </button>
@@ -164,7 +142,7 @@ const InvitationManager = () => {
                         </div>
                         <span className="">
                           {/* <StatusBadge status={attendee.status} /> */}
-                          <StatusBadge status={attendee.status}/>
+                          <StatusBadge status={attendee.status} />
                         </span>
                       </div>
                     ))}
@@ -181,19 +159,19 @@ const InvitationManager = () => {
               <div className="grid md:grid-cols-3 gap-4">
                 <ResponseSummary
                   title="Accepted"
-                  count={filteredAttendees("accepted").length}
+                  count={attendeeStatsdets?.stats?.accepted || 0}
                   color="bg-green-100 dark:bg-green-900"
                   textColor="text-green-800 dark:text-green-200"
                 />
                 <ResponseSummary
                   title="Declined"
-                  count={filteredAttendees("declined").length}
+                  count={attendeeStatsdets?.stats?.declined || 0}
                   color="bg-red-100 dark:bg-red-900"
                   textColor="text-red-800 dark:text-red-200"
                 />
                 <ResponseSummary
                   title="Pending"
-                  count={filteredAttendees("pending").length}
+                  count={attendeeStatsdets?.stats?.pending || 0}
                   color="bg-yellow-100 dark:bg-yellow-900"
                   textColor="text-yellow-800 dark:text-yellow-200"
                 />
@@ -274,9 +252,9 @@ const StatusBadge = ({ status }) => {
 
   return (
     <span
-      className={`px-3 pt-2 py-1 rounded-full text-sm ${statusConfig[status].color} ${statusConfig[status].text}`}
+      className={`px-3 pt-2 py-1 rounded-full text-sm ${statusConfig[status.toLowerCase()].color} ${statusConfig[status.toLowerCase()].text}`}
     >
-      {statusConfig[status].label}
+      {statusConfig[status.toLowerCase()].label}
     </span>
   );
 };

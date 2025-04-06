@@ -2,7 +2,8 @@ import Event from '../models/event.model.js';
 import Vendor from "../models/vendor.model.js";
 import mongoose from 'mongoose';
 import UserModel from '../models/user.model.js';
-import { totalmem } from 'os';
+import { totalmem, type } from 'os';
+import User from '../models/user.model.js';
 
 // Create a new event
 export const createEvent = async (req, res) => {
@@ -514,3 +515,202 @@ export const clearCart = async (req, res) => {
     }
 };
 
+// Add new attendee with validation
+export const addAttendee = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        console.log(req.user)
+
+        if (!name || !email) {
+            return res.status(400).json({
+                message: 'Name and email are required fields'
+            });
+        }
+
+        // Find existing user by email
+        const existingUser = await User.findOne({ email });
+        console.log(existingUser)
+        let receiverId = null;
+
+        // Add attendee to event
+        const event = await Event.findByIdAndUpdate(
+            req.params.eventId,
+            {
+                $push: {
+                    attendees: {
+                        name: existingUser?.fullName || name,
+                        email,
+                        status: 'Pending',
+                        user: existingUser?._id // Link to user if exists
+                    }
+                }
+            },
+            { new: true, runValidators: true }
+        ).select('attendees');
+
+        if (!event) return res.status(404).json({ message: 'Event not found' });
+
+        // If user exists, send notification
+        if (existingUser) {
+            await User.findByIdAndUpdate(
+                existingUser._id,
+                {
+                    $push: {
+                        notifications: {
+                            type: 'eventInvite',
+                            sender: req.user._id,
+                            event: event._id,
+                            message: `You've been invited to ${event?.name} by ${existingUser?.fullName}`
+                        }
+                    }
+                },
+                { new: true, runValidators: true }
+            );
+        }
+
+        res.status(201).json({
+            message: 'Attendee added successfully',
+            attendee: event.attendees[event.attendees.length - 1],
+            notificationSent: !!existingUser
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error adding attendee',
+            error: error.message
+        });
+        console.error(error)
+    }
+};
+
+// Update attendee status with better error handling
+export const updateAttendeeStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const { eventId, attendeeId } = req.params;
+
+        if (!['Accepted', 'Pending', 'Declined'].includes(status)) {
+            return res.status(400).json({ message: 'Invalid status value' });
+        }
+
+        const event = await Event.findOneAndUpdate(
+            { _id: eventId, 'attendees._id': attendeeId },
+            { $set: { 'attendees.$.status': status } },
+            { new: true, runValidators: true }
+        ).populate('organizer', 'email');
+
+        if (!event) return res.status(404).json({ message: 'Event or attendee not found' });
+
+        const attendee = event.attendees.id(attendeeId);
+
+        // Send notification to organizer
+        await User.findByIdAndUpdate(
+            event.organizer._id,
+            {
+                $push: {
+                    notifications: {
+                        type: 'statusUpdate',
+                        sender: req.user._id,
+                        receiver: event.organizer._id,
+                        event: event._id,
+                        message: `${attendee.name} (${attendee.email}) has ${status.toLowerCase()} the invitation`
+                    }
+                }
+            }
+        );
+
+        res.json({
+            message: 'Status updated successfully',
+            attendee: {
+                _id: attendee._id,
+                name: attendee.name,
+                email: attendee.email,
+                status: attendee.status
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error updating status',
+            error: error.message
+        });
+        console.log(error)
+    }
+};
+
+// Optimized stats endpoint with ObjectId fix
+export const getEventStats = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+
+        // Check event existence first
+        const eventExists = await Event.exists({ _id: eventId });
+        if (!eventExists) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        const aggregation = await Event.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(eventId) } },
+            { $unwind: '$attendees' },
+            {
+                $facet: {
+                    // Statistics pipeline
+                    stats: [
+                        {
+                            $group: {
+                                _id: '$attendees.status',
+                                count: { $sum: 1 }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                                status: '$_id',
+                                count: 1
+                            }
+                        }
+                    ],
+                    // All attendees pipeline
+                    attendees: [
+                        { $sort: { 'attendees.name': 1 } },
+                        {
+                            $group: {
+                                _id: null,
+                                allAttendees: { $push: "$attendees" }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                                attendees: "$allAttendees"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]);
+
+        // Process statistics
+        const statsResult = aggregation[0].stats.reduce((acc, { status, count }) => {
+            acc[status.toLowerCase()] = count;
+            return acc;
+        }, { accepted: 0, pending: 0, declined: 0 });
+
+        // Process attendees
+        const attendeesData = aggregation[0].attendees[0]?.attendees || [];
+
+        res.json({
+            stats: statsResult,
+            attendees: attendeesData.map(attendee => ({
+                _id: attendee._id,
+                name: attendee.name,
+                email: attendee.email,
+                status: attendee.status
+            }))
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error fetching stats',
+            error: error.message
+        });
+        console.error(error);
+    }
+};

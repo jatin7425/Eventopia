@@ -293,7 +293,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                   step === index + 1
                     ? "bg-blue-600 text-white"
                     : "bg-zinc-300 text-zinc-700"
-                }`}
+                  }`}
               >
                 {index + 1}
               </div>
@@ -396,6 +396,18 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
           {/* Step 3: Budget */}
           {step === 3 && (
             <>
+              <label className="text-md -mb-2 font-medium text-zinc-700 dark:text-zinc-300">
+                Location
+              </label>
+              <motion.input
+                whileFocus={{ scale: 1.02 }}
+                name="location"
+                onChange={handleChange}
+                value={formData.location}
+                type="text"
+                placeholder="Enter event location"
+                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-zinc-900 dark:text-white"
+              />
               <label className="text-md -mb-2 font-medium text-zinc-700 dark:text-zinc-300">
                 Budget
               </label>

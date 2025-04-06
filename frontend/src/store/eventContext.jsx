@@ -14,6 +14,8 @@ export function EventProvider({ children }) {
     const [event, setEvent] = useState(null);
     const [isEventLoading, setIsEventLoading] = useState(false);
     const { setEventId } = useEventCart();
+    const [attendeeStatsdets, setAttendeeStatsdets] = useState()
+    const [addedAttendee, setAddedAttendee] = useState()
 
     // Get all events with optional filters
     const getEvents = async (filters = {}) => {
@@ -121,22 +123,73 @@ export function EventProvider({ children }) {
         }
     };
 
+    const addAttendiesToEvent = async (eventId, attendees) => {
+        setIsEventLoading(true);
+        try {
+            const { data } = await axiosInstance.post(`/event/${eventId}/attendees`, attendees);
+            toast.success(data.message);
+            setAddedAttendee(data.attendee);
+            getEventById(eventId);  // Fetch updated event with new feedback
+        } catch (error) {
+            console.error('Error adding feedback to event', error);
+            toast.error(error.response?.data?.message || 'Error adding feedback');
+        } finally {
+            setIsEventLoading(false);
+        }
+    };
+
+    const updateStatus = async (eventId, attendeeId, status) => {
+        setIsEventLoading(true);
+        try {
+            const { data } = await axiosInstance.put(`/event/${eventId}/attendees/${attendeeId}`, { status });
+            toast.success(data.message);
+            getEventById(eventId);  // Fetch updated event with new feedback
+        } catch (error) {
+            console.error('Error adding feedback to event', error);
+            toast.error(error.response?.data?.message || 'Error adding feedback');
+        } finally {
+            setIsEventLoading(false);
+        }
+    };
+
+    const attendeeStats = async (eventId) => {
+        setIsEventLoading(true);
+        console.log(eventId)
+        try {
+            const { data } = await axiosInstance.get(`/event/${eventId}/stats`);
+            console.log(data)
+            setAttendeeStatsdets(data);
+            return data
+        } catch (error) {
+            console.error('Error adding feedback to event', error);
+            toast.error(error.response?.data?.message || 'Error adding feedback');
+        } finally {
+            setIsEventLoading(false);
+        }
+    }
+
     useEffect(() => {
         getEvents(); // Fetch all events when the component mounts
     }, []);
+    console.log(attendeeStatsdets)
 
     return (
         <EventContext.Provider value={{
             isEventLoading,
             events,
             event,
+            attendeeStatsdets,
+            addedAttendee,
             createEvent,
             getEvents,
             getEventById,
             updateEvent,
             deleteEvent,
             addServiceToEvent,
-            addFeedbackToEvent
+            addFeedbackToEvent,
+            addAttendiesToEvent,
+            updateStatus,
+            attendeeStats,
         }}>
             {children}
         </EventContext.Provider>

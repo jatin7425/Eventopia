@@ -10,7 +10,19 @@ const userSchema = new mongoose.Schema(
         otpExpiry: { type: String},
         password: { type: String, required: true },
         friend: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", default: [] }],
-        notification: [{ type: mongoose.Schema.Types.ObjectId, ref: "Notifications", default: [] }],
+        notification: [
+            { 
+                _id: mongoose.Schema.Types.ObjectId, 
+                type: {type: String, Enum: ["eventInvite", "vendorCollabInvite", "eventCollabInvite"]},
+                sender: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+                receiver: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+                event: {type: mongoose.Schema.Types.ObjectId, ref: "Event"},
+                vendor: {type: mongoose.Schema.Types.ObjectId, ref: "Vendor"},
+                message: {type: String},
+                seen: {type: Boolean, default: false},
+                createdAt: { type: Date, default: Date.now }
+            }
+        ],
         role: {
             type: String,
             enum: ["Admin", "Manager", "user"],

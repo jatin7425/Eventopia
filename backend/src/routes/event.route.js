@@ -15,7 +15,10 @@ import {
     removeFromCart,
     updateCartQuantity,
     getEventCart,
-    clearCart
+    clearCart,
+    addAttendee,
+    updateAttendeeStatus,
+    getEventStats
 } from '../controllers/event.controller.js';
 
 const router = express.Router();
@@ -36,5 +39,8 @@ router.delete("/:eventId/cart/:cartId", protectRoute, removeFromCart);
 router.put("/:eventId/cart/:cartId", protectRoute, updateCartQuantity);
 router.get("/:eventId/cart/", protectRoute, getEventCart);
 router.delete("/:eventId/cart/clear", protectRoute, clearCart);
+router.post('/:eventId/attendees', protectRoute, addAttendee);
+router.patch('/:eventId/attendees/:attendeeId', protectRoute, updateAttendeeStatus);
+router.get('/:eventId/stats', protectRoute, getEventStats);
 
 export default router;

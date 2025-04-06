@@ -15,12 +15,14 @@ const eventSchema = new mongoose.Schema({
     attendees: [
         {
             _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
-            User: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-            Status: { 
+            name: { type: String, required: true },
+            email: { type: String, required: true },
+            status: {
                 type: String,
-                enum: ['Accepted', 'Waiting', 'Declined'],
-                default: 'Waiting',
-            }
+                enum: ['Accepted', 'Pending', 'Declined'],
+                default: 'Pending',
+            },
+            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         }
     ], // List of attendees
     organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Event organizer
@@ -56,11 +58,11 @@ const eventSchema = new mongoose.Schema({
         },
     ], // Feedback and ratings for the event
     cart: [
-        {   
+        {
             _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
             user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-            vendor: { type: mongoose.Schema.Types.ObjectId, ref: 'Vendor'},
-            product: { type: mongoose.Schema.Types.ObjectId},
+            vendor: { type: mongoose.Schema.Types.ObjectId, ref: 'Vendor' },
+            product: { type: mongoose.Schema.Types.ObjectId },
             quantity: { type: Number, default: 1 },
         },
     ],
@@ -73,7 +75,7 @@ const eventSchema = new mongoose.Schema({
             createdAt: { type: Date, default: Date.now }, // Creation date
             updatedAt: { type: Date, default: Date.now }, // Last update date
         },
-    ],  
+    ],
     calender: [
         {
             _id: { type: mongoose.Schema.Types.ObjectId, auto: true },

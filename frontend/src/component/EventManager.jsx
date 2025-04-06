@@ -372,7 +372,7 @@ const EventManager = ({}) => {
         {/* Main Content Section */}
 
         {attendeesOption && (
-         <InvitationManager/>
+         <InvitationManager event={event}/>
         )}
 
         {addTodoOption && (

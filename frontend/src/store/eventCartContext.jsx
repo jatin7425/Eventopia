@@ -13,18 +13,18 @@ export const EventCartProvider = ({ children }) => {
     const [VendorId, setVendorId] = useState(null);
     const [cart, setCart] = useState([]); // Store cart data locally
 
-   useEffect(() => {
-     if (!eventId) {
-       const storedEventId = sessionStorage.getItem("eventId");
-       if (storedEventId) {
-         setEventId(storedEventId);
-       }
-     } else {
-       sessionStorage.setItem("eventId", eventId);
-     }
-   }, [eventId]);
+    useEffect(() => {
+        if (!eventId) {
+            const storedEventId = sessionStorage.getItem("eventId");
+            if (storedEventId) {
+                setEventId(storedEventId);
+            }
+        } else {
+            sessionStorage.setItem("eventId", eventId);
+        }
+    }, [eventId]);
 
-    
+
 
     const addToCart = async (productId, quantity = 1) => {
         console.log(eventId, productId, quantity);
@@ -60,7 +60,7 @@ export const EventCartProvider = ({ children }) => {
                 `/event/${eventId}/cart/${productId}`,
                 { quantity }
             );
-            
+
             getEventCart(1, 10)
             toast.success("Cart updated successfully!");
             return response.data;
@@ -99,7 +99,7 @@ export const EventCartProvider = ({ children }) => {
     useEffect(() => {
         getEventCart(1, 10)
     }, [eventId]);
-    
+
 
     return (
         <EventContext.Provider

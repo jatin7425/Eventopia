@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useEvent } from "../../store/eventContext";
 
 // Attendees Component
 const InvitationResponse = () => {
+  const { attendeeStatsdets } = useEvent();
   const [selectedOption, setSelectedOption] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
