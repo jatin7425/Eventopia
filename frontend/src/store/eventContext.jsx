@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 import { useEventCart } from './eventCartContext';
 const EventContext = createContext();
 
+
 export function useEvent() {
     return useContext(EventContext);
 }

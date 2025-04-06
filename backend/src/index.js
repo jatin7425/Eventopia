@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.route.js";
 import eventRoutes from "./routes/event.route.js";
 import vendorRoutes from "./routes/vendor.route.js";
 import ollamaChatRoutes from "./routes/ollamaChat.route.js";
+import notificationRoutes from "./routes/notification.route.js";
 import { connectDB } from "./lib/db.js";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -33,6 +34,7 @@ app.use("/api/event", eventRoutes);
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/ollamaChat", ollamaChatRoutes);
+app.use("/api/notification", notificationRoutes);
 
 app.listen(port, () => {
     console.log("Server is running on port: " + port);
