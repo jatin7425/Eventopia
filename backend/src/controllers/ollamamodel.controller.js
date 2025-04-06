@@ -35,7 +35,9 @@ export async function initializeOllamaModel() {
             return;
         }
 
-        const modelName = process.env.OLLAMA || models[models?.length - 1].name;
+        let defaultOllama = models.include(process.env.OLLAMA) ? process.env.OLLAMA : null;
+
+        let modelName = defaultOllama || models[models?.length - 1].name;
         console.log(`Processing model: ${modelName}`);
 
         // Get model details
