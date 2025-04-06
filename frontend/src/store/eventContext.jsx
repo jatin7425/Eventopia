@@ -157,7 +157,6 @@ export function EventProvider({ children }) {
         console.log(eventId)
         try {
             const { data } = await axiosInstance.get(`/event/${eventId}/stats`);
-            console.log(data)
             setAttendeeStatsdets(data);
             return data
         } catch (error) {
@@ -171,7 +170,6 @@ export function EventProvider({ children }) {
     useEffect(() => {
         getEvents(); // Fetch all events when the component mounts
     }, []);
-    console.log(attendeeStatsdets)
 
     return (
         <EventContext.Provider value={{

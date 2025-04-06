@@ -1,15 +1,13 @@
 import Event from '../models/event.model.js';
 import Vendor from "../models/vendor.model.js";
 import mongoose from 'mongoose';
-import UserModel from '../models/user.model.js';
-import { totalmem, type } from 'os';
 import User from '../models/user.model.js';
 
 // Create a new event
 export const createEvent = async (req, res) => {
     try {
         const user = req.user;
-        const User = await UserModel.findById(user._id);
+        const User = await User.findById(user._id);
         const { name, description, date, startTime, endTime, location, category, status, budget } = req.body;
 
         // console.log(User);
@@ -549,6 +547,9 @@ export const addAttendee = async (req, res) => {
         ).select('attendees');
 
         if (!event) return res.status(404).json({ message: 'Event not found' });
+        
+        // Get the newly added attendee (last in array)
+        const newAttendee = event.attendees[event.attendees.length - 1];
 
         // If user exists, send notification
         if (existingUser) {
@@ -560,7 +561,8 @@ export const addAttendee = async (req, res) => {
                             type: 'eventInvite',
                             sender: req.user._id,
                             event: event._id,
-                            message: `You've been invited to ${event?.name} by ${existingUser?.fullName}`
+                            message: `You've been invited to ${event?.name} by ${existingUser?.fullName}`,
+                            respondLink: `${process.env.HTTP_PROTOCOL}://${process.env.HOST}:${process.env.PORT}/${req.params.eventId}/attendees/${newAttendee._id}`,
                         }
                     }
                 },

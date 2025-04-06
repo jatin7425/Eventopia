@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema(
                 vendor: {type: mongoose.Schema.Types.ObjectId, ref: "Vendor"},
                 message: {type: String},
                 seen: {type: Boolean, default: false},
-                createdAt: { type: Date, default: Date.now }
+                createdAt: { type: Date, default: Date.now },
+                respondLink: {type: String}
             }
         ],
         role: {
