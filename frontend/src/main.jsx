@@ -17,7 +17,9 @@ createRoot(document.getElementById('root')).render(
           <VendorProvider>
             <EventProvider>
               <BrowserRouter>
-                <App />
+                <NotificationProvider>
+                  <App />
+                </NotificationProvider>
               </BrowserRouter>
             </EventProvider>
           </VendorProvider>
