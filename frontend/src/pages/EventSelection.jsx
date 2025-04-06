@@ -113,7 +113,7 @@ const EventSelection = () => {
   const [category, setCategory] = useState("Family Function");
 
   return (
-    <div className="font-sans overflow-hidden min-h-screen">
+    <div className=" overflow-hidden min-h-screen font-['Founders_Grotesk']">
       {/* Navbar */}
       <div className="h-20 w-full">
         <NavBar homeLink="/" aniDelay={0.7} />
@@ -140,7 +140,7 @@ const EventSelection = () => {
           <h1 className="text-4xl font-bold mb-6 pt-5 ">
             We Help You To Create Unforgettable Events
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-zinc-600 dark:text-zinc-400 font-['Founders_Grotesk_Condensed']">
             Stay ahead with the latest trends and insights in event management.
           </p>
         </motion.div>
@@ -149,7 +149,7 @@ const EventSelection = () => {
       {/* Blog Grid */}
       <section
         ref={ref}
-        className="h-full container mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="h-full container mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6"
       >
         {cards.map((post, index) => (
           <div
@@ -167,7 +167,7 @@ const EventSelection = () => {
               custom={index}
               className="h-full bg-white dark:bg-zinc-800 shadow-lg dark:shadow-white/10 rounded overflow-hidden group z-[3] my-4"
             >
-              <div className="h-48 bg-gray-300">
+              <div className="h-48 bg-zinc-300">
                 <img
                   src={post.img}
                   alt={post.alt}
@@ -175,14 +175,14 @@ const EventSelection = () => {
                 />
               </div>
               <div className="p-4 flex flex-col justify-between h-fit">
-                <span className="text-sm text-[#6366F1] dark:text-gray-400 font-semibold">
+                <span className="text-lg -mb-2 text-[#6366F1] dark:text-zinc-400 font-semibold">
                   {post.category}
                 </span>
-                <h3 className="text-lg font-bold mt-2">{post.title}</h3>
+                <h3 className="text-[22px] font-bold mt-4 -mb-2 ">{post.title}</h3>
                 <div className="flex items-center  gap-1 mt-2">
                   <div className="group flex items-center justify-center gap-1">
                     <a
-                      className="text-xs font-semibold text-zinc-500 dark:text-gray-300 dark:group-hover:text-gray-100 group-hover:text-zinc-700"
+                      className="text-xs font-semibold text-zinc-500 dark:text-zinc-300 dark:group-hover:text-zinc-100 group-hover:text-zinc-700"
                       href=""
                     >
                       <BorderAnimaButton
@@ -197,7 +197,7 @@ const EventSelection = () => {
                         h={"h-10"}
                       />
                     </a>
-                    <div className="text-zinc-500 mt-[6px] group-hover:text-blue-600 dark:group-hover:text-blue-500 -rotate-45 dark:text-gray-400">
+                    <div className="text-zinc-500 mt-[6px] group-hover:text-blue-600 dark:group-hover:text-blue-500 -rotate-45 dark:text-zinc-400">
                       <FaArrowRight size={18} />
                     </div>
                   </div>
@@ -273,14 +273,14 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
       >
         {/* Close Button */}
         <button
-          className="absolute top-4 right-4 text-gray-500 dark:text-gray-300 hover:text-red-500 transition-all"
+          className="absolute top-4 right-4 text-zinc-500 dark:text-zinc-300 hover:text-red-500 transition-all"
           onClick={handleShowCreateEventForm}
         >
           <FaTimes className="text-xl" />
         </button>
 
         {/* Title */}
-        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+        <h1 className="text-3xl font-bold text-center text-zinc-800 dark:text-white">
           Create <span className="text-blue-600">{category}</span> Event
         </h1>
 
@@ -289,14 +289,15 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
           {["Event Info", "Schedule", "Budget"].map((label, index) => (
             <div key={index} className="flex items-center">
               <div
-                className={`w-8 h-8 flex items-center justify-center text-sm font-semibold rounded-full ${step === index + 1
+                className={`w-8 h-8 flex items-center justify-center text-md -mb-2 font-semibold rounded-full font-sans ${
+                  step === index + 1
                     ? "bg-blue-600 text-white"
-                    : "bg-gray-300 text-gray-700"
-                  }`}
+                    : "bg-zinc-300 text-zinc-700"
+                }`}
               >
                 {index + 1}
               </div>
-              {index < 2 && <div className="w-8 h-1 bg-gray-400 mx-2"></div>}
+              {index < 2 && <div className="w-8 h-1 bg-zinc-400 mx-2  "></div>}
             </div>
           ))}
         </div>
@@ -312,7 +313,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
           {/* Step 1: Event Info */}
           {step === 1 && (
             <>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-md font-medium text-zinc-700 dark:text-zinc-300 -mb-2 ">
                 Event Name
               </label>
               <motion.input
@@ -323,10 +324,10 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                 type="text"
                 placeholder="Enter event name"
                 required
-                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-gray-900 dark:text-white"
+                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-zinc-900 dark:text-white"
               />
 
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-md -mb-2 font-medium text-zinc-700 dark:text-zinc-300">
                 Description
               </label>
               <motion.textarea
@@ -337,7 +338,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                 placeholder="Enter event description"
                 rows="3"
                 required
-                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-gray-900 dark:text-white"
+                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-zinc-900 dark:text-white"
               />
             </>
           )}
@@ -345,7 +346,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
           {/* Step 2: Schedule */}
           {step === 2 && (
             <>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-md -mb-2 font-medium text-zinc-700 dark:text-zinc-300">
                 Event Date
               </label>
               <motion.input
@@ -355,12 +356,12 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                 value={formData.date}
                 type="date"
                 required
-                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-gray-900 dark:text-white"
+                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-zinc-900 dark:text-white"
               />
 
               <div className="flex gap-4">
                 <div className="w-1/2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="text-md -mb-2 font-medium text-zinc-700 dark:text-zinc-300">
                     Start Time
                   </label>
                   <motion.input
@@ -370,12 +371,12 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                     value={formData.startTime}
                     type="time"
                     required
-                    className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-gray-900 dark:text-white"
+                    className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-zinc-900 dark:text-white"
                   />
                 </div>
 
                 <div className="w-1/2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="text-md -mb-2 font-medium text-zinc-700 dark:text-zinc-300">
                     End Time
                   </label>
                   <motion.input
@@ -385,7 +386,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                     value={formData.endTime}
                     type="time"
                     required
-                    className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-gray-900 dark:text-white"
+                    className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-zinc-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -395,20 +396,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
           {/* Step 3: Budget */}
           {step === 3 && (
             <>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Location
-              </label>
-              <motion.input
-                whileFocus={{ scale: 1.02 }}
-                name="location"
-                onChange={handleChange}
-                value={formData.location}
-                type="text"
-                placeholder="Location of Event"
-                min="0"
-                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-gray-900 dark:text-white"
-              />
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-md -mb-2 font-medium text-zinc-700 dark:text-zinc-300">
                 Budget
               </label>
               <motion.input
@@ -419,7 +407,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                 type="number"
                 placeholder="Enter event budget"
                 min="0"
-                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-gray-900 dark:text-white"
+                className="px-4 py-3 rounded-md bg-zinc-200 dark:bg-zinc-700 outline-none w-full text-zinc-900 dark:text-white"
               />
             </>
           )}
@@ -435,9 +423,9 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
               >
                 <ButtonBtmUp
                   title="Back"
-                  bgColor="bg-gray-500"
+                  bgColor="bg-zinc-500"
                   textColor="text-white"
-                  hoverBgColor="bg-gray-600"
+                  hoverBgColor="bg-zinc-600"
                   hoverTextColor="text-white"
                   rounded="rounded-lg"
                   w="w-20"
@@ -478,7 +466,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                 className=""
               >
                 <ButtonBtmUp
-                  title="Submit"
+                  title="Create Event"
                   bgColor="bg-blue-600"
                   textColor="text-white"
                   hoverBgColor="bg-blue-700"

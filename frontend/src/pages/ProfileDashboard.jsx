@@ -81,7 +81,6 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeIcon, setActiveIcon] = useState(selectedSideBarElement);
   const sidebarRef = useRef(null);
-  const [isSubscribe, setIsSubscribe] = useState(false)
 
   useEffect(() => {
     setActiveIcon(page);
@@ -131,9 +130,12 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
         }`}
       >
         {!isSidebarOpen ? (
-          <Menu size={24} />
+          <Menu size={24} className="text-black dark:text-white" />
         ) : (
-          <CgCross size={24} className="rotate-45" />
+          <CgCross
+            size={24}
+            className="rotate-45 text-black dark:text-white "
+          />
         )}
       </div>
 
@@ -141,7 +143,7 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
         <div className="px-3 py-4 border-b border-zinc-200 dark:border-zinc-400">
           <Link to="/" className="flex justify-start items-center ">
             {/* <img src={logo} alt="Logo" className="h-10" /> */}
-            <h1 className="text-3xl font-bold font-['Founders_Grotesk_Condensed'] tracking-widest -mb-2 text-[#DAA520] dark:text-[#DAA520]">
+            <h1 className="text-3xl font-bold font-['Founders_Grotesk_X'] tracking-widest -mb-2 text-[#DAA520] dark:text-[#DAA520]">
               EVENTOPIA
             </h1>
           </Link>
@@ -158,19 +160,19 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
                     ${
                       activeIcon === item.link
                         ? "bg-blue-700 text-white dark:text-zinc-100"
-                        : "text-zinc-500 dark:text-zinc-400 hover:bg-blue-600 hover:text-zinc-100 dark:hover:text-zinc-100"
+                        : "text-zinc-700 dark:text-zinc-400 hover:bg-blue-600 hover:text-zinc-100 dark:hover:text-zinc-100"
                     }`}
                 >
                   <span
                     className={`text-xl ${
                       activeIcon === item.link
                         ? "text-zinc-100"
-                        : "text-zinc-500 dark:text-zinc-400 group-hover:text-white"
+                        : "text-zinc-700 dark:text-zinc-400 group-hover:text-white"
                     }`}
                   >
                     {item.icon}
                   </span>
-                  {item.title}
+                  <span className="-mb-2 text-lg">{item.title}</span>
                   {item.link === "notifications" && (
                     <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                       3
@@ -196,10 +198,10 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
               className="w-12 h-12 rounded-full border-2 border-blue-600 mr-3"
             />
             <div>
-              <p className="text-zinc-700 dark:text-zinc-300 font-semibold">
+              <p className="text-zinc-700 dark:text-zinc-300 font-semibold -mb-1 ">
                 {userData?.userName || "Loading..."}
               </p>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 -mb-1 ">
                 {isOnline ? "Online" : "Offline"}
               </p>
             </div>
@@ -264,10 +266,10 @@ const Header = ({ userData }) => {
         </div>
       </div>
       <div>
-        <h1 className="text-2xl font-bold text-zinc-800 dark:text-white">
+        <h1 className="text-3xl -mb-2 font-bold text-zinc-800 dark:text-white">
           {userData?.fullName}
         </h1>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-md -mb-2 text-zinc-600 dark:text-zinc-400">
           @{userData?.userName}
         </p>
         {/* <div className="mt-2 flex items-center">
@@ -330,7 +332,7 @@ const ShopSummary = () => {
 
   return (
     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold text-zinc-700 dark:text-zinc-300 mb-6">
+      <h2 className="text-2xl font-bold text-zinc-700 dark:text-zinc-300 mb-6">
         Shop - Summary
       </h2>
       <div className="grid grid-cols-3 gap-6">
@@ -363,7 +365,9 @@ const ShopSummary = () => {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center w-full h-full col-start-1 col-end-4 p-4">
-            <h3 className="my-5">You don't have any shop</h3>
+            <h3 className="my-5 font-['Founders_Grotesk_Condensed'] ">
+              You don't have any shop
+            </h3>
             <br />
             <ButtonBtmUp
               title={"Register Your Shop"}

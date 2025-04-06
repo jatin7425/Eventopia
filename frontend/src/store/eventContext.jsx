@@ -51,8 +51,8 @@ export function EventProvider({ children }) {
             const data = await axiosInstance.post('/event/createEvent', eventData);
             toast.success(data.data.message);
             setEventId(data.data._id);
-            getEvents();  // Refresh the events list
-            window.location.href = "/vendorCollection/" + data.data._id;
+            getEvents();
+            window.location.href = "/vendorCollection";
         } catch (error) {
             console.error('Error creating event', error);
             toast.error(error.response?.data?.message || 'Error creating event');

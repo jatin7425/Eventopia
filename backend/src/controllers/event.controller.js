@@ -2,6 +2,7 @@ import Event from '../models/event.model.js';
 import Vendor from "../models/vendor.model.js";
 import mongoose from 'mongoose';
 import UserModel from '../models/user.model.js';
+import { totalmem } from 'os';
 
 // Create a new event
 export const createEvent = async (req, res) => {
@@ -327,25 +328,29 @@ export const addToCart = async (req, res) => {
 // Remove from Cart
 export const removeFromCart = async (req, res) => {
     try {
-        const userId = req.user._id;
         const { eventId, cartId } = req.params;
 
-        const event = await Event.findByIdAndUpdate(
-            eventId,
-            { $pull: { cart: cartId } }, // Remove product from cart
-            { new: true }
-        );
+        console.log(`Event ID: ${eventId}, Cart ID: ${cartId}`);
 
+        // Find the event by its ID
+        const event = await Event.findById(eventId);
         if (!event) {
             return res.status(404).json({ message: "Event not found" });
         }
 
+        // Filter out the item from the cart array
+        event.cart = event.cart.filter(item => item._id.toString() !== cartId);
+
+        // Save the updated event document
+        await event.save();
+
+        // Respond with a success message and the updated cart
         res.status(200).json({
             message: "Item removed from cart successfully",
             cart: event.cart
         });
-
     } catch (error) {
+        console.error(`Error occurred: ${error.message}`);
         res.status(500).json({ message: "Error removing item from cart", error: error.message });
     }
 };
@@ -361,8 +366,12 @@ export const updateCartQuantity = async (req, res) => {
             return res.status(400).json({ message: "Quantity must be at least 1" });
         }
 
+        console.log(eventId, cartId, quantity)
+
+        const newCartId = new mongoose.Types.ObjectId(cartId);
+
         const event = await Event.findOneAndUpdate(
-            { _id: eventId, "cart": cartId },
+            { _id: eventId, "cart": { $elemMatch: { _id: newCartId } } },
             { $set: { "cart.$.quantity": quantity } }, // Update quantity
             { new: true }
         );
@@ -377,7 +386,8 @@ export const updateCartQuantity = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ message: "Error updating cart quantity", error: error.message });
+        console.error(error)
+        res.status(500).json({ message: "Error updating cart quantity", error: error });
     }
 };
 
@@ -406,6 +416,9 @@ export const getEventCart = async (req, res) => {
         const vendorIds = event.cart.map(cart => cart.vendor);
         const vendors = await Vendor.find({ _id: { $in: vendorIds } });
 
+        const TotalCartItems = event.cart.length
+        let TotalBilling = 0
+
         // Map cart items with vendor and product details
         const cartWithProducts = await Promise.all(event.cart.map(async (cart) => {
             const vendor = vendors.find(v => v._id.equals(cart.vendor));
@@ -413,6 +426,8 @@ export const getEventCart = async (req, res) => {
 
             const product = vendor.Products.find(p => p._id.equals(cart.product));
             if (!product) return null;
+
+            TotalBilling += (product.productPrice * cart.quantity)
 
             return {
                 _id: cart._id,
@@ -435,7 +450,7 @@ export const getEventCart = async (req, res) => {
             };
         }));
 
-        
+
         // Remove null values (carts with missing products/vendors)
         const validCart = cartWithProducts.filter(item => item !== null);
 
@@ -454,6 +469,8 @@ export const getEventCart = async (req, res) => {
                 organizer: event.organizer,
             },
             cart: paginatedCart,
+            TotalCartItems: TotalCartItems,
+            TotalBilling: TotalBilling,
             pagination: {
                 currentPage: page,
                 totalPages: Math.ceil(validCart.length / limit),

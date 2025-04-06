@@ -116,7 +116,7 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="old-password"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   Old Password
                 </label>
@@ -132,13 +132,12 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="new-password"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   New Password
                 </label>
                 <input
                   type="password"
-                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
                   id="new-password"
                   className="mt-1 block w-full p-3 border border-zinc-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-transparent"
                   placeholder="New password"
@@ -149,13 +148,12 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="confirm-password"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   Confirm Password
                 </label>
                 <input
                   type="password"
-                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
                   id="confirm-password"
                   className="mt-1 block w-full p-3 border border-zinc-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-transparent"
                   placeholder="Confirm password"
@@ -191,7 +189,7 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="full-name"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   Full Name
                 </label>
@@ -209,7 +207,7 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="phone"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   Phone Number
                 </label>
@@ -227,7 +225,7 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   Email Address
                 </label>
@@ -245,7 +243,7 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="city"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   City
                 </label>
@@ -263,7 +261,7 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="state"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   State/County
                 </label>
@@ -281,7 +279,7 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="postcode"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   Postcode
                 </label>
@@ -299,7 +297,7 @@ const ProfileSetting = ({ userData }) => {
               <div>
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium text-zinc-800 dark:text-zinc-300 "
+                  className="block text-md -mb-1 font-medium text-zinc-800 dark:text-zinc-300 "
                 >
                   Country
                 </label>
@@ -460,26 +458,32 @@ const ProfileSetting = ({ userData }) => {
               </button>
             </div>
             <h2 className="mt-4 text-xl font-semibold">{userData?.fullName}</h2>
-            <p className="text-sm text-zinc-400">
+            <p className="text-md -mb-1 text-zinc-400">
               User Name: {userData?.userName}
             </p>
           </div>
-          <div className="mt-6 space-y-4 text-sm w-full">
+          <div className="mt-6 space-y-4 text-md -mb-1 w-full">
             <div className="flex justify-between">
               <span className="text-black/70 dark:text-zinc-300">
                 Event Organised
               </span>
-              <span className="font-bold text-zinc-300">32</span>
+              <span className="font-bold text-zinc-500 dark:text-zinc-300">
+                32
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-black/70 dark:text-zinc-300">
                 Pending Events
               </span>
-              <span className="font-bold text-zinc-300">26</span>
+              <span className="font-bold  text-zinc-500 dark:text-zinc-300">
+                26
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-black/70 dark:text-zinc-300">Coins</span>
-              <span className="font-bold text-zinc-300">6</span>
+              <span className="font-bold  text-zinc-500 dark:text-zinc-300">
+                6
+              </span>
             </div>
           </div>
         </div>
@@ -495,7 +499,7 @@ const ProfileSetting = ({ userData }) => {
                 <button
                   key={index}
                   onClick={() => setCurrentTab(index)} // Ensure the correct state setter
-                  className={`relative text-sm pb-2 transition ${
+                  className={`relative text-md -mb-1 pb-2 transition ${
                     index === currentTab
                       ? "text-blue-500"
                       : "text-black dark:text-white/70 hover:text-blue-400"

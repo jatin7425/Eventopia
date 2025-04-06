@@ -11,12 +11,13 @@ import toast from "react-hot-toast";
 import { useEventCart } from "../store/eventCartContext";
 import { Plus, ShoppingCart, ClipboardList, Users } from "lucide-react";
 import { set } from "lodash";
+import MyCalendar from "./Calendar/MyCalendar";
 
 const EventManager = ({}) => {
   const dropdownRef = useRef(null);
   const { event, getEventById } = useEvent();
   const { user } = useAuth();
-  const { setEventId } = useEventCart();
+  const { cart, setEventId } = useEventCart();
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -26,8 +27,6 @@ const EventManager = ({}) => {
   const [showDescriptionBox, setShowDescriptionBox] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
-
-  // console.log(cart)
 
   const handleIsDescriptionOpen = () => {
     setIsDescriptionOpen(!isDescriptionOpen);
@@ -113,30 +112,43 @@ const EventManager = ({}) => {
      setIsDescriptionOpen2(!isDescriptionOpen2);
    };
 
-
-
-
   const [attendeesOption, setAttendeesOption] = useState(false);
   const [addTodoOption, setaddTodoOption] = useState(false);
   const [openCartOption, setOpenCartOption] = useState(true);
+  const [openCalendar, setOpenCalendar] = useState(false);
 
   const handleAttendeesOption = () => {
     setAttendeesOption(true);
     setaddTodoOption(false);
     setOpenCartOption(false);
+    setOpenCalendar(false);
+
   };
 
   const handleAddTodoOption = () => {
     setaddTodoOption(true);
     setOpenCartOption(false);
     setAttendeesOption(false);
+    setOpenCalendar(false);
+
   };
 
   const handleOpenCartOption = () => {
     setOpenCartOption(true);
     setaddTodoOption(false);
     setAttendeesOption(false);
+    setOpenCalendar(false);
+
   };
+
+  const handleOpenCalendar = () => {
+    setOpenCalendar(true)
+    setOpenCartOption(false);
+    setaddTodoOption(false);
+    setAttendeesOption(false);
+  };
+
+
 
   return (
     <div
@@ -180,7 +192,7 @@ const EventManager = ({}) => {
 
         {/* ------------------------Category Dropdown------------------------- */}
         <div
-          className="h-full text-end md:w-64 w-full dark:text-black z-[99]"
+          className="h-full text-end md:w-64 w-full dark:text-black z-[40]"
           ref={dropdownRef}
         >
           <div className="relative md:w-64 w-full mx-auto">
@@ -192,7 +204,7 @@ const EventManager = ({}) => {
             >
               {selectedEvent?.category || "Select Category"}
               <ChevronDown
-                className="w-5 h-5 transition-transform"
+                className="w-5 h-5 transition-transform "
                 style={{
                   transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                 }}
@@ -254,7 +266,7 @@ const EventManager = ({}) => {
                 }
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                transition={{ }}
+                transition={{}}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleIsDescriptionOpen2();
@@ -319,7 +331,21 @@ const EventManager = ({}) => {
               w="w-32"
               h="h-10"
               onClick={() => setOpenCartOption(!openCartOption)}
-              
+            />
+          </span>
+
+          {/* Calendar Button */}
+          <span onClick={handleOpenCalendar}>
+            <ButtonBtmUp
+              title={"Calendar"}
+              icon={<ClipboardList size={18} />}
+              bgColor="bg-blue-600"
+              textColor="text-white"
+              hoverBgColor="bg-blue-700"
+              rounded="rounded-lg"
+              w="w-32"
+              h="h-10"
+              onClick={() => setOpenCalendar(!openCalendar)}
             />
           </span>
 
@@ -335,14 +361,13 @@ const EventManager = ({}) => {
               rounded="rounded-lg"
               w="w-32"
               h="h-10"
-              
             />
           </span>
 
           {/* Todo Button */}
           <span onClick={handleAddTodoOption}>
             <ButtonBtmUp
-              title={addTodoOption ? "Close Todo" : "View Todo"}
+              title={"View Todo"}
               icon={<ClipboardList size={18} />}
               bgColor="bg-blue-600"
               textColor="text-white"
@@ -350,8 +375,7 @@ const EventManager = ({}) => {
               rounded="rounded-lg"
               w="w-32"
               h="h-10"
-              onClick={() => setAddTodoOption(!addTodoOption)}
-              
+              onClick={() => setaddTodoOption(!addTodoOption)}
             />
           </span>
         </div>
@@ -403,7 +427,20 @@ const EventManager = ({}) => {
             className="w-full h-fit border-t-2 border-zinc-500"
           >
             <hr className="border-gray-300 dark:border-zinc-500" />
-            <VendorProductsComponent event={event} />
+            <VendorProductsComponent event={event} cart={cart} />
+          </motion.div>
+        )}
+
+        {openCalendar && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="w-full h-fit border-t-2 border-zinc-500"
+          >
+            <div className="h-full w-full">
+              <MyCalendar />
+            </div>
           </motion.div>
         )}
       </div>

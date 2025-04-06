@@ -21,6 +21,7 @@ router.get('/userById/:userId', protectRoute, userById);
 router.get('/getAllUsers', protectRoute, getAllUsers);
 
 router.post('/request-password-reset', requestPasswordReset);
+
 router.post('/reset-password', forgetPassword);
 
 export default router;

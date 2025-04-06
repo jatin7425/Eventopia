@@ -9,7 +9,6 @@ import { connectDB } from "./lib/db.js";
 import path from "path";
 import { fileURLToPath } from 'url';
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -26,10 +25,6 @@ app.use(cors({
 }));
 
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
-
-const decodeURLSpaces = (input) => {
-    return input.replace(/%20/g, ' ');
-};
 
 // Define routes after the CORS configuration
 app.use("/api/auth", authRoutes);

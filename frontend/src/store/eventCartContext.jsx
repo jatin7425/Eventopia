@@ -13,24 +13,17 @@ export const EventCartProvider = ({ children }) => {
     const [VendorId, setVendorId] = useState(null);
     const [cart, setCart] = useState([]); // Store cart data locally
 
-    useEffect(() => {
-        let eventIdFromLocalStorage;
-        if (!eventId) {
-            eventIdFromLocalStorage = localStorage.getItem("eventId");
-            if (eventIdFromLocalStorage) {
-                setEventId(eventIdFromLocalStorage);
-            }
-        } else {
-            localStorage.setItem("eventId", eventId);
-        }    
-        const handleUnload = () => {
-            localStorage.removeItem("eventId");
-        };
-        window.addEventListener("beforeunload", handleUnload);
-        return () => {
-            window.removeEventListener("beforeunload", handleUnload);
-        };
-    }, [eventId]);
+   useEffect(() => {
+     if (!eventId) {
+       const storedEventId = sessionStorage.getItem("eventId");
+       if (storedEventId) {
+         setEventId(storedEventId);
+       }
+     } else {
+       sessionStorage.setItem("eventId", eventId);
+     }
+   }, [eventId]);
+
     
 
     const addToCart = async (productId, quantity = 1) => {
@@ -40,7 +33,7 @@ export const EventCartProvider = ({ children }) => {
                 `/event/${eventId}/cart/${VendorId}`,
                 { productId, quantity }
             );
-            setCart(response.data.cart);
+            getEventCart(1, 10)
             toast.success("Product added to cart!");
             return response.data;
         } catch (error) {
@@ -53,7 +46,7 @@ export const EventCartProvider = ({ children }) => {
             const response = await axiosInstance.delete(
                 `/event/${eventId}/cart/${productId}`
             );
-            setCart(response.data.cart);
+            getEventCart(1, 10)
             toast.success("Product removed from cart!");
             return response.data;
         } catch (error) {
@@ -67,9 +60,9 @@ export const EventCartProvider = ({ children }) => {
                 `/event/${eventId}/cart/${productId}`,
                 { quantity }
             );
-            setCart(response.data.cart);
+            
+            getEventCart(1, 10)
             toast.success("Cart updated successfully!");
-            console.log(response.data);
             return response.data;
         } catch (error) {
             toast.error(error.response?.data?.message || "Error updating cart");
@@ -83,10 +76,9 @@ export const EventCartProvider = ({ children }) => {
                     `/event/${eventId}/cart?page=${page}&limit=${limit}`
                 );
                 setCart(response.data);
-                toast.success("Cart fetched successfully!");
                 return response.data;
             } catch (error) {
-                toast.error(error.response?.data?.message || "Error fetching cart");
+                setCart([]);
             }
         }
     };
@@ -106,7 +98,7 @@ export const EventCartProvider = ({ children }) => {
 
     useEffect(() => {
         getEventCart(1, 10)
-    }, [])
+    }, [eventId]);
     
 
     return (

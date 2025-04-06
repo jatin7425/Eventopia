@@ -7,7 +7,7 @@ import {
   FaHome,
   FaMapMarkerAlt,
 } from "react-icons/fa";
-import { BsCart3, BsCartCheck, BsClock } from "react-icons/bs";
+import { BsCartCheck, BsClock } from "react-icons/bs";
 import { MdDeliveryDining } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import Food from "../assets/food.jpg";
@@ -15,11 +15,13 @@ import Decoration from "../assets/decoration.jpg";
 import Hall from "../assets/hall.jpg";
 import Conference from "../assets/conferenceimg.jpg";
 import Bakery from "../assets/bakery.jpg";
-import { motion, motionValue, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { IoIosSearch } from "react-icons/io";
 import { useEventCart } from "../store/eventCartContext";
 import { Link } from "react-router-dom";
 import { CartCard } from "./ProductCard";
+import { ButtonBtmUp } from "./Button";
+import CartComponent from "./Carts/CartComponent";
 
 
 // Sidebar Component (common)
@@ -331,20 +333,16 @@ const Cart = ({ cartItems, onConfirmOrder, onUpdateCartQuantity }) => {
 };
 
 const OrderSummary = ({
-  cartItems = [],
+  cartItems,
   onConfirmOrder,
   onUpdateCartQuantity,
 }) => {
   // Ensure cartItems is an array before using reduce()
-  const validCartItems = Array.isArray(cartItems) ? cartItems : [];
+  // TotalCartItems TotalBilling
 
-  const subtotal = validCartItems.reduce((acc, item) => {
-    const price = parseFloat(item.price.replace("₹", ""));
-    return acc + price * item.quantity;
-  }, 0);
 
-  const deliveryCharge = validCartItems.length > 0 ? 10 : 0;
-  const total = subtotal + deliveryCharge;
+  const deliveryCharge = cartItems.TotalCartItems > 0 ? 10 : 0;
+  const total = cartItems.TotalBilling + deliveryCharge;
 
   return (
     <aside className="h-fit bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white ml-5 p-6 rounded-lg w-1/3 flex flex-col shadow-lg dark:shadow-white/10 max-lg:sticky mt-7 top-[30px] self-start max-xl:hidden">
@@ -354,47 +352,19 @@ const OrderSummary = ({
         </h3>
       </div>
       <div className="mt-3 flex-1 overflow-auto max-h-80">
-        {cartItems.length === 0 ? (
+        {cartItems.TotalCartItems <= 0 && (
           <p className="text-gray-700 dark:text-gray-400 mt-2">
             Your cart is empty.
           </p>
-        ) : (
-          <div className="mt-2 space-y-1">
-            {cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center text-gray-700 dark:text-gray-400"
-              >
-                <span className="w-2/3 flex items-center justify-between">
-                  {item.name}{" "}
-                  <input
-                    type="number"
-                    min="1"
-                    value={item.quantity}
-                    onChange={(e) =>
-                      onUpdateCartQuantity(
-                        item.id,
-                        parseInt(e.target.value, 10)
-                      )
-                    }
-                    className="ml-2 w-12 p-1 rounded bg-zinc-100 dark:bg-gray-600 text-zinc-800 dark:text-white outline-none"
-                  />
-                </span>
-                <span>
-                  ₹
-                  {(
-                    parseFloat(item.price.replace("₹", "")) * item.quantity
-                  ).toFixed(2)}
-                </span>
-              </div>
-            ))}
-          </div>
         )}
       </div>
-      {cartItems.length > 0 && (
+      {cartItems.TotalCartItems > 0 && (
         <div className="mt-4 space-y-1">
           <p className="text-zinc-800 dark:text-white ">
-            Subtotal: ₹{subtotal.toFixed(2)}
+            Total items: {cartItems?.TotalCartItems}
+          </p>
+          <p className="text-zinc-800 dark:text-white ">
+            Subtotal: ₹{cartItems?.TotalBilling.toFixed(2)}
           </p>
           <p className="text-zinc-800 dark:text-white ">
             Delivery Charge: ₹{deliveryCharge.toFixed(2)}
@@ -404,9 +374,22 @@ const OrderSummary = ({
       )}
       <Link
         to={`/vendorCollection`}
-        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-2 rounded-lg w-full disabled:opacity-50"
+        className="mt-4 text-center disabled:opacity-50"
       >
-        Add more Items
+        <ButtonBtmUp
+          title="Add more Items"
+          bgColor="bg-blue-600"
+          textColor="text-white"
+          hoverBgColor="bg-blue-700"
+          hoverTextColor="text-white"
+          rounded="rounded-lg"
+          w="w-full"
+          h="h-10"
+          p=""
+          display="max-md:hidden"
+          displayTitle2="md:hidden"
+          title2="+"
+        />
       </Link>
       <button
         onClick={onConfirmOrder}
@@ -420,24 +403,16 @@ const OrderSummary = ({
 };
 
 // Main VendorProductsComponent
-const VendorProductsComponent = () => {
+const VendorProductsComponent = ({cart}) => {
   const {
-    cart,
     removeFromCart,
     updateCartQuantity,
     getEventCart,
   } = useEventCart();
   const [searchTerm, setSearchTerm] = useState();
-  const [cartItems, setCartItems] = useState([]);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10)
-
-  useEffect(() => {
-    if (cartItems.length !== 0) {
-      setCartItems([cart]);
-    }
-  }, [setCartItems, cart]);
 
   const handleConfirmOrder = () => {
     // console.log("hello");
@@ -462,14 +437,15 @@ const VendorProductsComponent = () => {
         {/* <PopularDishes /> */}
 
         <div className="w-full h-full">
-          <CartCard />
+          <CartCard cart={cart} />
+          {/* <CartComponent/> */}
         </div>
       </main>
 
 
       <Cart />
       <OrderSummary
-        cartItems={cartItems}
+        cartItems={cart}
         onConfirmOrder={handleConfirmOrder}
         onUpdateCartQuantity={handleUpdateCartQuantity}
       />

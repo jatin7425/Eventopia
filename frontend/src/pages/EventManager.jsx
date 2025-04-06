@@ -16,7 +16,7 @@ const EventManager = ({}) => {
   const dropdownRef = useRef(null);
   const { event, getEventById } = useEvent();
   const { user } = useAuth();
-  const { setEventId } = useEventCart();
+  const { cart, setEventId } = useEventCart();
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -112,9 +112,6 @@ const EventManager = ({}) => {
    const handleIsDescriptionOpen2 = () => {
      setIsDescriptionOpen2(!isDescriptionOpen2);
    };
-
-
-
 
   const [attendeesOption, setAttendeesOption] = useState(false);
   const [addTodoOption, setaddTodoOption] = useState(false);
@@ -350,8 +347,6 @@ const EventManager = ({}) => {
               rounded="rounded-lg"
               w="w-32"
               h="h-10"
-              onClick={() => setAddTodoOption(!addTodoOption)}
-              
             />
           </span>
         </div>

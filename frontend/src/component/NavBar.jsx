@@ -90,7 +90,7 @@ export const NavBar = ({ homeLink, aniDelay }) => {
             <img src={logo} alt="logo" className="w-20 mr-6  " />
           </Link>
           <nav className="w-full max-md:hidden">
-            <ul className="flex space-x-6 w-max m-auto text-black dark:text-white ">
+            <ul className="flex space-x-6 w-max m-auto text-black dark:text-white font-semibold uppercase ">
               <li>
                 <a href={homeLink} className="hover:text-gray-300">
                   Home

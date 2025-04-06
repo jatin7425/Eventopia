@@ -3,25 +3,17 @@ import { Link } from "react-router-dom";
 import ContactUs from "../component/ContactUs.jsx";
 import { OchiFooter } from "../component/Footer.jsx";
 import Subscription from "../component/Subscription.jsx";
-import { MdAddBusiness } from "react-icons/md";
-import { BsCalendar4Event } from "react-icons/bs";
-import logo from "../assets/logo-nobg.png";
 import { useAuth } from "../store/auth.jsx";
+import { ButtonArrow } from "../component/Button.jsx";
+import { NavBar } from "../component/NavBar.jsx";
+import { MdAddBusiness, MdOutlineSecurity } from "react-icons/md";
+import { BsCalendar4Event, BsCameraReels } from "react-icons/bs";
+import logo from "../assets/logo-nobg.png";
 import { CgProfile } from "react-icons/cg";
-import { ButtonArrow, ButtonBtmUp } from "../component/Button.jsx";
 import LocomotiveScroll from "locomotive-scroll";
 import "locomotive-scroll/dist/locomotive-scroll.css";
 import { BiSupport } from "react-icons/bi";
-import { MdOutlineSecurity } from "react-icons/md";
-import { FaArrowLeft, FaArrowRight, FaRegCommentDots } from "react-icons/fa6";
-import { BsCameraReels } from "react-icons/bs";
-import {
-  IoIosArrowBack,
-  IoIosArrowDropleft,
-  IoIosArrowDropright,
-  IoIosArrowForward,
-} from "react-icons/io";
-import { NavBar } from "../component/NavBar.jsx";
+import { FaRegCommentDots } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { OchiLoadingScreen } from "../component/LoadingAnimation";
@@ -35,7 +27,7 @@ function WelcomePage() {
     // Simulate loading
     setTimeout(() => {
       setIsLoading(false);
-    }, 2700);
+    }, 3000);
   }, []);
 
   if (isLoading) {
@@ -55,7 +47,7 @@ function WelcomePage() {
     },
   };
   return (
-    <div className="dark:bg-[#1a1a1a] dark:text-white max-w-[1920px] mx-auto ">
+    <div className="dark:bg-[#1a1a1a] dark:text-white max-w-[1920px] mx-auto  ">
       <div className="bg-[#f8f9ff] dark:bg-[#1a1a1a] dark:text-white text-black text-[15px]">
         {/* <HeaderSection /> */}
         <NavBar homeLink="#home" aniDelay={1.6} />
@@ -194,22 +186,12 @@ const LandingSection = () => {
   const buttonRef = useRef(null);
   const scrollRef = useRef(null);
 
-  useEffect(() => {
-    // Initialize Locomotive Scroll
-    const scroll = new LocomotiveScroll({
-      el: scrollRef.current,
-      smooth: true,
-    });
 
-    return () => {
-      scroll.destroy();
-    };
-  }, []);
 
   return (
     <motion.div
       id="home"
-      className="dark:bg-[#1a1a1a] dark:text-white relative"
+      className="dark:bg-[#1a1a1a] dark:text-white relative "
       ref={scrollRef}
     >
       <div className="px-4 sm:px-10 overflow-hidden">
@@ -235,7 +217,7 @@ const LandingSection = () => {
             at Your Fingertips!
           </motion.h1>
           <motion.p
-            className="text-base"
+            className="text-base font-['Founders_Grotesk_Condensed']"
             ref={paragraphRef}
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -403,14 +385,6 @@ const FeaturesSection = () => {
     };
   }, []);
 
-  useEffect(() => {
-    gsap.fromTo(
-      animate.current,
-      { opacity: 0, x: 100 },
-      { opacity: 1, x: 0, duration: 1 }
-    );
-  }, []);
-
   const featureVariants = {
     hidden: { opacity: 0, x: 100 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
@@ -431,10 +405,10 @@ const FeaturesSection = () => {
             isFixed ? "sticky top-24" : ""
           } ${releaseAnimation ? "release-animation" : ""}`}
         >
-          <h2 className="md:text-4xl text-3xl font-extrabold pb-6 max-md:pb-0 ">
-            Our Features<span className="font-serif ">.</span>{" "}
+          <h2 className="md:text-4xl text-3xl font-extrabold pb-6 max-md:pb-0  ">
+            Our Features
           </h2>
-          <p className="pr-16">
+          <p className="pr-16 font-['Founders_Grotesk_Condensed']">
             "Organize, manage, and execute your events seamlessly with our
             intuitive platform. Whether it's a corporate gathering, a wedding,
             or a festival, we've got you covered from start to finish.
@@ -465,7 +439,7 @@ const FeaturesSection = () => {
               <div className="dark:text-black">{item.icon}</div>
               <div>
                 <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p>{item.discription}</p>
+                <p className="font-['Founders_Grotesk_Condensed']">{item.discription}</p>
               </div>
             </motion.div>
           ))}
@@ -582,11 +556,11 @@ const ClientTestimonial = () => {
                 <h4 className="whitespace-nowrap font-semibold mt-2">
                   {item.name}
                 </h4>
-                <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-300">
+                <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-300 font-['Founders_Grotesk_Condensed']">
                   {item.description}
                 </p>
               </div>
-              <div className="mt-4">
+              <div className="mt-4 font-['Founders_Grotesk_Condensed']">
                 <p>{item.review}</p>
               </div>
             </div>
@@ -771,7 +745,9 @@ const TeamCard = ({ member }) => {
       />
       <div className="text-center mt-6">
         <h4 className="text-lg font-semibold">{member.name}</h4>
-        <p className="text-sm text-gray-400">{member.role}</p>
+        <p className="text-sm text-gray-400 font-['Founders_Grotesk_Condensed']">
+          {member.role}
+        </p>
         <div className="flex justify-center space-x-4 mt-4">
           {member.socials?.map((social, i) => (
             <a

@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import { VendorProductCard } from "./ProductCard";
 import LocomotiveScroll from 'locomotive-scroll';
 import gsap from "gsap";
+import { ButtonBtmUp } from "./Button";
 
 // Sidebar Component (reused)
 const Sidebar = () => {
@@ -200,7 +201,10 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4">
+    <form
+      onSubmit={handleSubmit}
+      className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4"
+    >
       <h2 className="text-lg font-semibold mb-2 dark:text-white">
         {editingProduct ? "Edit Product" : "Add New Product"}
       </h2>
@@ -238,7 +242,11 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           className="p-2 rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none"
         />
         <div className="flex flex-col gap-2">
-          <label className="dark:text-white">{editingProduct ? "Don't upload new image, if you want to update the image, click on the update button" : ""}</label>
+          <label className="dark:text-white">
+            {editingProduct
+              ? "Don't upload new image, if you want to update the image, click on the update button"
+              : ""}
+          </label>
           <label className="dark:text-white">Product Image Preview:</label>
           {imagePreview && (
             <img
@@ -261,9 +269,23 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
         <div className="flex gap-2">
           <button
             type="submit"
-            className="flex-1 bg-blue-500 dark:bg-blue-600 text-white p-2 rounded"
+            className="flex-1"
           >
-            {editingProduct ? "Update" : "Add"} <FaPlus className="inline ml-1" />
+            <ButtonBtmUp
+              title={editingProduct ? "Update +" : "Add +"}
+              bgColor="bg-blue-600"
+              textColor="text-white"
+              hoverBgColor="bg-blue-700"
+              hoverTextColor="text-white"
+              rounded="rounded-lg"
+              w="w-full"
+              h="h-10"
+              p="px-4 "
+              display="max-md:hidden"
+              displayTitle2="md:hidden"
+              title2="+"
+            />{" "}
+            
           </button>
           {editingProduct && (
             <button
@@ -349,6 +371,8 @@ const ProductList = ({
           />
         ))}
       </div>
+      
+      {/* Page Num */}
       <div className="flex justify-center mt-4">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map(
           (pageNum) => (

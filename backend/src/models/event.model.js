@@ -73,6 +73,16 @@ const eventSchema = new mongoose.Schema({
             createdAt: { type: Date, default: Date.now }, // Creation date
             updatedAt: { type: Date, default: Date.now }, // Last update date
         },
+    ],  
+    calender: [
+        {
+            _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+            title: { type: String },
+            date: { type: Date },
+            description: { type: String },
+            startTime: { type: Date, required: true },
+            endTime: { type: Date, required: true }
+        }
     ],
     createdAt: { type: Date, default: Date.now }, // Creation date
     updatedAt: { type: Date, default: Date.now }, // Last update date

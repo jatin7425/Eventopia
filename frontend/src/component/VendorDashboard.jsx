@@ -134,13 +134,17 @@ export default function VendorDashboard() {
     }, [listRef.current]);
 
     return (
-      <div className="h-[280px] flex flex-col gap-4 relative pl-2 ">
-        <h1
-          className={`text-lg py-2 px-3 cursor-pointer text-white bg-blue-600 hover:bg-blue-700 rounded `}
-          onClick={handleOpenAddVenderForm}
-        >
-          Create new Shop
-        </h1>
+      <div
+        onClick={handleOpenAddVenderForm}
+        className="h-[280px] flex flex-col gap-4 relative pl-2 "
+      >
+        <div className="py-1 px-3">
+          <h1
+            className={`text-lg cursor-pointer text-white hover:text-blue-500 rounded `}
+          >
+            Create new Shop
+          </h1>
+        </div>
         {listRef.current?.map((vendor, index) => (
           <div className="h-fit w-full relative flex items-center justify-start  ">
             <Link
@@ -154,16 +158,18 @@ export default function VendorDashboard() {
               className=""
             >
               <span
-                className={` w-full py-5 px-3 cursor-pointer ${currentVendor === vendor?.data?._id
-                  ? "bg-zinc-600 rounded-r-lg absolute h-6 w-[190px] -left-2 -top-[5px] z-[-10] "
-                  : ""
-                  }`}
+                className={` w-full py-5 px-3 cursor-pointer ${
+                  currentVendor === vendor?.data?._id
+                    ? "bg-zinc-600 rounded-r-lg absolute h-6 w-[190px] -left-2 -top-[5px] z-[-10] "
+                    : ""
+                }`}
               ></span>
               <span
-                className={` text-lg cursor-pointer -ml-4 text-zinc-800 dark:text-zinc-100 ${currentVendor === vendor?.data?._id
-                  ? "pl-8 text-zinc-100  "
-                  : ""
-                  }`}
+                className={` text-lg cursor-pointer -ml-4 text-zinc-800 dark:text-zinc-100 ${
+                  currentVendor === vendor?.data?._id
+                    ? "pl-8 text-zinc-100  "
+                    : ""
+                }`}
               >
                 {vendor?.data?.ShopName}
               </span>

@@ -46,7 +46,7 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm start",
-    "client": "cd frontend && npm run dev"
+    "client": "cd frontend && npm run dev --host "
   },
   "author": "",
   "license": "ISC",

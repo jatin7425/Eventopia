@@ -61,7 +61,7 @@ const VendorsCollection = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white dark:bg-[#1a1a1a] relative ">
+    <div className="w-full h-full min-h-screen bg-white dark:bg-[#1a1a1a] relative ">
       <div className="h-20 w-full">
         <NavBar homeLink="/" aniDelay={0.4} />
       </div>

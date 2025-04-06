@@ -38,12 +38,7 @@ export const createVendor = async (req, res) => {
         const vendorData = req.body;
 
         
-        const currentUser = await User.findOne(user._id).populate('-Products');
-        
-        console.log(currentUser, user)
-        
-        // Add current user as the owner of the vendor
-        vendorData.owner = user._id;
+        const currentUser = await User.findOne(user._id);
 
         const vendor = await Vendor.create({
             owner: user._id,

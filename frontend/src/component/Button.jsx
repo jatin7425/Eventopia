@@ -78,6 +78,8 @@ export const BorderAnimaButton = ({
   borderColor,
   w,
   h,
+  icon,
+  activeBgColor,
 }) => {
   return (
     <div>
@@ -85,13 +87,14 @@ export const BorderAnimaButton = ({
         className={`relative px- py-  font-medium text-lg cursor-pointer overflow-hidden group`}
       >
         <span
-          className={`absolute will-change-transform inset-0 border-b-2 ${borderColor} transform scale-x-100 origin-left group-hover:origin-right transition-transform group-hover:duration-500 group-hover:-scale-x-0 will-change-transform `}
+          className={`absolute will-change-transform inset-0 border-b-2 ${borderColor} ${activeBgColor} transform scale-x-100 origin-left group-hover:origin-right transition-transform group-hover:duration-500 group-hover:-scale-x-0 will-change-transform `}
         ></span>
 
         <span
-          className={`relative z-10 transition-colors ${hoverBgColor} ${textColor} ${hoverTextColor} text-sm `}
+          className={`relative z-10 transition-colors ${hoverBgColor} ${textColor} ${hoverTextColor} text-sm font-sans `}
         >
           {title}
+          {icon}
         </span>
 
         <span

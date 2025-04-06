@@ -185,7 +185,6 @@ function AuthPage() {
                       <input
                         name="confirm password"
                         type={showPassword ? "text" : "password"}
-                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="******"
@@ -217,7 +216,6 @@ function AuthPage() {
                         <input
                           name="confirmPassword"
                           type={showPassword2 ? "text" : "password"}
-                          pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           placeholder="******"

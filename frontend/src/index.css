@@ -6,6 +6,25 @@ body {
   font-family: Poppins, sans-serif;
 }
 
+/* Add this to your global CSS file */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #a1a1a1 #2d2d2d;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #a1a1a1;
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
 @layer components {
   .input-field {
     @apply mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-slate-900 dark:text-white;
@@ -78,3 +97,6 @@ body {
 .imgSelecte {
   user-select: none;
 }
+
+
+

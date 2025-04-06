@@ -105,9 +105,7 @@ export function AuthProvider({ children }) {
                 console.error("Error in checkAuth", error);
                 if (error.response.data.message === "Unauthorized - no token provided") {
                     if (window.location.pathname !== "/") {
-                        if (window.location.pathname != "/admin") {
-                            window.location.href = "/"
-                        }
+                        window.location.href = "/"
                     }
                 }
             } finally {

@@ -8,7 +8,15 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import { useInView } from "react-intersection-observer";
 import { OchiFooter } from "./Footer";
-import { Trash, Plus, Minus } from "lucide-react";
+import {
+  Trash,
+  Plus,
+  Minus,
+  ArrowBigRight,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
+import { ButtonBtmUp } from "./Button";
 export const VendorProductCard = ({
   Edit,
   Delete,
@@ -20,7 +28,7 @@ export const VendorProductCard = ({
 }) => {
   const shortDescription =
     description.length > 100 ? description.slice(0, 50) + "..." : description;
-    
+
   return (
     <div className="md:max-w-xs xs:max-w-full xs:h-fit md:h-full xs:flex md:flex-col min-w-72 w-full h-full rounded-lg overflow-hidden shadow-lg m-4 relative bg-white dark:bg-[#333333] dark:shadow-zinc-700">
       <div className="relative">
@@ -106,11 +114,29 @@ export const ClientProductCard = () => {
   );
 };
 
-export const CartCard = () => {
-  const { cart, removeFromCart, updateCartQuantity, getEventCart } =useEventCart();
+export const CartCard = ({cart}) => {
+  const {
+    removeFromCart,
+    updateCartQuantity,
+    getEventCart,
+    item,
+    updateCart,
+  } = useEventCart();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
-  
+
+  const updateQuantity = (id, quantity, change) => {
+    const newQuantity = Math.max(1, quantity + change); // Prevent negative/zero values
+    updateCart(id, newQuantity); // Update the cart in parent state
+  };
+
+  // Handle direct input change
+  const handleInputChange = (e) => {
+    let value = parseInt(e.target.value, 10);
+    if (isNaN(value) || value < 1) value = 1;
+    setQuantity(value);
+    updateCart(item?._id, value);
+  };
 
   useEffect(() => {
     if (cart?.pagination) {
@@ -126,28 +152,28 @@ export const CartCard = () => {
     fetchCart();
   }, [page]);
 
-
-
   const paginatedCart = cart?.cart;
 
-  
-
   return (
-    <section className="p-6 h-full">
-      <h1 className="text-2xl font-bold mb-4">
+    <section className="p-6 h-full w-full">
+      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
         Cart for {cart?.eventDetails?.name}
       </h1>
-      <div className="grid gap-4">
+      <div className="grid gap-4 ">
         {paginatedCart?.map((item) => (
           <motion.article
             key={item._id}
-            className="p-4 flex justify-between items-center rounded-lg shadow-md dark:shadow-white/20 bg-white dark:bg-zinc-800"
+            className="p-4 flex justify-between items-center rounded-lg shadow-md dark:shadow-white/20 bg-zinc-100 dark:bg-zinc-800"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4 items-center h-full">
               <img
-                src={item?.product?.productImage ? `${BASE_URL}${item?.product?.productImage}` : `..${DefaultImg}`}
+                src={
+                  item?.product?.productImage
+                    ? `${BASE_URL}${item?.product?.productImage}`
+                    : `..${DefaultImg}`
+                }
                 alt={item?.product?.productName}
                 className="w-20 h-20 object-cover rounded-lg"
               />
@@ -156,30 +182,54 @@ export const CartCard = () => {
                   {item?.product?.productName}
                 </h2>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                  {item?.product?.productDescription}
+                  From: {item?.vendor?.ShopName}
+                </p>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Added by: {item?.user?.userName}
                 </p>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 font-bold">
                   Price: ₹{item?.product?.productPrice}
                 </p>
               </div>
             </div>
+
             <div className="flex items-center gap-2">
+              {/* Decrease Quantity Button */}
               <button
-                onClick={() => updateQuantity(item._id, -1)}
-                className="px-2 py-2 bg-red-500 dark:border-zinc-200 rounded-lg text-black dark:text-white hover:bg-red-500"
+                onClick={() =>
+                  updateCartQuantity(item?._id, item?.quantity, -1)
+                }
+                disabled={item?.quantity <= 1}
+                className={`px-3 py-2 rounded-lg text-white transition ${
+                  item?.quantity <= 1
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-red-500 hover:bg-red-600"
+                }`}
               >
                 <Minus size={16} />
               </button>
-              <span>{item.quantity}</span>
+
+              {/* Quantity Input */}
+              <input
+                type="number"
+                value={item?.quantity}
+                onChange={handleInputChange}
+                className="w-12 text-center border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                min="1"
+              />
+
+              {/* Increase Quantity Button */}
               <button
-                onClick={() => updateQuantity(item._id, 1)}
-                className="px-2 py-2  bg-blue-600 dark:border-zinc-300 rounded-lg text-black dark:text-white hover:bg-blue-700"
+                onClick={() => updateCartQuantity(item?._id, 1)}
+                className="px-3 py-2 bg-blue-600 rounded-lg text-white transition hover:bg-blue-700"
               >
                 <Plus size={16} />
               </button>
+
+              {/* Remove Item Button */}
               <button
-                onClick={() => removeItem(item._id)}
-                className="px-3 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                onClick={() => removeFromCart(item._id)}
+                className="px-3 py-2 bg-red-600 text-white rounded-lg transition hover:bg-red-700"
               >
                 <Trash size={16} />
               </button>
@@ -187,17 +237,31 @@ export const CartCard = () => {
           </motion.article>
         ))}
       </div>
-      <div className="flex flex-col items-center gap-4 mt-4">
-        {/* Pagination Controls */}
-        <div className="flex items-center gap-2 mt-10">
+
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-between gap-4 mt-4">
+        <div className="flex items-center gap-2 mt-5">
           <button
             disabled={cart?.pagination?.currentPage === 1}
             onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-            className="px-4 py-2 bg-slate-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Prev
+            <ButtonBtmUp
+              title="Prev"
+              bgColor="bg-slate-600"
+              textColor="text-white"
+              hoverBgColor="bg-slatre-700"
+              hoverTextColor="text-white"
+              rounded="rounded-lg"
+              w="w-full"
+              h="h-10"
+              p="px-4 "
+              display="max-md:hidden"
+              displayTitle2="md:hidden"
+              title2="+"
+            />
           </button>
-          <span className="font-medium">
+          <span className="font-medium text-black dark:text-white ">
             Page {cart?.pagination?.currentPage} of{" "}
             {cart?.pagination?.totalPages}
           </span>
@@ -210,15 +274,31 @@ export const CartCard = () => {
                 Math.min(cart?.pagination?.totalPages, prev + 1)
               )
             }
-            className="px-4 py-2 bg-blue-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className=" disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Next
+            <ButtonBtmUp
+              title="Next"
+              bgColor="bg-blue-600"
+              textColor="text-white"
+              hoverBgColor="bg-blue-700"
+              hoverTextColor="text-white"
+              rounded="rounded-lg"
+              w="w-full"
+              h="h-10"
+              p="px-4 "
+              display="max-md:hidden"
+              displayTitle2="md:hidden"
+              title2="+"
+            />
           </button>
         </div>
 
         {/* Limit Selector */}
-        <div className="flex items-center gap-2">
-          <label htmlFor="limit" className="font-medium">
+        <div className="flex items-center gap-2 mt-5">
+          <label
+            htmlFor="limit"
+            className="font-medium text-black dark:text-white"
+          >
             Limit:
           </label>
           <input
@@ -227,15 +307,26 @@ export const CartCard = () => {
             name="limit"
             value={limit > 15 ? 15 : limit}
             onChange={(e) => setLimit(e.target.value)}
-            className="w-16 px-2 py-1 border rounded-lg text-center bg-black/20"
+            className="w-16 px-2 py-1 text-black dark:text-white rounded-lg text-center bg-zinc-100 dark:bg-zinc-700 "
           />
-          <button onClick={fetchCart} className="px-4 py-2 border rounded-lg">
-            Update
+          <button onClick={fetchCart} className="">
+            <ButtonBtmUp
+              title="Update"
+              bgColor="bg-blue-600"
+              textColor="text-white"
+              hoverBgColor="bg-blue-700"
+              hoverTextColor="text-white"
+              rounded="rounded-lg"
+              w="w-full"
+              h="h-10"
+              p="px-4 "
+              display="max-md:hidden"
+              displayTitle2="md:hidden"
+              title2="+"
+            />
           </button>
         </div>
       </div>
-
-      
     </section>
   );
 };
