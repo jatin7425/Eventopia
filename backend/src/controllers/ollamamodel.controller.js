@@ -35,7 +35,7 @@ export async function initializeOllamaModel() {
             return;
         }
 
-        let defaultOllama = models.include(process.env.OLLAMA) ? process.env.OLLAMA : null;
+        let defaultOllama = models.includes(process.env.OLLAMA) ? process.env.OLLAMA : null;
 
         let modelName = defaultOllama || models[models?.length - 1].name;
         console.log(`Processing model: ${modelName}`);
@@ -80,7 +80,7 @@ export async function initializeOllamaModel() {
         existingModelsCache.add(details.digest);
 
     } catch (error) {
-        console.error('Initialization error:', error.message);
+        console.error('Initialization error:', error);
         if (error.message.includes('Ollama')) {
             console.log('→ Ensure Ollama is running: `ollama serve`');
         }
