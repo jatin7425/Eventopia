@@ -78,11 +78,11 @@ export const OchiLoadingScreen = () => {
         initial={{ opacity: 1, scale: 1 }}
         className="bg-white dark:bg-zinc-800 text-black dark:text-white p-10 rounded-lg shadow-sm shadow-black w-3/4 h-3/4 flex flex-col justify-center items-center text-center relative z-10"
       >
-        <img
+        {/* <img
           src="https://readymadeui.com/bg-effect.svg"
           alt=""
           className=" absolute inset-0 w-full h-full"
-        />
+        /> */}
 
         <motion.h1
           transition={{ delay: 0.5, duration: 1 }}

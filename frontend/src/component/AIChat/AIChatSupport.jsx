@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "../ToggleTheme";
+import { ArrowBigLeft, ArrowLeft } from "lucide-react";
+import { BsArrowLeft } from "react-icons/bs";
+import { Link } from "react-router-dom";
 
 const AIChatSupport = () => {
   // State for managing messages and loading states
@@ -104,21 +107,24 @@ const AIChatSupport = () => {
       <div className="flex flex-col h-full">
         {/* Chat Header with AI Assistant Info */}
         <div className="p-4 border-b border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex items-center">
+          <Link to={"/"} className="pr-3">
+            <BsArrowLeft size={25} />
+          </Link>
           <img
             src={botProfilePic}
             alt="AI Assistant"
-            className="w-10 h-10 rounded-full mr-3"
+            className="w-10 h-10 rounded-full mr-3 max-sm:hidden"
           />
           <div className="flex justify-between w-full items-center">
             <div>
-              <h2 className="text-xl font-semibold dark:text-white">
+              <h2 className="text-xl font-semibold dark:text-white text-nowrap">
                 AI Support Assistant
               </h2>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Model: llama2-uncensored
               </p>
             </div>
-            <div className="pr-7">
+            <div className="pr-7 max-sm:pr-1">
               <ThemeToggle />
             </div>
           </div>
@@ -160,10 +166,10 @@ const AIChatSupport = () => {
                   />
                   {/* Message bubble */}
                   <div
-                    className={`rounded-lg p-4 ${
+                    className={`rounded-lg px-4 pt-2 pb-1 ${
                       message.senderType === "user"
                         ? "bg-blue-500 text-white"
-                        : "bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 text-zinc-800 dark:text-white"
+                        : " bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 text-zinc-800 dark:text-white"
                     }`}
                   >
                     <div className="whitespace-pre-wrap">{message.content}</div>
@@ -220,7 +226,6 @@ const AIChatSupport = () => {
               onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
               placeholder="Type your message here..."
               className="flex-1 px-3 pt-3 pb-2 border border-zinc-300 dark:border-zinc-600 rounded-l-md outline-none dark:bg-zinc-700 dark:text-white"
-              
             />
             <button
               onClick={handleSendMessage}

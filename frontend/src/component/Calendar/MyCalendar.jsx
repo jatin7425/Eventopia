@@ -222,10 +222,13 @@ const MyCalendar = () => {
                     : subWeeks(currentDate, 1)
                 )
               }
-              className="p-2 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full dark:text-white"
+              className="px-2 pt-2 pb-1 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full dark:text-white bg-blue-600 "
             >
               ←
             </button>
+            <span className="text-xl font-semibold dark:text-white pt-3 pb-2">
+              {format(currentDate, "MMMM yyyy")}
+            </span>
             <button
               onClick={() =>
                 setCurrentDate(
@@ -234,13 +237,10 @@ const MyCalendar = () => {
                     : addWeeks(currentDate, 1)
                 )
               }
-              className="p-2 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full dark:text-white"
+              className="px-2 pt-2 pb-1 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full dark:text-white bg-blue-600 "
             >
               →
             </button>
-            <span className="text-xl font-semibold dark:text-white pt-3 pb-2">
-              {format(currentDate, "MMMM yyyy")}
-            </span>
           </div>
 
           <div className="flex gap-2 ml-auto">

@@ -18,6 +18,15 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import { OchiLoadingScreen } from "../component/LoadingAnimation";
 import { useInView } from "react-intersection-observer";
+import FoodImg1 from "../assets/FoodImg1.png";
+import FoodImg2 from "../assets/FoodImg2.avif";
+import FoodImg3 from "../assets/FoodImg3.png";
+import FoodImg4 from "../assets/FoodImg4.png";
+import FoodImg5 from "../assets/FoodImg16.png";
+import HallImg from "../assets/hall.png";
+import HallImg2 from "../assets/hall2.png";
+import HallImg3 from "../assets/hall3.png";
+
 
 function WelcomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -216,13 +225,44 @@ const LandingSection = () => {
   const buttonRef = useRef(null);
   const scrollRef = useRef(null);
 
+const FoodImgCycle = [
+  {
+    id: 1,
+    img: FoodImg1,
+  },
+  {
+    id: 2,
+    img: FoodImg2,
+  },
+  {
+    id: 3,
+    img: FoodImg3,
+  },
+  {
+    id: 4,
+    img: FoodImg4,
+  },
+  {
+    id: 5,
+    img: FoodImg5,
+  },
+  {
+    id: 7,
+    img: HallImg,
+  },
+  {
+    id: 8,
+    img: HallImg2,
+  },
+];
+
   return (
     <motion.div
       id="home"
-      className="dark:bg-[#1a1a1a] dark:text-white relative "
+      className="dark:bg-[#1a1a1a] dark:text-white relative w-full "
       ref={scrollRef}
     >
-      <div className="px-4 sm:px-10 overflow-hidden">
+      <div className="px-4 sm:px-10 overflow-hidden w-full">
         {/* <motion.img
           src="https://readymadeui.com/bg-effect.svg"
           className="absolute inset-0 w-full h-full"
@@ -284,7 +324,7 @@ const LandingSection = () => {
           transition={{ duration: 1, delay: 1 }}
           className="my-5 mt-16 border-gray-300"
         />
-        <motion.div className="flex origin-left justify-center items-center overflow-hidden z-[99]">
+        <motion.div className="flex flex-col origin-left justify-center items-center overflow-hidden bg- h-60 rounded-lg ">
           <motion.h1
             className="md:text-2xl text-4xl font-extrabold pb-6 md:!leading-[75px]  "
             initial={{ opacity: 0, y: -50 }}
@@ -293,6 +333,43 @@ const LandingSection = () => {
           >
             We Collaborated Vendors Near-By You.
           </motion.h1>
+
+          <motion.div 
+          initial={{opacity:0}}
+          animate={{opacity:1}}
+          transition={{duration:2, delay:3.2}}
+          className="overflow-hidden w-[90%] relative">
+            {/* Gradient Overlay - Left */}
+            <div className="h-24 w-40 bg-gradient-to-r dark:from-[#1a1a1a] from-[#F8F9FF] to-transparent absolute left-0 top-0 z-10"></div>
+
+            {/* Animated Image Carousel */}
+            <motion.div
+              className="flex gap-10 whitespace-nowrap"
+              initial={{ x: 0 }}
+              animate={{ x: ["0%", "-99.5%"] }}
+              transition={{
+                duration: 10,
+                ease: "linear",
+                repeat: Infinity,
+                repeatType: "loop",
+              }}
+            >
+              {FoodImgCycle
+              .concat(FoodImgCycle)
+                .concat(FoodImgCycle)
+                .map((img, index) => (
+                  <div
+                    key={index}
+                    className="h-20 flex-shrink-0 mx-1 flex items-center"
+                  >
+                    <img src={img.img} alt="logo" className="w-full h-full" />
+                  </div>
+                ))}
+            </motion.div>
+
+            {/* Gradient Overlay - Right */}
+            <div className="h-24 w-40 bg-gradient-to-l dark:from-[#1a1a1a] from-[#F8F9FF] to-transparent absolute right-0 top-0 z-10"></div>
+          </motion.div>
         </motion.div>
       </div>
     </motion.div>
@@ -421,7 +498,7 @@ const FeaturesSection = () => {
 
   return (
     <>
-      <hr className="border-zinc-400 border w-full mt-32 " />
+      <hr className="border-zinc-400 border w-full mt-10 " />
       <section
         id="our-features"
         ref={part2Ref}
