@@ -164,17 +164,7 @@ const InvitationManager = () => {
                         </div>
                         <span className="">
                           {/* <StatusBadge status={attendee.status} /> */}
-                          <span
-                            className={
-                              attendee.status === "pending"
-                                ? "px-2 pt-1 pb-[2px] rounded-full bg-orange-500/50 "
-                                : attendee.status === "accepted"
-                                ? "bg-green-400"
-                                : "bg-red-400"
-                            }
-                          >
-                            {attendee.status}
-                          </span>
+                          <StatusBadge status={attendee.status}/>
                         </span>
                       </div>
                     ))}
@@ -217,9 +207,9 @@ const InvitationManager = () => {
                   <table className="min-w-full bg-white dark:bg-zinc-700 rounded-md overflow-hidden">
                     <thead className="bg-zinc-200 dark:bg-zinc-600">
                       <tr>
-                        <th className="py-2 px-4 text-left">Name</th>
-                        <th className="py-2 px-4 text-left">Email</th>
-                        <th className="py-2 px-4 text-left">Status</th>
+                        <th className="pt-3 pb-2 px-4 text-left">Name</th>
+                        <th className="pt-3 pb-2 px-4 text-left">Email</th>
+                        <th className="pt-3 pb-2 px-4 text-left">Status</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -228,13 +218,13 @@ const InvitationManager = () => {
                           key={attendee.id}
                           className="border-t border-zinc-300 dark:border-zinc-600"
                         >
-                          <td className="py-2 px-4 dark:text-white">
+                          <td className="pt-3 pb-2 px-4 dark:text-white">
                             {attendee.name}
                           </td>
-                          <td className="py-2 px-4 dark:text-white">
+                          <td className="pt-3 pb-2 px-4 dark:text-white">
                             {attendee.email}
                           </td>
-                          <td className="py-2 px-4">
+                          <td className="pt-3 pb-2 px-4">
                             <StatusBadge status={attendee.status} />
                           </td>
                         </tr>
@@ -266,17 +256,17 @@ const ResponseSummary = ({ title, count, color, textColor }) => {
 const StatusBadge = ({ status }) => {
   const statusConfig = {
     accepted: {
-      color: "bg-green-100 dark:bg-green-900",
+      color: "bg-green-100 dark:bg-green-900 ",
       text: "text-green-800 dark:text-green-200",
       label: "Accepted",
     },
     declined: {
-      color: "bg-red-100 dark:bg-red-900",
+      color: "bg-red-100 dark:bg-red-900 ",
       text: "text-red-800 dark:text-red-200",
       label: "Declined",
     },
     pending: {
-      color: "bg-yellow-100 dark:bg-yellow-900",
+      color: "bg-yellow-100 dark:bg-yellow-900 ",
       text: "text-yellow-800 dark:text-yellow-200",
       label: "Pending",
     },
@@ -284,7 +274,7 @@ const StatusBadge = ({ status }) => {
 
   return (
     <span
-      className={`px-3 py-1 rounded-full text-sm ${statusConfig[status].color} ${statusConfig[status].text}`}
+      className={`px-3 pt-2 py-1 rounded-full text-sm ${statusConfig[status].color} ${statusConfig[status].text}`}
     >
       {statusConfig[status].label}
     </span>

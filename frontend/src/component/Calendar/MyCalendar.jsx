@@ -226,7 +226,7 @@ const MyCalendar = () => {
         {selectedTab === "calendar" ? (
           <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg overflow-hidden">
             <div className="flex gap-4 p-4 border-b dark:border-zinc-700">
-              {["Day", "Week", "Month"].map((view) => (
+              {["Week", "Month"].map((view) => (
                 <button
                   key={view}
                   onClick={() => setViewMode(view.toLowerCase())}
@@ -256,7 +256,7 @@ const MyCalendar = () => {
                 onChange={(e) =>
                   setNewEvent({ ...newEvent, title: e.target.value })
                 }
-                className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                className="px-2 pt-3 pb-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
               />
               <input
                 type="date"
@@ -264,7 +264,7 @@ const MyCalendar = () => {
                 onChange={(e) =>
                   setNewEvent({ ...newEvent, date: e.target.value })
                 }
-                className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                className="px-2 pt-3 pb-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
               />
               <div className="grid grid-cols-2 gap-4">
                 <input
@@ -273,7 +273,7 @@ const MyCalendar = () => {
                   onChange={(e) =>
                     setNewEvent({ ...newEvent, startTime: e.target.value })
                   }
-                  className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                  className="px-2 pt-3 pb-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                 />
                 <input
                   type="time"
@@ -281,7 +281,7 @@ const MyCalendar = () => {
                   onChange={(e) =>
                     setNewEvent({ ...newEvent, endTime: e.target.value })
                   }
-                  className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                  className="px-2 pt-3 pb-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                 />
               </div>
               <select
@@ -289,7 +289,7 @@ const MyCalendar = () => {
                 onChange={(e) =>
                   setNewEvent({ ...newEvent, priority: e.target.value })
                 }
-                className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                className="px-2 pt-3 pb-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
               >
                 <option value="low">Low Priority</option>
                 <option value="medium">Medium Priority</option>
