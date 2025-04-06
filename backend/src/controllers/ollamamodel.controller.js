@@ -1,5 +1,8 @@
 import OllamaModel from "../models/ollamamodel.model.js";
 import ollama from 'ollama';
+import Chat from '../models/chat.model.js';
+import mongoose from 'mongoose';
+
 
 const existingModelsCache = new Set();
 const basePrompt = `
@@ -86,4 +89,124 @@ export async function initializeOllamaModel() {
         }
     }
 }
+
+
+export const createChatCompletion = async (req, res) => {
+    try {
+        const { message, userId } = req.body;
+
+        // Validate input
+        if (!message || !userId) {
+            return res.status(400).json({
+                status: 'error',
+                error: 'message, modelId, and userId are required'
+            });
+        }
+
+        // Get model profile with base prompt
+        const model = await OllamaModel.find();
+        if (!model || model.length === 0) {
+            return res.status(404).json({
+                status: 'error',
+                error: 'Model not found'
+            });
+        }
+
+        // Create full model name with version
+        const fullModelName = `${model[0].name}:${model[0].version}`;
+
+        // Generate AI response
+        const response = await ollama.chat({
+            model: fullModelName,
+            messages: [
+                {
+                    role: 'system',
+                    content: model.basePrompt
+                },
+                {
+                    role: 'user',
+                    content: message
+                }
+            ],
+            options: {
+                num_ctx: model?.parameters?.context_window
+            }
+        });
+
+        // Create chat document
+        const newChat = await Chat.create({
+            participants: {
+                users: [userId],
+                aiModels: [model[0]._id]
+            },
+            messages: [{
+                content: message,
+                senderType: 'user',
+                senderId: userId
+            }, {
+                content: response.message.content,
+                senderType: 'ai_model',
+                senderId: model[0]._id
+            }],
+            aiModelConfig: {
+                modelName: fullModelName,
+                temperature: 0.7, // Default value
+                systemPrompt: model.basePrompt
+            }
+        });
+
+        // Populate references for response
+        const populatedChat = await Chat.findById(newChat._id)
+            .populate('participants.users', 'username email')
+            .populate('participants.aiModels', 'name version');
+
+        res.status(201).json({
+            status: 'success',
+            data: {
+                chatId: populatedChat._id,
+                response: response.message.content,
+                participants: populatedChat.participants,
+                modelConfig: populatedChat.aiModelConfig,
+                timestamp: new Date()
+            }
+        });
+
+    } catch (error) {
+        console.error('Chat error:', error);
+        const status = error.message.includes('Ollama') ? 503 : 500;
+        res.status(status).json({
+            status: 'error',
+            error: error.message,
+            resolution: status === 503
+                ? 'Check Ollama service status'
+                : 'Verify request parameters'
+        });
+    }
+};
+
+// Additional helper functions
+export const getChatHistory = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const chats = await Chat.find({ 'participants.users': userId })
+            .populate('participants.aiModels', 'name version basePrompt')
+            .sort('-createdAt');
+
+        res.status(200).json({
+            status: 'success',
+            count: chats.length,
+            data: chats
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            error: 'Failed to retrieve chat history'
+        });
+    }
+};
+
+
+
 

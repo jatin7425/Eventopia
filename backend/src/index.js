@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.route.js";
 import eventRoutes from "./routes/event.route.js";
 import vendorRoutes from "./routes/vendor.route.js";
+import ollamaChatRoutes from "./routes/ollamaChat.route.js";
 import { connectDB } from "./lib/db.js";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -30,6 +31,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.use("/api/auth", authRoutes);
 app.use("/api/event", eventRoutes);
 app.use("/api/vendor", vendorRoutes);
+app.use("/api/vendor", vendorRoutes);
+app.use("/api/ollamaChat", ollamaChatRoutes);
 
 app.listen(port, () => {
     console.log("Server is running on port: " + port);
