@@ -8,6 +8,7 @@ import { AuthProvider } from './store/auth.jsx'
 import { VendorProvider } from './store/vendorContext.jsx'
 import { EventProvider } from './store/eventContext.jsx'
 import { EventCartProvider } from './store/eventCartContext.jsx'
+import { NotificationProvider } from './store/notificationContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
