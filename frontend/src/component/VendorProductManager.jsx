@@ -14,9 +14,10 @@ import { FiLogOut } from "react-icons/fi";
 import { useVendor } from "../store/vendorContext";
 import toast from "react-hot-toast";
 import { VendorProductCard } from "./ProductCard";
-import LocomotiveScroll from 'locomotive-scroll';
+import LocomotiveScroll from "locomotive-scroll";
 import gsap from "gsap";
 import { ButtonBtmUp } from "./Button";
+import { motion } from "framer-motion";
 
 // Sidebar Component (reused)
 const Sidebar = () => {
@@ -24,7 +25,10 @@ const Sidebar = () => {
     <aside className="w-1/5 bg-[#222] text-white p-5 flex flex-col min-h-screen">
       <div className="text-center text-3xl font-bold text-red-500">🍜</div>
       <nav className="mt-10 space-y-4">
-        <a href="#" className="flex items-center space-x-2 text-red-500 text-lg">
+        <a
+          href="#"
+          className="flex items-center space-x-2 text-red-500 text-lg"
+        >
           <FaHamburger />
           <span>Dashboard</span>
         </a>
@@ -48,7 +52,7 @@ const Sidebar = () => {
 // Header Component for product manager
 const Header = ({ searchTerm, setSearchTerm }) => {
   return (
-    <header className="dark:bg-zinc-700 text-gray-600 bg-zinc-100 dark:text-white shadow-md p-4 rounded-lg flex items-center justify-between">
+    <header className="dark:bg-zinc-700 text-gray-600 bg-zinc-100 dark:text-white shadow-md p-4 rounded-lg flex items-center justify-between font-['Gilroy']">
       <div className="flex items-center space-x-2 flex-1">
         <FaSearch className="text-gray-400" />
         <input
@@ -56,7 +60,7 @@ const Header = ({ searchTerm, setSearchTerm }) => {
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-transparent flex-1 outline-none pl-2 text-white"
+          className="p-2 rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none w-full"
         />
       </div>
     </header>
@@ -82,7 +86,9 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
         price: editingProduct.productPrice,
         description: editingProduct.productDescription,
         available: editingProduct.available,
-        image: editingProduct.productImage ? new File([], editingProduct.productImage) : null,
+        image: editingProduct.productImage
+          ? new File([], editingProduct.productImage)
+          : null,
       });
       setImagePreview(editingProduct.productImage || "");
     } else {
@@ -95,14 +101,14 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     if (type === "file") {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        image: files[0]
+        image: files[0],
       }));
       // Create preview URL
       setImagePreview(URL.createObjectURL(files[0]));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         [name]: type === "checkbox" ? checked : value,
       }));
@@ -122,7 +128,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
             type: file.type,
             name: file.name,
             size: file.size,
-            lastModified: file.lastModified
+            lastModified: file.lastModified,
           };
           resolve(fileData);
         };
@@ -138,7 +144,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           name: formData.name,
           price: formData.price,
           description: formData.description,
-          available: formData.available
+          available: formData.available,
         };
 
         // If there's a new image, process it with metadata
@@ -150,16 +156,16 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
               filename: fileData.name,
               contentType: fileData.type,
               size: fileData.size,
-              lastModified: fileData.lastModified
-            }
+              lastModified: fileData.lastModified,
+            },
           };
         }
 
         console.log("Update data being sent:", {
           ...updateData,
-          image: updateData.image ? "base64_data_exists" : "no_image"
+          image: updateData.image ? "base64_data_exists" : "no_image",
         }); // Debug log without flooding console
-        
+
         await updateProduct(currentvendor, editingProduct._id, updateData);
       } else {
         // For new product
@@ -180,18 +186,24 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
               filename: fileData.name,
               contentType: fileData.type,
               size: fileData.size,
-              lastModified: fileData.lastModified
-            }
-          }
+              lastModified: fileData.lastModified,
+            },
+          },
         };
 
         console.log("New product data being sent:", {
           ...productData,
-          image: "base64_data_exists"
+          image: "base64_data_exists",
         }); // Debug log without flooding console
-        
+
         await addProduct(currentvendor, productData);
-        setFormData({ name: "", price: "", description: "", available: true, image: null });
+        setFormData({
+          name: "",
+          price: "",
+          description: "",
+          available: true,
+          image: null,
+        });
         setImagePreview("");
       }
     } catch (error) {
@@ -203,7 +215,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4"
+      className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4 font-['Gilroy']"
     >
       <h2 className="text-lg font-semibold mb-2 dark:text-white">
         {editingProduct ? "Edit Product" : "Add New Product"}
@@ -267,10 +279,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           <label className="dark:text-white">Available</label>
         </div>
         <div className="flex gap-2">
-          <button
-            type="submit"
-            className="flex-1"
-          >
+          <button type="submit" className="flex-1">
             <ButtonBtmUp
               title={editingProduct ? "Update +" : "Add +"}
               bgColor="bg-blue-600"
@@ -285,7 +294,6 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
               displayTitle2="md:hidden"
               title2="+"
             />{" "}
-            
           </button>
           {editingProduct && (
             <button
@@ -304,32 +312,35 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
 
 // ProductItem Component for each product in the list with image preview
 const ProductItem = ({ product, onEdit, onDelete }) => {
-
   const starRating = Math.floor(product?.averageRating) || 0;
 
   const starRatingArrayRender = () => {
-    return Array(starRating).fill(null).map((_, index) => (
-      <FaStar key={index} className="text-yellow-400" />
-    ));
+    return Array(starRating)
+      .fill(null)
+      .map((_, index) => <FaStar key={index} className="text-yellow-400" />);
   };
 
   // console.log(product._id)
 
   const EditProduct = () => {
-    onEdit(product)
-  }
-
+    onEdit(product);
+  };
 
   const DeleteProduct = () => {
-    onDelete(product._id)
-  }
-
+    onDelete(product._id);
+  };
 
   return (
-    <VendorProductCard Edit={EditProduct} Delete={DeleteProduct} title={product.productName} price={product.productPrice} description={product.productDescription} imageUrl={product.productImage} available={product.available} />
+    <VendorProductCard
+      Edit={EditProduct}
+      Delete={DeleteProduct}
+      title={product.productName}
+      price={product.productPrice}
+      description={product.productDescription}
+      imageUrl={product.productImage}
+      available={product.available}
+    />
   );
-
-
 };
 
 // ProductList Component with basic pagination
@@ -342,7 +353,6 @@ const ProductList = ({
   itemsPerPage,
   onPageChange,
 }) => {
-
   // console.log(products)
 
   const filteredProducts = products?.filter((p) =>
@@ -360,32 +370,34 @@ const ProductList = ({
 
   return (
     <>
-      <div className={`grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 place-items-center mt-4 z-0`}>
+      <div
+        className={`grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 place-items-center mt-4 z-0`}
+      >
         {paginatedProducts?.map((product) => (
           <ProductItem
             key={product.id}
             product={product}
             onEdit={onEdit}
             onDelete={onDelete}
-
           />
         ))}
       </div>
-      
+
       {/* Page Num */}
       <div className="flex justify-center mt-4">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-          (pageNum) => (
-            <button
-              key={pageNum}
-              onClick={() => onPageChange(pageNum)}
-              className={`mx-1 mt-5 px-3 py-1 rounded ${currentPage === pageNum ? "bg-blue-500 dark:bg-blue-600 text-white" : "bg-gray-600"
-                }`}
-            >
-              {pageNum}
-            </button>
-          )
-        )}
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+          <button
+            key={pageNum}
+            onClick={() => onPageChange(pageNum)}
+            className={`mx-1 mt-5 px-3 py-1 rounded ${
+              currentPage === pageNum
+                ? "bg-blue-500 dark:bg-blue-600 text-white"
+                : "bg-gray-600"
+            }`}
+          >
+            {pageNum}
+          </button>
+        ))}
       </div>
     </>
   );
@@ -399,7 +411,6 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
   const [notification, setNotification] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  
 
   // console.log(currentvendor)
 
@@ -409,10 +420,9 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
         "Are you sure you want to delete this product? This action cannot be undone."
       )
     ) {
-      deleteProduct(currentvendor, id)
+      deleteProduct(currentvendor, id);
       setTimeout(() => setNotification(""), 3000);
     }
-
   };
 
   const handleEditProduct = (product) => {
@@ -427,31 +437,121 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
     setCurrentPage(pageNum);
   };
 
+  const [shop, setShop] = useState(true);
+  const [manageOrder, setManageOrder] = useState(false);
+
+  const handleShop = () => {
+    setShop(true);
+    setManageOrder(false);
+  };
+
+  const handleManageOrder = () => {
+    setManageOrder(true);
+    setShop(false);
+  };
+
   return (
     <div className="flex  min-h-screen dark:text-white rounded-lg">
       {/* <Sidebar /> */}
       <main className="w-full overflow-y-auto">
-        <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <div className="relative flex items-center gap-1 py- bg-transparent rounded-lg max-sm:mt-8 mb-3 font-['Gilroy'] font-bold ">
+          <button
+            className={`relative px-4 py-2 rounded-md ${
+              shop
+                ? "text-white bg-blue-500 shadow-md"
+                : "text-gray-500 dark:text-gray-400 bg-transparent"
+            } transition-all duration-300`}
+            onClick={() => {
+              setShop(true);
+              setManageOrder(false);
+            }}
+          >
+            {shop ? (
+              <motion.span
+                className="absolute inset-0 bg-blue-500 rounded-md z-0"
+                layoutId="activeTab"
+                initial={false}
+                transition={{ stiffness: 500, damping: 30 }}
+              />
+            ) : null}
+            <span className="relative ">Shop</span>
+          </button>
+
+          <button
+            className={`relative px-4 py-2 rounded-md ${
+              manageOrder
+                ? "text-white bg-blue-500 shadow-md"
+                : "text-gray-500 dark:text-gray-400 bg-transparent"
+            } transition-all duration-300`}
+            onClick={() => {
+              setShop(false);
+              setManageOrder(true);
+            }}
+          >
+            {manageOrder ? (
+              <motion.span
+                className="absolute inset-0 bg-blue-500 rounded-md z-0"
+                layoutId="activeTab"
+                initial={false}
+                transition={{ stiffness: 500, damping: 30 }}
+              />
+            ) : null}
+            <span className="relative ">Manage Orders</span>
+          </button>
+        </div>
+
         {notification && (
           <div className="bg-green-500 dark:text-white p-2 rounded mt-4">
             {notification}
           </div>
         )}
-        <ProductForm
-          currentvendor={currentvendor}
-          editingProduct={editingProduct}
-          onCancel={handleCancelEdit}
-        />
-        <h2 className="text-2xl font-bold mt-6">Product List</h2>
-        <ProductList
-          products={vendorProducts}
-          onEdit={handleEditProduct}
-          onDelete={handleDeleteProduct}
-          searchTerm={searchTerm}
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          onPageChange={handlePageChange}
-        />
+
+        {/* Product Form and List */}
+        {shop && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="w-full h-fit"
+          >
+            <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+            <div className="h-full max-md:flex-col-reverse items-center justify-between gap-5 md:px-0 px-0 pb-10 font-['Gilroy']">
+              <ProductForm
+                currentvendor={currentvendor}
+                editingProduct={editingProduct}
+                onCancel={handleCancelEdit}
+              />
+              <h2 className="text-2xl font-bold mt-6">Product List</h2>
+              <ProductList
+                products={vendorProducts}
+                onEdit={handleEditProduct}
+                onDelete={handleDeleteProduct}
+                searchTerm={searchTerm}
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </motion.div>
+        )}
+
+        {/* Order Management Section */}
+        {manageOrder && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4 font-['Gilroy']"
+          >
+            <h2 className="text-lg font-semibold mb-2 dark:text-white">
+              Manage Orders
+            </h2>
+            <p className="dark:text-gray-400 mt-4">
+              Order management functionality will be implemented here.
+            </p>
+          </motion.div>
+        )}
       </main>
     </div>
   );

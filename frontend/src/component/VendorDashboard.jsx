@@ -270,7 +270,7 @@ export default function VendorDashboard() {
             vendorId={vendor?._id}
           />
         )}
-        <div className="p-4 dark:bg-[#333] bg-white  dark:text-white rounded-lg mt-6 sm:mx-6 mx-2 text-md max-md:text-sm max-sm:text-xs absolute sm:-bottom-4 -bottom-8 left-0 right-0">
+        <div className="p-4 dark:bg-zinc-800 bg-white  dark:text-white rounded-lg mt-6 sm:mx-6 mx-2 text-md max-md:text-sm max-sm:text-xs absolute sm:-bottom-4 -bottom-8 left-0 right-0">
           <p>
             <strong>Email:</strong> {vendor?.ShopEmail}
           </p>
