@@ -37,17 +37,7 @@ const ProfileDashboard = () => {
         return <NotificationPage />;
       case "home":
         return <Navigate to={"/"} />;
-      case "dashboard":
-        return (
-          <main className="flex-1 p-6 space-y-6 ">
-            <Header userData={user} />
-            <ProfileStats userData={user} />
-            <div className="">
-              <ShopSummary userData={user} />
-              {/* <Inventory userData={user} /> */}
-            </div>
-          </main>
-        );
+      
 
       case "myEvents":
         return (
@@ -104,7 +94,6 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
   const sideBarElements = [
     { link: "home", title: "Home", icon: <CgHome /> },
     { link: "profile", title: "Profile", icon: <CgProfile /> },
-    { link: "dashboard", title: "Dashboard", icon: <FaHourglassHalf /> },
     { link: "myEvents", title: "My Events", icon: <BsCalendar4Event /> },
     { link: "myVendors", title: "My Shop", icon: <FaShop /> },
     {
