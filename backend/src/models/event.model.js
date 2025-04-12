@@ -79,11 +79,16 @@ const eventSchema = new mongoose.Schema({
     calender: [
         {
             _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
-            title: { type: String },
-            date: { type: Date },
-            description: { type: String },
-            startTime: { type: Date, required: true },
-            endTime: { type: Date, required: true }
+            title: { type: String, required: true },
+            date: { type: Date, required: true },  // Date portion only
+            startTime: { type: String, required: true },  // HH:mm format
+            endTime: { type: String, required: true },   // HH:mm format
+            description: String,
+            priority: {
+                type: String,
+                enum: ['high', 'medium', 'low'],
+                default: 'medium'
+            }
         }
     ],
     createdAt: { type: Date, default: Date.now }, // Creation date

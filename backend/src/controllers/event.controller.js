@@ -2,6 +2,7 @@ import Event from '../models/event.model.js';
 import Vendor from "../models/vendor.model.js";
 import mongoose from 'mongoose';
 import User from '../models/user.model.js';
+import { isSameDay, parseISO } from 'date-fns';
 
 // Create a new event
 export const createEvent = async (req, res) => {
@@ -547,7 +548,7 @@ export const addAttendee = async (req, res) => {
         ).select('attendees');
 
         if (!event) return res.status(404).json({ message: 'Event not found' });
-        
+
         // Get the newly added attendee (last in array)
         const newAttendee = event.attendees[event.attendees.length - 1];
 
@@ -714,5 +715,237 @@ export const getEventStats = async (req, res) => {
             error: error.message
         });
         console.error(error);
+    }
+};
+
+// Calendar
+// Add Calendar Entry
+export const addCalendarToEvent = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const { title, date, description, startTime, endTime, priority } = req.body;
+        const userId = req.user._id;
+
+        // Validation remains the same
+        if (!['high', 'medium', 'low'].includes(priority)) {
+            return res.status(400).json({ message: 'Invalid priority value' });
+        }
+        if (!title || !date || !startTime || !endTime) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // Time validation remains the same
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        const [endHours, endMinutes] = endTime.split(':').map(Number);
+        if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
+            return res.status(400).json({ message: 'End time must be after start time' });
+        }
+
+        // Direct database update with permissions check
+        const result = await Event.updateOne(
+            {
+                _id: eventId,
+                $or: [
+                    { organizer: userId },
+                    { collaborator: userId }
+                ]
+            },
+            {
+                $push: {
+                    calendar: {
+                        title,
+                        date: new Date(date),
+                        startTime,
+                        endTime,
+                        description,
+                        priority
+                    }
+                }
+            }
+        );
+
+        // Check if any document was matched/modified
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: 'Event not found or unauthorized' });
+        }
+
+        res.status(201).json({
+            message: 'Calendar entry added successfully',
+            entry: {
+                title,
+                date,
+                startTime,
+                endTime,
+                description,
+                priority
+            }
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error adding entry',
+            error: error.message
+        });
+    }
+};
+
+export const updateCalendarInEvent = async (req, res) => {
+    try {
+        const { eventId, calendarId } = req.params;
+        const updates = req.body;
+        const userId = req.user._id;
+
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        // Check permissions
+        if (event.organizer.toString() !== userId.toString() &&
+            (!event.collaborator || event.collaborator.toString() !== userId.toString())) {
+            return res.status(403).json({ message: 'Unauthorized to modify calendar' });
+        }
+
+        // Find calendar entry
+        const entry = event.calender.id(calendarId);
+        if (!entry) {
+            return res.status(404).json({ message: 'Calendar entry not found' });
+        }
+
+        // Apply updates
+        if (updates.title) entry.title = updates.title;
+        if (updates.description) entry.description = updates.description;
+        if (updates.date) entry.date = new Date(updates.date);
+        if (updates.startTime) entry.startTime = new Date(updates.startTime);
+        if (updates.endTime) entry.endTime = new Date(updates.endTime);
+        if (updates.priority) {
+            if (!['high', 'medium', 'low'].includes(updates.priority)) {
+                return res.status(400).json({ message: 'Invalid priority value' });
+            }
+            entry.priority = updates.priority;
+        }
+
+        entry.updatedAt = new Date();
+        await event.save();
+
+        res.status(200).json({
+            message: 'Calendar entry updated successfully',
+            entry
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error updating calendar entry',
+            error: error.message
+        });
+    }
+};
+
+export const deleteCalendarFromEvent = async (req, res) => {
+    try {
+        const { eventId, calendarId } = req.params;
+        const userId = req.user._id;
+
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        // Check permissions
+        if (event.organizer.toString() !== userId.toString() &&
+            (!event.collaborator || event.collaborator.toString() !== userId.toString())) {
+            return res.status(403).json({ message: 'Unauthorized to modify calendar' });
+        }
+
+        // Remove entry
+        event.calender.pull(calendarId);
+        await event.save();
+
+        res.status(200).json({
+            message: 'Calendar entry deleted successfully',
+            remainingEntries: event.calender
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error deleting calendar entry',
+            error: error.message
+        });
+    }
+};
+
+// Get Calendar Entries
+
+// Allowed fields for calendar entries
+const ALLOWED_CALENDAR_FIELDS = new Set([
+    'title',
+    'date',
+    'startTime',
+    'endTime',
+    'description',
+    'priority'
+]);
+
+export const getCalendarEntries = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const { date, filter } = req.body;
+
+        // Validate date format if provided
+        if (date && isNaN(parseISO(date).getTime())) {
+            return res.status(400).json({ message: 'Invalid date format' });
+        }
+
+        // Process column filters
+        const requestedFields = filter ? filter.split(',') : [];
+        const validFields = requestedFields.filter(f =>
+            ALLOWED_CALENDAR_FIELDS.has(f)
+        );
+
+        // Use all fields if no valid filters provided
+        const selectedFields = validFields.length > 0
+            ? validFields
+            : Array.from(ALLOWED_CALENDAR_FIELDS);
+
+        const event = await Event.findById(eventId)
+            .select('calendar organizer')
+            .populate('organizer', 'name email');
+
+        if (!event) return res.status(404).json({ message: 'Event not found' });
+
+        // Get calendar entries or empty array if undefined
+        const calendarEntries = event.calendar || [];
+
+        // Filter by date if provided
+        let filteredEntries = date
+            ? calendarEntries.filter(entry =>
+                isSameDay(entry.date, parseISO(date))
+            )
+            : calendarEntries;
+
+        // Project only selected fields
+        const projectedEntries = filteredEntries.map(entry => {
+            return selectedFields.reduce((acc, field) => {
+                acc[field] = entry[field];
+                return acc;
+            }, {});
+        });
+
+        console.log(projectedEntries)
+
+        res.status(200).json({
+            eventId,
+            organizer: event.organizer,
+            calendarEntries: projectedEntries,
+            count: projectedEntries.length,
+            returnedFields: selectedFields,
+            dateFilter: date || 'all'
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error fetching entries',
+            error: error.message
+        });
     }
 };

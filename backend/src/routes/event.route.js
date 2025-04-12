@@ -18,7 +18,11 @@ import {
     clearCart,
     addAttendee,
     updateAttendeeStatus,
-    getEventStats
+    getEventStats,
+    addCalendarToEvent,
+    updateCalendarInEvent,
+    deleteCalendarFromEvent,
+    getCalendarEntries,
 } from '../controllers/event.controller.js';
 
 const router = express.Router();
@@ -42,5 +46,9 @@ router.delete("/:eventId/cart/clear", protectRoute, clearCart);
 router.post('/:eventId/attendees', protectRoute, addAttendee);
 router.patch('/:eventId/attendees/:attendeeId', protectRoute, updateAttendeeStatus);
 router.get('/:eventId/stats', protectRoute, getEventStats);
+router.post('/:eventId/calendar', protectRoute, addCalendarToEvent);
+router.put('/:eventId/calendar/:calendarId', protectRoute, updateCalendarInEvent);
+router.delete('/:eventId/calendar/:calendarId', protectRoute, deleteCalendarFromEvent);
+router.get('/:eventId/calendar', protectRoute, getCalendarEntries);
 
 export default router;

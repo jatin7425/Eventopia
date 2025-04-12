@@ -17,6 +17,8 @@ export function EventProvider({ children }) {
     const { setEventId } = useEventCart();
     const [attendeeStatsdets, setAttendeeStatsdets] = useState()
     const [addedAttendee, setAddedAttendee] = useState()
+    const [calendarEntries, setCalendarEntries] = useState([]);
+    const [selectedCalendarEntry, setSelectedCalendarEntry] = useState(null);
 
     // Get all events with optional filters
     const getEvents = async (filters = {}) => {
@@ -168,6 +170,77 @@ export function EventProvider({ children }) {
         }
     }
 
+    // Calendar Operations
+    const addCalendarToEvent = async (eventId, calendarData) => {
+        setIsEventLoading(true);
+        try {
+            const { data } = await axiosInstance.post(
+                `/event/${eventId}/calendar`,
+                calendarData
+            );
+            toast.success('Calendar entry added successfully');
+            getEventById(eventId); // Refresh event data
+            return data;
+        } catch (error) {
+            console.error('Error adding calendar entry', error);
+            toast.error(error.response?.data?.message || 'Error adding calendar entry');
+            throw error;
+        } finally {
+            setIsEventLoading(false);
+        }
+    };
+
+    const updateCalendarEntry = async (eventId, calendarId, updates) => {
+        setIsEventLoading(true);
+        try {
+            const { data } = await axiosInstance.put(
+                `/event/${eventId}/calendar/${calendarId}`,
+                updates
+            );
+            toast.success('Calendar entry updated successfully');
+            getEventById(eventId); // Refresh event data
+            return data;
+        } catch (error) {
+            console.error('Error updating calendar entry', error);
+            toast.error(error.response?.data?.message || 'Error updating calendar entry');
+            throw error;
+        } finally {
+            setIsEventLoading(false);
+        }
+    };
+
+    const deleteCalendarEntry = async (eventId, calendarId) => {
+        setIsEventLoading(true);
+        try {
+            await axiosInstance.delete(`/event/${eventId}/calendar/${calendarId}`);
+            toast.success('Calendar entry deleted successfully');
+            getEventById(eventId); // Refresh event data
+        } catch (error) {
+            console.error('Error deleting calendar entry', error);
+            toast.error(error.response?.data?.message || 'Error deleting calendar entry');
+            throw error;
+        } finally {
+            setIsEventLoading(false);
+        }
+    };
+
+    const getCalendarEntries = async (eventId, date = null, filters = []) => {
+        setIsEventLoading(true);
+        try {
+            const { data } = await axiosInstance.get(`/event/${eventId}/calendar`, {
+                body: {date, filters}
+            });
+            setCalendarEntries(data);
+            return data;
+        } catch (error) {
+            console.error('Error fetching calendar entries', error);
+            toast.error(error.response?.data?.message || 'Error fetching calendar entries');
+            // throw error;
+        } finally {
+            setIsEventLoading(false);
+        }
+    };
+
     useEffect(() => {
         getEvents(); // Fetch all events when the component mounts
     }, []);
@@ -179,6 +252,8 @@ export function EventProvider({ children }) {
             event,
             attendeeStatsdets,
             addedAttendee,
+            calendarEntries,
+            selectedCalendarEntry,
             createEvent,
             getEvents,
             getEventById,
@@ -189,6 +264,11 @@ export function EventProvider({ children }) {
             addAttendiesToEvent,
             updateStatus,
             attendeeStats,
+            addCalendarToEvent,
+            updateCalendarEntry,
+            deleteCalendarEntry,
+            getCalendarEntries,
+            setSelectedCalendarEntry,
         }}>
             {children}
         </EventContext.Provider>

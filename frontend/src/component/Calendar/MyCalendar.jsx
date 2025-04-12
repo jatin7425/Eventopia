@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import { 
-  startOfWeek, endOfWeek, eachDayOfInterval, format, 
+import { useEvent } from '../../store/eventContext';
+import {
+  startOfWeek, endOfWeek, eachDayOfInterval, format,
   addWeeks, subWeeks, addMonths, subMonths, isSameMonth,
   startOfDay, addHours, isSameDay, parse, isToday,
-  startOfMonth, endOfMonth, eachDayOfInterval as eachDayOfMonth,
-  differenceInCalendarDays, addDays
+  startOfMonth, endOfMonth, eachDayOfInterval as eachDayOfMonth
 } from 'date-fns';
 
 const MyCalendar = () => {
+  const { calendarEntries, event, updateCalendarEntry, addCalendarToEvent, getCalendarEntries, deleteCalendarEntry, isEventLoading } = useEvent();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState([]);
   const [selectedTab, setSelectedTab] = useState('calendar');
   const [viewMode, setViewMode] = useState('month');
   const [newEvent, setNewEvent] = useState({
@@ -17,41 +17,44 @@ const MyCalendar = () => {
     date: format(new Date(), 'yyyy-MM-dd'),
     startTime: '09:00',
     endTime: '10:00',
+    description: '',
     priority: 'medium'
   });
 
+  console.log(calendarEntries)
+
   useEffect(() => {
-    const savedEvents = localStorage.getItem('events');
-    if (savedEvents) setEvents(JSON.parse(savedEvents));
-  }, []);
+    getCalendarEntries(event._id);
+  }, [getCalendarEntries]);
 
-  const saveEvents = (updatedEvents) => {
-    setEvents(updatedEvents);
-    localStorage.setItem('events', JSON.stringify(updatedEvents));
-  };
-
-  const handleAddEvent = () => {
+  const handleAddEvent = async () => {
     if (!newEvent.title) return;
-    
-    const start = parse(newEvent.startTime, 'HH:mm', new Date(newEvent.date));
-    const end = parse(newEvent.endTime, 'HH:mm', new Date(newEvent.date));
-    
-    const event = {
-      id: crypto.randomUUID(),
-      ...newEvent,
-      start: start.toISOString(),
-      end: end.toISOString()
-    };
-    
-    saveEvents([...events, event]);
-    setNewEvent({
-      title: '',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      startTime: '09:00',
-      endTime: '10:00',
-      priority: 'medium'
-    });
-    setSelectedTab('calendar');
+
+    try {
+      // Basic client-side validation
+      const [startH, startM] = newEvent.startTime.split(':').map(Number);
+      const [endH, endM] = newEvent.endTime.split(':').map(Number);
+
+      if (endH < startH || (endH === startH && endM <= startM)) {
+        toast.error('End time must be after start time');
+        return;
+      }
+
+      await addCalendarToEvent(event._id, newEvent);
+
+      // Reset form
+      setNewEvent({
+        title: '',
+        date: format(new Date(), 'yyyy-MM-dd'),
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '',
+        priority: 'medium'
+      });
+
+    } catch (error) {
+      toast.error('Failed to create event');
+    }
   };
 
   const getPriorityColor = (priority) => {
@@ -67,21 +70,23 @@ const MyCalendar = () => {
     const monthEnd = endOfMonth(currentDate);
     const daysInMonth = eachDayOfMonth({ start: monthStart, end: monthEnd });
     const startDay = monthStart.getDay();
-    
+
     return (
       <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-zinc-700">
-        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(day => (
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
           <div key={day} className="bg-white dark:bg-zinc-800 p-2 text-center text-sm font-medium dark:text-white">
             {day}
           </div>
         ))}
-        
-        {Array(startDay).fill(null).map((_,i) => (
+
+        {Array(startDay).fill(null).map((_, i) => (
           <div key={`empty-${i}`} className="bg-white dark:bg-zinc-800 min-h-[100px]" />
         ))}
-        
+
         {daysInMonth.map(day => {
-          const dayEvents = events.filter(e => isSameDay(new Date(e.start), day));
+          const dayEvents = (calendarEntries == undefined || calendarEntries.length === 0) ? [] : calendarEntries?.filter(entry =>
+            isSameDay(new Date(entry.date), day)
+          );
           return (
             <div
               key={day}
@@ -89,21 +94,22 @@ const MyCalendar = () => {
                 ${!isSameMonth(day, currentDate) ? 'opacity-50' : ''}`}
             >
               <div className="flex justify-between items-center">
-                <span className={`text-sm ${
-                  isToday(day) ? 
-                  'bg-blue-500 text-white rounded-full px-2 pt-1' : 
+                <span className={`text-sm ${isToday(day) ?
+                  'bg-blue-500 text-white rounded-full px-2 pt-1' :
                   'dark:text-white'
-                }`}>
+                  }`}>
                   {format(day, 'd')}
                 </span>
               </div>
               <div className="mt-1 space-y-1">
-                {dayEvents.map(event => (
-                  <div
-                    key={event.id}
-                    className={`${getPriorityColor(event.priority)} text-white text-xs p-1 rounded truncate`}
-                  >
-                    {event.title}
+                {dayEvents.map(entry => (
+                  <div key={entry._id} className="calendar-event">
+                    <div className={`priority-${entry.priority}`} />
+                    <div>
+                      <strong>{entry.title}</strong>
+                      <div>{entry.startTime} - {entry.endTime}</div>
+                      {entry.description && <div>{entry.description}</div>}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -114,92 +120,91 @@ const MyCalendar = () => {
     );
   };
 
- const renderWeekView = () => {
-   const weekDays = eachDayOfInterval({
-     start: startOfWeek(currentDate, { weekStartsOn: 0 }),
-     end: endOfWeek(currentDate, { weekStartsOn: 0 }),
-   });
+  const renderWeekView = () => {
+    const weekDays = eachDayOfInterval({
+      start: startOfWeek(currentDate, { weekStartsOn: 0 }),
+      end: endOfWeek(currentDate, { weekStartsOn: 0 }),
+    });
 
-   return (
-     <div className="flex flex-row">
-       {/* Time Column */}
-       <div className="flex flex-col w-[120px] bg-gray-100 dark:bg-zinc-800 border-r border-gray-300 dark:border-zinc-700">
-         <div
-           className={`p-2 text-start text-sm border-t border-gray-100 dark:border-zinc-700 `}
-         >
-           Time Stamp
-         </div>
-         {Array.from({ length: 24 }, (_, i) => {
-           const startHour = String(i).padStart(2, "0");
-           const endHour = String(i + 1).padStart(2, "0");
-           return (
-             <div className="">
-               <div
-                 key={i}
-                 className="h-[50px] flex items-start px-2 text-xs text-gray-600 dark:text-zinc-400 border-t border-gray-100 dark:border-zinc-700 pt-5"
-               >
-                 {`${startHour}:00 - ${endHour}:00`}
-               </div>
-             </div>
-           );
-         })}
-       </div>
+    return (
+      <div className="flex flex-row">
+        {/* Time Column */}
+        <div className="flex flex-col w-[120px] bg-gray-100 dark:bg-zinc-800 border-r border-gray-300 dark:border-zinc-700">
+          <div
+            className={`p-2 text-start text-sm border-t border-gray-100 dark:border-zinc-700 `}
+          >
+            Time Stamp
+          </div>
+          {Array.from({ length: 24 }, (_, i) => {
+            const startHour = String(i).padStart(2, "0");
+            const endHour = String(i + 1).padStart(2, "0");
+            return (
+              <div className="">
+                <div
+                  key={i}
+                  className="h-[50px] flex items-start px-2 text-xs text-gray-600 dark:text-zinc-400 border-t border-gray-100 dark:border-zinc-700 pt-5"
+                >
+                  {`${startHour}:00 - ${endHour}:00`}
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-       {/* Week Grid */}
-       <div className="flex-1 grid grid-cols-7 gap-px bg-gray-200 dark:bg-zinc-700">
-         {weekDays.map((day) => (
-           <div key={day} className="bg-white dark:bg-zinc-800">
-             {/* Date Header */}
-             <div
-               className={`p-2 text-sm ${
-                 isSameMonth(day, currentDate)
-                   ? "text-gray-800 dark:text-white"
-                   : "text-gray-400 dark:text-zinc-500"
-               }`}
-             >
-               {format(day, "EEE d")}
-             </div>
+        {/* Week Grid */}
+        <div className="flex-1 grid grid-cols-7 gap-px bg-gray-200 dark:bg-zinc-700">
+          {weekDays.map((day) => (
+            <div key={day} className="bg-white dark:bg-zinc-800">
+              {/* Date Header */}
+              <div
+                className={`p-2 text-sm ${isSameMonth(day, currentDate)
+                  ? "text-gray-800 dark:text-white"
+                  : "text-gray-400 dark:text-zinc-500"
+                  }`}
+              >
+                {format(day, "EEE d")}
+              </div>
 
-             {/* Hourly Slots */}
-             <div className="relative h-[1200px]">
-               {Array.from({ length: 24 }, (_, i) => (
-                 <div
-                   key={i}
-                   className="h-[50px] border-t border-gray-100 dark:border-zinc-700"
-                 />
-               ))}
-               {/* Events */}
-               {events
-                 .filter((e) => isSameDay(new Date(e.start), day))
-                 .map((event) => {
-                   const start = new Date(event.start);
-                   const end = new Date(event.end);
-                   const top =
-                     (start.getHours() + start.getMinutes() / 60) * 50;
-                   const height = ((end - start) / (1000 * 60 * 60)) * 50;
+              {/* Hourly Slots */}
+              <div className="relative h-[1200px]">
+                {Array.from({ length: 24 }, (_, i) => (
+                  <div
+                    key={i}
+                    className="h-[50px] border-t border-gray-100 dark:border-zinc-700"
+                  />
+                ))}
+                {/* Events */}
+                {events
+                  .filter((e) => isSameDay(new Date(e.start), day))
+                  .map((event) => {
+                    const start = new Date(event.start);
+                    const end = new Date(event.end);
+                    const top =
+                      (start.getHours() + start.getMinutes() / 60) * 50;
+                    const height = ((end - start) / (1000 * 60 * 60)) * 50;
 
-                   return (
-                     <div
-                       key={event.id}
-                       className={`absolute left-1 right-1 ${getPriorityColor(
-                         event.priority
-                       )} rounded p-1 text-white text-sm cursor-pointer`}
-                       style={{ top: `${top}px`, height: `${height}px` }}
-                     >
-                       {event.title}
-                       <div className="text-xs opacity-75">
-                         {format(start, "HH:mm")} - {format(end, "HH:mm")}
-                       </div>
-                     </div>
-                   );
-                 })}
-             </div>
-           </div>
-         ))}
-       </div>
-     </div>
-   );
- };
+                    return (
+                      <div
+                        key={event.id}
+                        className={`absolute left-1 right-1 ${getPriorityColor(
+                          event.priority
+                        )} rounded p-1 text-white text-sm cursor-pointer`}
+                        style={{ top: `${top}px`, height: `${height}px` }}
+                      >
+                        {event.title}
+                        <div className="text-xs opacity-75">
+                          {format(start, "HH:mm")} - {format(end, "HH:mm")}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
 
 
@@ -246,21 +251,19 @@ const MyCalendar = () => {
           <div className="flex gap-2 ml-auto">
             <button
               onClick={() => setSelectedTab("calendar")}
-              className={`px-4 pt-3 pb-2 rounded-lg ${
-                selectedTab === "calendar"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
-              }`}
+              className={`px-4 pt-3 pb-2 rounded-lg ${selectedTab === "calendar"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+                }`}
             >
               Calendar
             </button>
             <button
               onClick={() => setSelectedTab("event")}
-              className={`px-4 pt-3 pb-2 rounded-lg ${
-                selectedTab === "event"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
-              }`}
+              className={`px-4 pt-3 pb-2 rounded-lg ${selectedTab === "event"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+                }`}
             >
               Add Event
             </button>
@@ -274,11 +277,10 @@ const MyCalendar = () => {
                 <button
                   key={view}
                   onClick={() => setViewMode(view.toLowerCase())}
-                  className={`px-4 pt-3 pb-2 rounded-lg ${
-                    viewMode === view.toLowerCase()
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
-                  }`}
+                  className={`px-4 pt-3 pb-2 rounded-lg ${viewMode === view.toLowerCase()
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+                    }`}
                 >
                   {view}
                 </button>
