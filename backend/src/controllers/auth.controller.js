@@ -63,12 +63,12 @@ export const signup = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        let pfp;
+        let pfp = 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
         if (gender === 'female' || gender === 'others') {
-            pfp = Math.floor(Math.random() * 50) + 51; // Generates a random number between 51 and 100
-        } else {
-            pfp = Math.floor(Math.random() * 50) + 1;  // Generates a random number between 1 and 50
-        };
+            pfp =  `https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 50) + 51}`; // Generates a random number between 51 and 100
+        } else if (gender === 'male') {
+            pfp = `https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 50) + 1}`;  // Generates a random number between 1 and 50
+        }
 
         // Create new user
         const newUser = new User({
@@ -77,7 +77,7 @@ export const signup = async (req, res) => {
             email,
             gender,
             password: hashedPassword,
-            profilePicture: `https://avatar.iran.liara.run/public/${pfp}`,
+            profilePicture: pfp,
         });
 
         await newUser.save();
@@ -221,7 +221,7 @@ export const checkAuth = async (req, res) => {
             email: user.email,
             profilePicture: user.profilePicture,
             vendorOwnerShip: user.vendorOwnerShip,
-            
+
             event: events.map(event => ({
                 _id: event._id,
                 name: event.name,

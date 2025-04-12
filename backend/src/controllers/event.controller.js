@@ -1,7 +1,7 @@
 import Event from '../models/event.model.js';
 import Vendor from "../models/vendor.model.js";
-import mongoose from 'mongoose';
 import User from '../models/user.model.js';
+import mongoose from 'mongoose';
 import { isSameDay, parseISO } from 'date-fns';
 
 // Create a new event
@@ -224,7 +224,6 @@ export const addTodoToEvent = async (req, res) => {
 };
 
 // Delete a to-do from an event
-
 export const deleteTodoFromEvent = async (req, res) => {
     try {
         const { eventId } = req.params;
@@ -517,8 +516,9 @@ export const clearCart = async (req, res) => {
 // Add new attendee with validation
 export const addAttendee = async (req, res) => {
     try {
+        const { eventId } = req.params;
         const { name, email } = req.body;
-        console.log(req.user)
+        const userId = req.user._id;
 
         if (!name || !email) {
             return res.status(400).json({
@@ -526,62 +526,102 @@ export const addAttendee = async (req, res) => {
             });
         }
 
-        // Find existing user by email
-        const existingUser = await User.findOne({ email });
-        console.log(existingUser)
-        let receiverId = null;
+        const existingUser = await User.findOne({ email }).select('+notification');
+        const event = await Event.findById(eventId);
 
-        // Add attendee to event
-        const event = await Event.findByIdAndUpdate(
-            req.params.eventId,
-            {
-                $push: {
-                    attendees: {
-                        name: existingUser?.fullName || name,
-                        email,
-                        status: 'Pending',
-                        user: existingUser?._id // Link to user if exists
-                    }
-                }
-            },
-            { new: true, runValidators: true }
-        ).select('attendees');
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
 
-        if (!event) return res.status(404).json({ message: 'Event not found' });
+        // Check if attendee already exists
+        const attendeeExists = event.attendees.some(attendee =>
+            attendee.email === email ||
+            (existingUser && attendee.user?.equals(existingUser._id))
+        );
 
-        // Get the newly added attendee (last in array)
-        const newAttendee = event.attendees[event.attendees.length - 1];
+        if (attendeeExists) {
+            return res.status(400).json({ error: 'Attendee already exists' });
+        }
 
-        // If user exists, send notification
+        // Add new attendee
+        const newAttendee = {
+            name: existingUser?.fullName || name,
+            email,
+            status: 'Pending',
+            user: existingUser?._id
+        };
+
+        event.attendees.push(newAttendee);
+        await event.save();
+
+        // Notification logic
+        let notificationSent = false;
         if (existingUser) {
-            await User.findByIdAndUpdate(
-                existingUser._id,
-                {
-                    $push: {
-                        notifications: {
-                            type: 'eventInvite',
-                            sender: req.user._id,
-                            event: event._id,
-                            message: `You've been invited to ${event?.name} by ${existingUser?.fullName}`,
-                            respondLink: `${process.env.HTTP_PROTOCOL}://${process.env.HOST}:${process.env.PORT}/${req.params.eventId}/attendees/${newAttendee._id}`,
+            try {
+                const notificationPayload = {
+                    type: 'eventInvite',
+                    sender: userId,
+                    event: event._id,
+                    message: `You've been invited to ${event.name} by ${req.user.fullName}`,
+                    respondLink: `${process.env.HTTP_PROTOCOL}://${process.env.HOST}:${process.env.PORT}/api/v1/events/${eventId}/attendees/${newAttendee._id}/respond`,
+                    seen: false,
+                    createdAt: new Date()
+                };
+
+                // Check for existing notification
+                const existingNotification = existingUser.notification.find(n =>
+                    // Compare all relevant fields (excluding seen/createdAt)
+                    n.type === notificationPayload.type &&
+                    n.sender.equals(notificationPayload.sender) &&
+                    n.event.equals(notificationPayload.event) &&
+                    n.message === notificationPayload.message &&
+                    n.respondLink === notificationPayload.respondLink
+                );
+
+                const updateOperation = existingNotification ?
+                    {
+                        $set: {
+                            'notification.$[elem].seen': false,
+                            'notification.$[elem].createdAt': new Date(),
+                            'notification.$[elem].respondLink': notificationPayload.respondLink
                         }
-                    }
-                },
-                { new: true, runValidators: true }
-            );
+                    } : {
+                        $push: { notification: notificationPayload },
+                        $inc: { notificationCount: 1 }
+                    };
+
+                const updateOptions = {
+                    new: true,
+                    runValidators: true,
+                    arrayFilters: existingNotification ?
+                        [{ 'elem.event': event._id, 'elem.type': 'eventInvite' }] :
+                        undefined
+                };
+
+                await User.findByIdAndUpdate(
+                    existingUser._id,
+                    updateOperation,
+                    updateOptions
+                );
+
+                notificationSent = true;
+            } catch (error) {
+                const deletingEvent = await Event.findByIdAndUpdate(event._id, { $pull: { attendees: { _id: newAttendee._id } } });
+                await deletingEvent.save();
+            }
         }
 
         res.status(201).json({
             message: 'Attendee added successfully',
-            attendee: event.attendees[event.attendees.length - 1],
-            notificationSent: !!existingUser
+            attendee: newAttendee,
+            notificationSent
         });
+
     } catch (error) {
         res.status(500).json({
             message: 'Error adding attendee',
             error: error.message
         });
-        console.error(error)
     }
 };
 
@@ -610,7 +650,7 @@ export const updateAttendeeStatus = async (req, res) => {
             event.organizer._id,
             {
                 $push: {
-                    notifications: {
+                    notification: {
                         type: 'statusUpdate',
                         sender: req.user._id,
                         receiver: event.organizer._id,

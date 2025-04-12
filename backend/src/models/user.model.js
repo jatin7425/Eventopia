@@ -3,11 +3,12 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema(
     {
         userName: { type: String, required: true, unique: true },
-        fullName: { type: String, required: true },
+        fullName: { type: String,},
         email: { type: String, required: true, unique: true },
         contact: { type: String },
         otp: { type: String },
         otpExpiry: { type: String },
+        gender: { type: String},
         password: { type: String, required: true },
         friend: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", default: [] }],
         notification: {
@@ -48,8 +49,7 @@ const userSchema = new mongoose.Schema(
                 city: { type: String },
                 pincode: { type: String },
             }
-        ],
-        gender: { type: String, required: true },
+        ]
     },
     { timestamps: true }
 );
