@@ -134,13 +134,11 @@ export default function VendorDashboard() {
     }, [listRef.current]);
 
     return (
-      <div
-        onClick={handleOpenAddVenderForm}
-        className="h-[280px] flex flex-col gap-4 relative pl-2 "
-      >
+      <div className="h-[280px] flex flex-col gap-4 relative pl-2 ">
         <div className="py-1 px-3">
           <h1
-            className={`text-lg cursor-pointer text-white hover:text-blue-500 rounded `}
+            onClick={handleOpenAddVenderForm}
+            className={`text-lg cursor-pointer text-white hover:text-blue-500 rounded font-['Gilroy'] `}
           >
             Create new Shop
           </h1>
@@ -160,12 +158,12 @@ export default function VendorDashboard() {
               <span
                 className={` w-full py-5 px-3 cursor-pointer ${
                   currentVendor === vendor?.data?._id
-                    ? "bg-zinc-600 rounded-r-lg absolute h-6 w-[190px] -left-2 -top-[5px] z-[-10] "
+                    ? "bg-blue-600 rounded-r-lg absolute h-6 w-[190px] -left-2 -top-[5px] z-[-10] "
                     : ""
                 }`}
               ></span>
               <span
-                className={` text-lg cursor-pointer -ml-4 text-zinc-800 dark:text-zinc-100 ${
+                className={` text-lg cursor-pointer -ml-4 text-zinc-800 dark:text-zinc-100 font-['Gilroy'] ${
                   currentVendor === vendor?.data?._id
                     ? "pl-8 text-zinc-100  "
                     : ""
@@ -239,7 +237,7 @@ export default function VendorDashboard() {
           </div>
         </div>
       </div>
-      <div className="relative">
+      <div className={`relative `}>
         <div className="flex items-center justify-center">
           <div
             onMouseEnter={handleHoverBanner}
