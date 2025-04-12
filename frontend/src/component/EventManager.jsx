@@ -25,13 +25,7 @@ const EventManager = ({}) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [eventAccodCategory, setEventAccodCategory] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [showDescriptionBox, setShowDescriptionBox] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
-
-  const handleIsDescriptionOpen = () => {
-    setIsDescriptionOpen(!isDescriptionOpen);
-  };
 
   // Category selection handler
   const handleCategorySelection = (category) => {
