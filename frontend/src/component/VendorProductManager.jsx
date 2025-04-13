@@ -18,6 +18,7 @@ import LocomotiveScroll from "locomotive-scroll";
 import gsap from "gsap";
 import { ButtonBtmUp } from "./Button";
 import { motion } from "framer-motion";
+import VendorOrderManager from "./Vendor/VendorOrderManager";
 
 // Sidebar Component (reused)
 const Sidebar = () => {
@@ -474,7 +475,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
                 transition={{ stiffness: 500, damping: 30 }}
               />
             ) : null}
-            <span className="relative ">Shop</span>
+            <span className="relative "> Shop</span>
           </button>
 
           <button
@@ -506,6 +507,11 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
           </div>
         )}
 
+        {/* Header with Search */}
+        <span className={`${manageOrder ? "hidden" : ""}`}>
+          <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </span>
+
         {/* Product Form and List */}
         {shop && (
           <motion.div
@@ -514,8 +520,6 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             exit={{ opacity: 0, y: -20 }}
             className="w-full h-fit"
           >
-            <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
             <div className="h-full max-md:flex-col-reverse items-center justify-between gap-5 md:px-0 px-0 pb-10 font-['Gilroy']">
               <ProductForm
                 currentvendor={currentvendor}
@@ -544,12 +548,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             exit={{ opacity: 0, y: -20 }}
             className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4 font-['Gilroy']"
           >
-            <h2 className="text-lg font-semibold mb-2 dark:text-white">
-              Manage Orders
-            </h2>
-            <p className="dark:text-gray-400 mt-4">
-              Order management functionality will be implemented here.
-            </p>
+            <VendorOrderManager />
           </motion.div>
         )}
       </main>

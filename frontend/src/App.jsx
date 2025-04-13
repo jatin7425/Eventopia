@@ -6,15 +6,14 @@ import WelcomePage from './pages/WelcomePage';
 import EventSelection from './pages/EventSelection';
 import ProfileDashboard from './pages/ProfileDashboard';
 import PasswordReset from './pages/PasswordReset';
-import FamilyEvent from './pages/FamilyEvent';
 import VendorProduct from './pages/VendorProduct';
 import LocomotiveScroll from 'locomotive-scroll';
 import VendorCollection from './component/VendorCards/VendorCollection';
 import ProductCollection from './component/ProductCard/ProductCollection';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AdminPanelPage from './pages/AdminPanelPage';
-import CartComponent from './component/Carts/CartComponent';
 import AIChatSupport from './component/AIChat/AIChatSupport';
+import VendorOrderManager from './component/Vendor/VendorOrderManager';
 
 
 const App = () => {
@@ -40,6 +39,7 @@ const App = () => {
         <Route path="/productCollection/:id" element={<ProductCollection />} />
         <Route path="/subscriptionPage" element={<SubscriptionPage />} />
         <Route path="/aichatbot" element={<AIChatSupport />} />
+        <Route path="/vendorordermanager" element={<VendorOrderManager />} />
       </Routes>
       <Toaster />
     </div>
