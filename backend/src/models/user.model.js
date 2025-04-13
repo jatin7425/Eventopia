@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
             type: [
                 {
                     _id: { type: mongoose.Schema.Types.ObjectId },
-                    type: { type: String, enum: ["eventInvite", "vendorCollabInvite", "eventCollabInvite", "WelcomeMessage"] },
+                    type: { type: String, enum: ["eventInvite", "vendorCollabInvite", "eventCollabInvite", "WelcomeMessage", "Message"] },
                     sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
                     receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
                     event: { type: mongoose.Schema.Types.ObjectId, ref: "Event" },

@@ -563,7 +563,7 @@ export const addAttendee = async (req, res) => {
                     sender: userId,
                     event: event._id,
                     message: `You've been invited to ${event.name} by ${req.user.fullName}`,
-                    respondLink: `${process.env.HTTP_PROTOCOL}://${process.env.HOST}:${process.env.PORT}/api/v1/events/${eventId}/attendees/${newAttendee._id}/respond`,
+                    respondLink: `${process.env.BASE_HOST_URL}/api/event/${eventId}/attendees/respond`,
                     seen: false,
                     createdAt: new Date()
                 };
@@ -626,43 +626,81 @@ export const addAttendee = async (req, res) => {
 };
 
 // Update attendee status with better error handling
-export const updateAttendeeStatus = async (req, res) => {
+export const respondToEventInvite = async (req, res) => {
     try {
-        const { status } = req.body;
-        const { eventId, attendeeId } = req.params;
+        const { eventId } = req.params;
+        const { response } = req.query; // Get from query params
+        const userId = req.user._id;
 
-        if (!['Accepted', 'Pending', 'Declined'].includes(status)) {
-            return res.status(400).json({ message: 'Invalid status value' });
+        // Validate response parameter
+        if (!response || !['true', 'false'].includes(response.trim().toLowerCase())) {
+            return res.status(400).json({
+                message: 'Missing or invalid response parameter (must be true/false)'
+            });
         }
 
-        const event = await Event.findOneAndUpdate(
-            { _id: eventId, 'attendees._id': attendeeId },
-            { $set: { 'attendees.$.status': status } },
-            { new: true, runValidators: true }
-        ).populate('organizer', 'email');
+        const responseStatus = response.trim().toLowerCase() === 'true' ? 'Accepted' : 'Declined';
 
-        if (!event) return res.status(404).json({ message: 'Event or attendee not found' });
+        const event = await Event.findById(eventId).populate('organizer', 'email');
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
 
-        const attendee = event.attendees.id(attendeeId);
+        // Find attendee by user ID
+        const attendee = event.attendees.find(a => a.user && a.user.equals(userId));
+        if (!attendee) {
+            return res.status(403).json({ message: 'You are not invited to this event' });
+        }
 
-        // Send notification to organizer
-        await User.findByIdAndUpdate(
-            event.organizer._id,
-            {
-                $push: {
-                    notification: {
-                        type: 'statusUpdate',
-                        sender: req.user._id,
-                        receiver: event.organizer._id,
-                        event: event._id,
-                        message: `${attendee.name} (${attendee.email}) has ${status.toLowerCase()} the invitation`
-                    }
+        if (attendee.status === responseStatus) {
+            return res.status(400).json({
+                message: `Invite is already ${responseStatus.toLowerCase()}`
+            });
+        }
+
+        attendee.status = responseStatus;
+        await event.save();
+
+        // Notify organizer
+        await User.findByIdAndUpdate(event.organizer._id, {
+            $push: {
+                notification: {
+                    type: 'Message',
+                    sender: userId,
+                    event: eventId,
+                    message: `${attendee.name} (${attendee.email}) has ${responseStatus.toLowerCase()} the invitation`,
+                    seen: false,
+                    createdAt: new Date()
                 }
+            }
+        });
+
+        const result = await User.findOneAndUpdate(
+            {
+                _id: userId,
+                'notification.event': eventId,
+                'notification.type': 'eventInvite'
+            },
+            {
+                $set: { 'notification.$[elem].seen': true }
+            },
+            {
+                new: true,
+                arrayFilters: [
+                    {
+                        'elem.event': new mongoose.Types.ObjectId(eventId),
+                        'elem.type': 'eventInvite'
+                    }
+                ]
             }
         );
 
+        if (!result) {
+            throw new Error('Notification not found or user does not exist');
+        }
+
         res.json({
-            message: 'Status updated successfully',
+            message: `Invite ${responseStatus.toLowerCase()} successfully`,
             attendee: {
                 _id: attendee._id,
                 name: attendee.name,
@@ -670,12 +708,13 @@ export const updateAttendeeStatus = async (req, res) => {
                 status: attendee.status
             }
         });
+
     } catch (error) {
+        console.error('Response error:', error);
         res.status(500).json({
-            message: 'Error updating status',
+            message: 'Error processing invitation response',
             error: error.message
         });
-        console.log(error)
     }
 };
 
@@ -758,7 +797,6 @@ export const getEventStats = async (req, res) => {
     }
 };
 
-// Calendar
 // Add Calendar Entry
 export const addCalendarToEvent = async (req, res) => {
     try {
@@ -913,6 +951,10 @@ export const deleteCalendarFromEvent = async (req, res) => {
         });
     }
 };
+
+
+
+
 
 // Get Calendar Entries
 

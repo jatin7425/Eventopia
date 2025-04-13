@@ -14,7 +14,7 @@ import { set } from "lodash";
 import MyCalendar from "./Calendar/MyCalendar";
 import InvitationManager from "./MyEventsComponent/InvitationManager";
 
-const EventManager = ({}) => {
+const EventManager = ({ }) => {
   const dropdownRef = useRef(null);
   const { event, getEventById } = useEvent();
   const { user } = useAuth();
@@ -101,11 +101,11 @@ const EventManager = ({}) => {
     };
   }, []);
 
-   const [isDescriptionOpen2, setIsDescriptionOpen2] = useState(false);
+  const [isDescriptionOpen2, setIsDescriptionOpen2] = useState(false);
 
-   const handleIsDescriptionOpen2 = () => {
-     setIsDescriptionOpen2(!isDescriptionOpen2);
-   };
+  const handleIsDescriptionOpen2 = () => {
+    setIsDescriptionOpen2(!isDescriptionOpen2);
+  };
 
   const [attendeesOption, setAttendeesOption] = useState(false);
   const [addTodoOption, setaddTodoOption] = useState(false);
@@ -278,9 +278,8 @@ const EventManager = ({}) => {
           </motion.div>
 
           <motion.div
-            className={`sm:w-2/3 h-full w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 rounded-lg flex flex-col sm:justify-center items-center max-sm:${
-              !isDescriptionOpen2 && "hidden"
-            }`}
+            className={`sm:w-2/3 h-full w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 rounded-lg flex flex-col sm:justify-center items-center max-sm:${!isDescriptionOpen2 && "hidden"
+              }`}
             initial={{ opacity: 0, rotateY: -90 }}
             animate={{ opacity: 1, rotateY: 0 }}
             transition={{ duration: 0.6 }}
@@ -360,13 +359,13 @@ const EventManager = ({}) => {
           </span>
 
           {/* Todo Button */}
-          
+
         </div>
 
         {/* Main Content Section */}
 
         {attendeesOption && (
-         <InvitationManager event={event}/>
+          <InvitationManager event={event} />
         )}
 
         {addTodoOption && (
@@ -611,14 +610,12 @@ dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800"
           <span>Create To-Do</span>
         </div>
         <hr
-          className={`border-gray-300 dark:border-zinc-500 ${
-            dropOpen ? "hidden" : "block"
-          }`}
+          className={`border-gray-300 dark:border-zinc-500 ${dropOpen ? "hidden" : "block"
+            }`}
         />
         <div
-          className={`w-full px-5 py-3 overflow-y-auto flex flex-col gap-2 ${
-            dropOpen ? "hidden" : "block"
-          }`}
+          className={`w-full px-5 py-3 overflow-y-auto flex flex-col gap-2 ${dropOpen ? "hidden" : "block"
+            }`}
         >
           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
             <label htmlFor="title">Title</label>

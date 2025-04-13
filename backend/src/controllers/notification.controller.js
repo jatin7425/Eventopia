@@ -81,6 +81,64 @@ export const getNotification = async (req, res) => {
                     }
                 }
             },
+            // Extract sender IDs from filteredNotifications
+            { $unwind: "$filteredNotifications" },
+            {
+                $group: {
+                    _id: "$_id",
+                    filteredNotifications: { $push: "$filteredNotifications" },
+                    senderIds: { $addToSet: "$filteredNotifications.sender" }
+                }
+            },
+            // Fetch all sender documents in one query
+            {
+                $lookup: {
+                    from: "users", // Replace with your User collection name
+                    localField: "senderIds",
+                    foreignField: "_id",
+                    pipeline: [
+                        {
+                            $project: {
+                                fullName: 1,
+                                profilePicture: 1,
+                                userName: 1
+                            }
+                        }
+                    ],
+                    as: "senders"
+                }
+            },
+            // Replace sender IDs with actual user documents
+            {
+                $addFields: {
+                    filteredNotifications: {
+                        $map: {
+                            input: "$filteredNotifications",
+                            as: "notif",
+                            in: {
+                                $mergeObjects: [
+                                    "$$notif",
+                                    {
+                                        sender: {
+                                            $arrayElemAt: [
+                                                {
+                                                    $filter: {
+                                                        input: "$senders",
+                                                        as: "s",
+                                                        cond: { $eq: ["$$s._id", "$$notif.sender"] }
+                                                    }
+                                                },
+                                                0
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            // Sort and paginate
             {
                 $project: {
                     sortedNotifications: {
