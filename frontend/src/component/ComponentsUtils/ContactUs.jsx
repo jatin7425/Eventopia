@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ButtonArrow } from './Button';
+import { ButtonArrow } from '../Theme/Button';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 
 const ContactUs = () => {
+  
     const [isFixed, setIsFixed] = useState(false);
 
     useEffect(() => {
@@ -11,6 +11,7 @@ const ContactUs = () => {
             setIsFixed(window.scrollY > 100);
         };
     }, []);
+
     return (
       <motion.div
         id="contact"

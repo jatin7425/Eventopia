@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Moon, Sun } from "lucide-react";
-import { ThemeContext } from '../store/ThemeContext.jsx';
+import { ThemeContext } from '../../store/ThemeContext.jsx';
 import { motion } from 'framer-motion';
 
 // ✅ Simple Toggle Theme Button Component

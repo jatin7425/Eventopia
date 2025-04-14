@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../store/auth"; // Ensure correct path
-import { useEvent } from "../../store/eventContext"; // Ensure correct path
+import { useAuth } from "../../store/auth";
+import { useEvent } from "../../store/eventContext"; 
 import {useEventCart} from "../../store/eventCartContext"
 
 const CartComponent = () => {

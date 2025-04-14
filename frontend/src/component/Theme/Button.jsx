@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { IoMdArrowBack, IoMdArrowDown, IoMdArrowForward } from "react-icons/io";
-import { motion } from "framer-motion";
+import { IoMdArrowForward } from "react-icons/io";
 
 export const ButtonArrow = ({
   title,

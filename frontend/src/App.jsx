@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import AuthPage from './pages/AuthPage';
@@ -6,12 +6,10 @@ import WelcomePage from './pages/WelcomePage';
 import EventSelection from './pages/EventSelection';
 import ProfileDashboard from './pages/ProfileDashboard';
 import PasswordReset from './pages/PasswordReset';
-import VendorProduct from './pages/VendorProduct';
 import LocomotiveScroll from 'locomotive-scroll';
-import VendorCollection from './component/VendorCards/VendorCollection';
+import VendorCollection from './component/Vendor/VendorCollection';
 import ProductCollection from './component/ProductCard/ProductCollection';
 import SubscriptionPage from './pages/SubscriptionPage';
-import AdminPanelPage from './pages/AdminPanelPage';
 import AIChatSupport from './component/AIChat/AIChatSupport';
 import VendorOrderManager from './component/Vendor/VendorOrderManager';
 
@@ -28,12 +26,10 @@ const App = () => {
     >
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/adminPanel" element={<AdminPanelPage />} />
         <Route path="/" element={<WelcomePage />} />
         <Route path="/user/:page" element={<ProfileDashboard />} />
         <Route path="/resetPassword" element={<PasswordReset />} />
         <Route path="/eventSelection" element={<EventSelection />} />
-        <Route path="/vendorProducts" element={<VendorProduct />} />
         <Route path="/user/:page/:vendorId" element={<ProfileDashboard />} />
         <Route path="/vendorCollection" element={<VendorCollection />} />
         <Route path="/productCollection/:id" element={<ProductCollection />} />

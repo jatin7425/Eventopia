@@ -1,67 +1,23 @@
 // VendorProductsComponent.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   FaSearch,
   FaHamburger,
   FaPizzaSlice,
   FaHome,
-  FaMapMarkerAlt,
 } from "react-icons/fa";
-import { BsCartCheck, BsClock } from "react-icons/bs";
-import { MdDeliveryDining } from "react-icons/md";
-import { FiLogOut } from "react-icons/fi";
-import Food from "../assets/food.jpg";
-import Decoration from "../assets/decoration.jpg";
-import Hall from "../assets/hall.jpg";
-import Conference from "../assets/conferenceimg.jpg";
-import Bakery from "../assets/bakery.jpg";
+import Food from "../../assets/food.jpg";
+import Decoration from "../../assets/decoration.jpg";
+import Hall from "../../assets/hall.jpg";
+import Conference from "../../assets/conferenceimg.jpg";
+import Bakery from "../../assets/bakery.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoIosSearch } from "react-icons/io";
-import { useEventCart } from "../store/eventCartContext";
+import { useEventCart } from "../../store/eventCartContext";
 import { Link } from "react-router-dom";
-import { CartCard } from "./ProductCard";
-import { ButtonBtmUp } from "./Button";
-import CartComponent from "./Carts/CartComponent";
+import { CartCard } from "../ComponentsUtils/ProductCard";
+import { ButtonBtmUp } from "../Theme/Button";
 
-
-// Sidebar Component (common)
-const Sidebar = () => {
-
-  return (
-    <aside className="w-1/5 bg-white dark:bg-[#222] text-white p-5 flex flex-col min-h-screen">
-      <div className="text-center text-3xl font-bold text-red-500">🍜</div>
-      <nav className="mt-10 space-y-4">
-        <a
-          href="#"
-          className="flex items-center space-x-2 text-red-500 text-lg"
-        >
-          <FaHamburger />
-          <span>Dashboard</span>
-        </a>
-        <a href="#" className="flex items-center space-x-2 text-lg">
-          <BsCartCheck />
-          <span>Orders</span>
-        </a>
-        <a href="#" className="flex items-center space-x-2 text-lg">
-          <FaMapMarkerAlt />
-          <span>Restaurants</span>
-        </a>
-        <a href="#" className="flex items-center space-x-2 text-lg">
-          <BsClock />
-          <span>Finance</span>
-        </a>
-        <a href="#" className="flex items-center space-x-2 text-lg">
-          <MdDeliveryDining />
-          <span>Delivery</span>
-        </a>
-        <a href="#" className="flex items-center space-x-2 text-lg mt-auto">
-          <FiLogOut />
-          <span>Logout</span>
-        </a>
-      </nav>
-    </aside>
-  );
-};
 
 // Header Component with search and profile section
 const Header = ({ searchTerm, setSearchTerm }) => {
@@ -88,120 +44,6 @@ const Header = ({ searchTerm, setSearchTerm }) => {
         <div className="w-10 h-10 rounded-full bg-gray-500"></div> */}
       </div>
     </header>
-  );
-};
-
-// Categories Component
-const Categories = () => {
-  const categories = [
-    {
-      id: 1,
-      name: "Pizza",
-      icon: <FaPizzaSlice className="text-yellow-400 text-2xl" />,
-    },
-    {
-      id: 2,
-      name: "Burger",
-      icon: <FaHamburger className="text-red-400 text-2xl" />,
-    },
-    {
-      id: 3,
-      name: "Sushi",
-      icon: <FaHome className="text-blue-400 text-2xl" />,
-    },
-  ];
-
-  const [selectedCategoryImg, setSelectedCategoryImg] = useState(null);
-
-  // Define categories and corresponding images
-  const categoriesImg = [
-    { name: "Food", img: Food },
-    { name: "Bakery", img: Bakery },
-    { name: "Hall", img: Hall },
-    { name: "Decoration", img: Decoration },
-    { name: "Conference", img: Conference },
-  ];
-
-  return (
-    <section className="mt-6">
-      <h2 className="text-lg font-semibold text-white">Categories</h2>
-
-      <div className="w-full h-fit px- pt-5 flex gap-5 items-center justify-start relative">
-        {categoriesImg.map((item, index) => (
-          <div key={index} className="group">
-            <div
-              className={`relative w-32 h-32 rounded-full border-[3px] border-black dark:border-white overflow-hidden cursor-pointer flex items-center justify-center ${selectedCategoryImg === item.name ? "border-blue-500" : ""
-                }`}
-              onClick={() => setSelectedCategoryImg(item.name)}
-            >
-              <img
-                src={item.img}
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="h-11 w-full flex justify-center overflow-hidden group">
-              <motion.h3
-                initial={{ y: -50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                className="text-white text-center mt-2 text-lg font-semibold bg-zinc-700 bg-opacity-70 px-3 py-1 rounded hidden group-hover:block"
-              >
-                {item.name}
-              </motion.h3>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-};
-
-// Popular Dishes Component (static demo data)
-const PopularDishes = () => {
-  const dishes = [
-    {
-      id: 1,
-      name: "Hamburger",
-      price: "₹10.00",
-      img: <FaHamburger className="text-4xl text-red-400" />,
-    },
-    {
-      id: 2,
-      name: "Pizza",
-      price: "₹25.00",
-      img: <FaPizzaSlice className="text-4xl text-yellow-400" />,
-    },
-    {
-      id: 3,
-      name: "Sushi",
-      price: "₹15.00",
-      img: <FaHome className="text-4xl text-blue-400" />,
-    },
-  ];
-
-  return (
-    <section className="mt-">
-      <h2 className="text-lg font-semibold text-zinc-800 dark:text-white ">
-        Popular Dishes
-      </h2>
-      <div className="grid grid-cols-3 gap-4 mt-3">
-        {dishes.map((dish) => (
-          <div
-            key={dish.id}
-            className="bg-zinc-200 dark:bg-[#333] p-4 rounded-lg"
-          >
-            <div className="flex justify-center">{dish.img}</div>
-            <p className="text-center mt-2 text-zinc-700 dark:text-white">
-              {dish.name}
-            </p>
-            <p className="text-center text-zinc-600 dark:text-zinc-300 ">
-              {dish.price}
-            </p>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 };
 
@@ -332,14 +174,9 @@ const Cart = ({ cartItems, onConfirmOrder, onUpdateCartQuantity }) => {
   );
 };
 
-const OrderSummary = ({
-  cartItems,
-  onConfirmOrder,
-  onUpdateCartQuantity,
-}) => {
+const OrderSummary = ({ cartItems, onConfirmOrder }) => {
   // Ensure cartItems is an array before using reduce()
   // TotalCartItems TotalBilling
-
 
   const deliveryCharge = cartItems.TotalCartItems > 0 ? 10 : 0;
   const total = cartItems.TotalBilling + deliveryCharge;
@@ -403,16 +240,12 @@ const OrderSummary = ({
 };
 
 // Main VendorProductsComponent
-const VendorProductsComponent = ({cart}) => {
-  const {
-    removeFromCart,
-    updateCartQuantity,
-    getEventCart,
-  } = useEventCart();
+const VendorProductsComponent = ({ cart }) => {
+  const { removeFromCart, updateCartQuantity, getEventCart } = useEventCart();
   const [searchTerm, setSearchTerm] = useState();
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(10);
 
   const handleConfirmOrder = () => {
     // console.log("hello");
@@ -433,15 +266,11 @@ const VendorProductsComponent = ({cart}) => {
     <div className="flex h-fit bg-white dark:bg-[#1a1a1a] min-h-screen text-white">
       <main className="xl:w-3/5 w-full  p-8 flex flex-col gap-6 overflow-y-auto">
         <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        {/* <Categories /> */}
-        {/* <PopularDishes /> */}
 
         <div className="w-full h-full">
           <CartCard cart={cart} />
-          {/* <CartComponent/> */}
         </div>
       </main>
-
 
       <Cart />
       <OrderSummary

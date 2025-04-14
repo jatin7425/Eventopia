@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { FaHourglassHalf, FaCoins } from "react-icons/fa";
+import { FaCoins } from "react-icons/fa";
 import { IoMdNotifications } from "react-icons/io";
 import { FaShop } from "react-icons/fa6";
 import { BsCalendar4Event } from "react-icons/bs";
@@ -8,15 +8,14 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { useAuth } from "../store/auth";
 import { MdOutlineEventNote } from "react-icons/md";
 import { BsFillCalendarDateFill } from "react-icons/bs";
-import { ThemeToggle } from "../component/ToggleTheme";
-import ProfileSetting from "../component/ProfileSetting";
-import NotificationPage from "../component/NotificationPage";
-import VendorDashboard from "../component/VendorDashboard";
-import { ButtonBtmUp } from "../component/Button";
-import { Cross, Menu } from "lucide-react";
-import EventManager from "../component/EventManager";
-import logo from "../assets/logo-nobg.png";
-import SubscriptionAds from "../component/SubscriptionAds";
+import { ThemeToggle } from "../component/Theme/ToggleTheme";
+import ProfileSetting from "../component/ProfileOption/ProfileSetting";
+import NotificationPage from "../component/Notiffications/NotificationPage";
+import { ButtonBtmUp } from "../component/Theme/Button";
+import EventManager from "../component/Events/EventManager";
+import SubscriptionAds from "../component/ComponentsUtils/SubscriptionAds";
+import { Menu } from "lucide-react";
+import VendorProductsComponent from "../component/Vendor/VendorProductsComponent";
 
 
 const ProfileDashboard = () => {
@@ -46,7 +45,7 @@ const ProfileDashboard = () => {
           </div>
         );
       case "myVendors":
-        return <VendorDashboard />;
+        return <VendorProductsComponent />;
       default:
         return <ProfileSetting userData={user} />;
     }
@@ -234,86 +233,6 @@ const useOnlineStatus = () => {
   return isOnline;
 };
 
-const Header = ({ userData }) => {
-  const isOnline = useOnlineStatus();
-  return (
-    <header className="flex max-sm:flex-col-reverse gap-4 items-center mb-8 bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-md">
-      {/* User Info Section */}
-      <div className="flex space-x-4 items-center gap-4">
-        {/* Profile Icon */}
-        <div className="relative h-full aspect-square">
-          <img
-            src={userData?.profilePicture}
-            alt="Profile"
-            className="size-20 rounded-full border-2 border-blue-600"
-          />
-          <span
-            className={`absolute bottom-1 right-2 w-3 h-3 ${
-              isOnline ? "bg-green-500" : "bg-red-500"
-            }  border-2 border-zinc-700 dark:border-white rounded-full`}
-          ></span>
-        </div>
-      </div>
-      <div>
-        <h1 className="text-3xl -mb-2 font-bold text-zinc-800 dark:text-white">
-          {userData?.fullName}
-        </h1>
-        <p className="text-md -mb-2 text-zinc-600 dark:text-zinc-400">
-          @{userData?.userName}
-        </p>
-        {/* <div className="mt-2 flex items-center">
-          <div className="bg-gray-200 w-40 h-2 rounded-full overflow-hidden mr-2">
-            <div
-              className="bg-blue-600 h-2 rounded-full"
-              style={{ width: "60%" }}
-            ></div>
-          </div>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">3000 / 8000 XP</p>
-        </div> */}
-      </div>
-    </header>
-  );
-};
-
-const ProfileStats = () => {
-  return (
-    <section className="grid grid-cols-3 gap-6 mb-8 bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-lg">
-      {/* Game Wins */}
-      <div className="text-center">
-        <div className="bg-blue-100 w-16 h-16 flex items-center justify-center rounded-full mx-auto shadow-sm">
-          <span className="material-icons text-blue-600 text-4xl">
-            <MdOutlineEventNote />
-          </span>
-        </div>
-        <p className="text-3xl font-bold text-blue-500 mt-4">27</p>
-        <p className="text-zinc-600 dark:text-zinc-400">Total Event</p>
-      </div>
-
-      {/* Highest Score */}
-      <div className="text-center">
-        <div className="bg-green-100 w-16 h-16 flex items-center justify-center rounded-full mx-auto shadow-sm">
-          <span className="material-icons text-green-600 text-4xl">
-            <FaCoins />
-          </span>
-        </div>
-        <p className="text-3xl font-bold text-green-600 mt-4">910</p>
-        <p className="text-zinc-600 dark:text-zinc-400">EZ Coins</p>
-      </div>
-
-      {/* Correct Answers */}
-      <div className="text-center">
-        <div className="bg-yellow-100 w-16 h-16 flex items-center justify-center rounded-full mx-auto shadow-sm">
-          <span className="material-icons text-yellow-600 text-4xl">
-            <BsFillCalendarDateFill />
-          </span>
-        </div>
-        <p className="text-3xl font-bold text-yellow-600 mt-4">2</p>
-        <p className="text-zinc-600 dark:text-zinc-400">Upcoming event</p>
-      </div>
-    </section>
-  );
-};
-
 const ShopSummary = () => {
   // Sample achievement data
 
@@ -375,53 +294,5 @@ const ShopSummary = () => {
     </div>
   );
 };
-
-// const Inventory = () => {
-//   // Sample inventory data
-//   const inventoryItems = [
-//     {
-//       name: "Extra Time",
-//       icon: <FaHourglassHalf size={32} />,
-//       description: "Add 30 seconds to the timer.",
-//       color: "bg-blue-100 text-blue-600",
-//     },
-//     {
-//       name: "50/50",
-//       icon: <FaPercentage size={32} />,
-//       description: "Eliminate two wrong answers.",
-//       color: "bg-yellow-100 text-yellow-600",
-//     },
-//     {
-//       name: "Most Popular",
-//       icon: <FaPoll size={32} />,
-//       description: "Show the most popular answer.",
-//       color: "bg-green-100 text-green-600",
-//     },
-//   ];
-
-//   return (
-//     <div className="bg-white dark:bg-zinc-700 p-6 rounded-lg shadow-lg">
-//       <h2 className="text-xl font-bold text-zinc-700 dark:text-zinc-300 mb-6">Inventory</h2>
-//       <div className="grid grid-cols-3 gap-6">
-//         {inventoryItems.map((item, index) => (
-//           <div className="text-center" key={index}>
-//             {/* Icon with unique background */}
-//             <div
-//               className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-md ${item.color}`}
-//             >
-//               {item.icon}
-//             </div>
-//             {/* Inventory item name */}
-//             <p className="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-300">
-//               {item.name}
-//             </p>
-//             {/* Inventory item description */}
-//             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
 
 export default ProfileDashboard;

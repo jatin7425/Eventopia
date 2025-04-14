@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ButtonBtmUp } from "./Button";
+import { ButtonBtmUp } from "../Theme/Button";
 
 export const Subscription = () => {
   const [commonPlans, setCommonPlans] = useState([

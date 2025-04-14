@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
-import { useNotification } from "../store/notificationContext";
+import { useNotification } from "../../store/notificationContext";
 import moment from "moment";
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance } from "../../lib/axios";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import {
-  FaArrowLeft,
   FaSearch,
   FaFilter,
   FaTimes,
@@ -19,8 +18,8 @@ import {
 } from "react-icons/fa";
 import { debounce } from "lodash";
 import "react-datepicker/dist/react-datepicker.css";
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import toast from "react-hot-toast";
 
 const NotificationIcon = ({ type }) => {
@@ -37,14 +36,19 @@ const makeFirstLetterCapital = (Word) => {
   return Word.charAt(0).toUpperCase() + Word.slice(1);
 };
 
-const NotificationItem = ({ notification, onMarkRead, onDismiss, isMobile }) => {
+const NotificationItem = ({
+  notification,
+  onMarkRead,
+  onDismiss,
+  isMobile,
+}) => {
   const [swiped, setSwiped] = useState(false);
   const navigate = useNavigate();
 
   const handlers = useSwipeable({
     onSwipedLeft: () => isMobile && handleSwipe("Left"),
     onSwipedRight: () => isMobile && handleSwipe("Right"),
-    trackMouse: true
+    trackMouse: true,
   });
 
   const handleSwipe = (dir) => {
@@ -56,7 +60,9 @@ const NotificationItem = ({ notification, onMarkRead, onDismiss, isMobile }) => 
 
   const handleRespond = async (response) => {
     try {
-      await axiosInstance.patch(`${notification.respondLink}/?response=${response}`);
+      await axiosInstance.patch(
+        `${notification.respondLink}/?response=${response}`
+      );
       // Update notification status after response
       if (response) {
         onMarkRead(notification._id);
@@ -75,28 +81,35 @@ const NotificationItem = ({ notification, onMarkRead, onDismiss, isMobile }) => 
   return (
     <div
       {...handlers}
-      className={`p-4 bg-white dark:bg-zinc-800 ${swiped ? "opacity-50" : ""} ${!notification.seen ? "bg-blue-50 dark:bg-zinc-700" : ""
-        } ${!isMobile ? "hover:bg-zinc-50 dark:hover:bg-zinc-700" : ""
-        } transition-colors flex sm:items-center justify-between max-sm:flex-col gap-2`}
+      className={`p-4 bg-white dark:bg-zinc-800 ${swiped ? "opacity-50" : ""} ${
+        !notification.seen ? "bg-blue-50 dark:bg-zinc-700" : ""
+      } ${
+        !isMobile ? "hover:bg-zinc-50 dark:hover:bg-zinc-700" : ""
+      } transition-colors flex sm:items-center justify-between max-sm:flex-col gap-2`}
     >
       <div className="flex items-center gap-4 flex-1">
         <NotificationIcon type={notification.type} />
         <div className="flex-1">
           {/* Sender Details */}
-          {
-            notification.type !== "WelcomeMessage" &&
+          {notification.type !== "WelcomeMessage" && (
             <div div className="flex items-center gap-2 mb-2">
               <img
-                src={notification.sender?.profilePicture || '/default-avatar.png'}
+                src={
+                  notification.sender?.profilePicture || "/default-avatar.png"
+                }
                 alt={notification.sender?.fullName}
                 className="w-8 h-8 rounded-full object-cover"
               />
               <div>
-                <p className="font-medium text-sm">{notification.sender?.fullName}</p>
-                <p className="text-xs text-zinc-500">@{notification.sender?.userName}</p>
+                <p className="font-medium text-sm">
+                  {notification.sender?.fullName}
+                </p>
+                <p className="text-xs text-zinc-500">
+                  @{notification.sender?.userName}
+                </p>
               </div>
             </div>
-          }
+          )}
 
           <h4 className="font-semibold text-sm md:text-base">
             {makeFirstLetterCapital(notification.type)}
@@ -110,9 +123,12 @@ const NotificationItem = ({ notification, onMarkRead, onDismiss, isMobile }) => 
         </div>
       </div>
 
-      {
-        !["WelcomeMessage", "Message"].includes(notification.type) && (notification.seen === false ? (
-          <div className={`flex gap-2 ${notification.seen ? "opacity-0" : "opacity-100"} 
+      {!["WelcomeMessage", "Message"].includes(notification.type) &&
+        (notification.seen === false ? (
+          <div
+            className={`flex gap-2 ${
+              notification.seen ? "opacity-0" : "opacity-100"
+            } 
           transition-opacity mx-2 max-sm:w-full`}
           >
             <button
@@ -135,7 +151,11 @@ const NotificationItem = ({ notification, onMarkRead, onDismiss, isMobile }) => 
             </button>
           </div>
         ) : (
-          <div className={`flex gap-2 transition-opacity mx-2 max-sm:hidden ${notification.seen ? "opacity-100" : "opacity-0"} `}>
+          <div
+            className={`flex gap-2 transition-opacity mx-2 max-sm:hidden ${
+              notification.seen ? "opacity-100" : "opacity-0"
+            } `}
+          >
             <div
               className="text-green-500 hover:text-green-700 flex items-center 
             justify-center gap-2 px-3 py-2 "
@@ -143,28 +163,26 @@ const NotificationItem = ({ notification, onMarkRead, onDismiss, isMobile }) => 
               <span>Accepted</span>
             </div>
           </div>
-        ))
-      }
-    </div >
+        ))}
+    </div>
   );
 };
 
 const Filtering = ({ notificationFilters, filters, handleFilterChange }) => {
   const [localDateRange, setLocalDateRange] = useState({
     start: null,
-    end: null
+    end: null,
   });
 
   const filterObj = notificationFilters?.data || {};
-  const keys = Object.keys(filterObj).filter(key =>
-    typeof filterObj === 'object' &&
-    !Array.isArray(filterObj)
+  const keys = Object.keys(filterObj).filter(
+    (key) => typeof filterObj === "object" && !Array.isArray(filterObj)
   );
 
   const renderSenderOptions = (senders) => (
     <select
-      value={filters.sender || ''}
-      onChange={(e) => handleFilterChange('sender', e.target.value)}
+      value={filters.sender || ""}
+      onChange={(e) => handleFilterChange("sender", e.target.value)}
       className="w-full p-2 rounded border dark:bg-zinc-700"
     >
       <option value="">All Senders</option>
@@ -180,20 +198,24 @@ const Filtering = ({ notificationFilters, filters, handleFilterChange }) => {
     <>
       {keys.map((key) => (
         <div key={key} className="mb-4">
-          <h3 className="font-medium mb-2 capitalize">{key.charAt(0).toUpperCase() + key.slice(1)}</h3>
+          <h3 className="font-medium mb-2 capitalize">
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </h3>
 
           {key === "date" ? (
             <div className="grid grid-cols-2 gap-2">
               <input
                 type="date"
-                value={localDateRange.start?.toISOString().split('T')[0] || ''}
-                onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                value={localDateRange.start?.toISOString().split("T")[0] || ""}
+                onChange={(e) =>
+                  handleFilterChange("startDate", e.target.value)
+                }
                 className="p-2 rounded border dark:bg-zinc-700"
               />
               <input
                 type="date"
-                value={localDateRange.end?.toISOString().split('T')[0] || ''}
-                onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                value={localDateRange.end?.toISOString().split("T")[0] || ""}
+                onChange={(e) => handleFilterChange("endDate", e.target.value)}
                 className="p-2 rounded border dark:bg-zinc-700"
               />
             </div>
@@ -201,7 +223,7 @@ const Filtering = ({ notificationFilters, filters, handleFilterChange }) => {
             renderSenderOptions(filterObj[key])
           ) : (
             <select
-              value={filters[key] || ''}
+              value={filters[key] || ""}
               onChange={(e) => handleFilterChange(key, e.target.value)}
               className="w-full p-2 rounded border dark:bg-zinc-700"
             >
@@ -226,7 +248,7 @@ const NotificationPage = () => {
     filters,
     notificationFilters,
     setFilters,
-    getNotification
+    getNotification,
   } = useNotification();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -241,9 +263,9 @@ const NotificationPage = () => {
   }, 300);
 
   const handleFilterChange = (filterType, value) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [filterType]: value
+      [filterType]: value,
     }));
   };
 
@@ -261,14 +283,20 @@ const NotificationPage = () => {
     // Find selected filter labels
     const getFilterLabel = (filterType, value) => {
       switch (filterType) {
-        case 'type':
-          return filterData.type?.find(t => t.value === value)?.label || value;
-        case 'sender':
-          return filterData.sender?.find(s => s._id === value)?.userName || value;
-        case 'date':
-          return filterData.date?.find(d => d.value === value)?.label || value;
-        case 'seen':
-          return value ? 'Read' : 'Unread';
+        case "type":
+          return (
+            filterData.type?.find((t) => t.value === value)?.label || value
+          );
+        case "sender":
+          return (
+            filterData.sender?.find((s) => s._id === value)?.userName || value
+          );
+        case "date":
+          return (
+            filterData.date?.find((d) => d.value === value)?.label || value
+          );
+        case "seen":
+          return value ? "Read" : "Unread";
         default:
           return value;
       }
@@ -277,7 +305,13 @@ const NotificationPage = () => {
     return (
       <div className="flex flex-wrap gap-2 p-2">
         {Object.entries(filters).map(([filterType, value]) => {
-          if (!value || filterType === 'search' || filterType === 'page' || filterType === 'limit') return null;
+          if (
+            !value ||
+            filterType === "search" ||
+            filterType === "page" ||
+            filterType === "limit"
+          )
+            return null;
 
           return (
             <div
@@ -300,8 +334,6 @@ const NotificationPage = () => {
       </div>
     );
   };
-
-
 
   return (
     <div className="min-h-screen dark:bg-zinc-900 w-full">
@@ -371,34 +403,47 @@ const NotificationPage = () => {
                 </div>
                 {isDesktop && notifications?.Stats?.earliestDate && (
                   <div className="text-sm text-zinc-500">
-                    {notifications.Stats?.earliestDate && notifications.Stats?.latestDate && (
-                      <>
-                        {moment(notifications.Stats.earliestDate).format("MMM D YYYY")}
-                        {!moment(notifications.Stats.earliestDate).isSame(notifications.Stats.latestDate, 'day') && (
-                          <>
-                            {" - "}
-                            {moment(notifications.Stats.latestDate).isSame(moment(), 'day')
-                              ? "Today"
-                              : moment(notifications.Stats.latestDate).format("MMM D YYYY")}
-                          </>
-                        )}
-                      </>
-                    )}
+                    {notifications.Stats?.earliestDate &&
+                      notifications.Stats?.latestDate && (
+                        <>
+                          {moment(notifications.Stats.earliestDate).format(
+                            "MMM D YYYY"
+                          )}
+                          {!moment(notifications.Stats.earliestDate).isSame(
+                            notifications.Stats.latestDate,
+                            "day"
+                          ) && (
+                            <>
+                              {" - "}
+                              {moment(notifications.Stats.latestDate).isSame(
+                                moment(),
+                                "day"
+                              )
+                                ? "Today"
+                                : moment(notifications.Stats.latestDate).format(
+                                    "MMM D YYYY"
+                                  )}
+                            </>
+                          )}
+                        </>
+                      )}
                   </div>
                 )}
               </div>
 
               <div className="divide-y dark:divide-zinc-700">
                 {notifications?.Notifications ? (
-                  Object.values(notifications.Notifications).flat().map((notification) => (
-                    <NotificationItem
-                      key={notification._id}
-                      notification={notification}
-                      onMarkRead={handleFilterChange}
-                      onDismiss={handleFilterChange}
-                      isMobile={!isDesktop}
-                    />
-                  ))
+                  Object.values(notifications.Notifications)
+                    .flat()
+                    .map((notification) => (
+                      <NotificationItem
+                        key={notification._id}
+                        notification={notification}
+                        onMarkRead={handleFilterChange}
+                        onDismiss={handleFilterChange}
+                        isMobile={!isDesktop}
+                      />
+                    ))
                 ) : (
                   <div className="p-4 text-center text-zinc-500">
                     No notifications found
@@ -410,18 +455,22 @@ const NotificationPage = () => {
             {/* Pagination */}
             {notifications?.Pagination && (
               <div className="mt-4 flex justify-center gap-2">
-                {Array.from({ length: notifications.Pagination.totalPages }, (_, i) => (
-                  <button
-                    key={i + 1}
-                    onClick={() => setFilters({ page: i + 1 })}
-                    className={`px-3 py-1 rounded ${filters.page === i + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-zinc-200 dark:bg-zinc-700"
+                {Array.from(
+                  { length: notifications.Pagination.totalPages },
+                  (_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setFilters({ page: i + 1 })}
+                      className={`px-3 py-1 rounded ${
+                        filters.page === i + 1
+                          ? "bg-blue-500 text-white"
+                          : "bg-zinc-200 dark:bg-zinc-700"
                       }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                    >
+                      {i + 1}
+                    </button>
+                  )
+                )}
               </div>
             )}
           </div>

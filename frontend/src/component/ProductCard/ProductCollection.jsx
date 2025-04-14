@@ -4,12 +4,10 @@ import axios from "axios";
 import DefaultImg from "../../assets/default-product-image.png";
 import { BsCart3 } from "react-icons/bs";
 import { AiOutlineStop } from "react-icons/ai";
-
-import { OchiFooter } from "../Footer";
+import { OchiFooter } from "../ComponentsUtils/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { Link } from "react-router-dom";
-import { NavBar } from "../NavBar";
+import { NavBar } from "../ComponentsUtils/NavBar";
 import { useEventCart } from "../../store/eventCartContext";
 
 const ProductCollection = () => {

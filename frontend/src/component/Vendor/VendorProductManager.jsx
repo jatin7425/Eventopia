@@ -2,53 +2,18 @@
 import React, { useState, useEffect } from "react";
 import {
   FaSearch,
-  FaEdit,
-  FaTrash,
-  FaPlus,
   FaHamburger,
   FaPizzaSlice,
   FaHome,
   FaStar,
 } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
-import { useVendor } from "../store/vendorContext";
+import { useVendor } from "../../store/vendorContext";
 import toast from "react-hot-toast";
-import { VendorProductCard } from "./ProductCard";
-import LocomotiveScroll from "locomotive-scroll";
-import gsap from "gsap";
-import { ButtonBtmUp } from "./Button";
+import { VendorProductCard } from "../ComponentsUtils/ProductCard";
+import { ButtonBtmUp } from "../Theme/Button";
 import { motion } from "framer-motion";
-import VendorOrderManager from "./Vendor/VendorOrderManager";
-
-// Sidebar Component (reused)
-const Sidebar = () => {
-  return (
-    <aside className="w-1/5 bg-[#222] text-white p-5 flex flex-col min-h-screen">
-      <div className="text-center text-3xl font-bold text-red-500">🍜</div>
-      <nav className="mt-10 space-y-4">
-        <a
-          href="#"
-          className="flex items-center space-x-2 text-red-500 text-lg"
-        >
-          <FaHamburger />
-          <span>Dashboard</span>
-        </a>
-        <a href="#" className="flex items-center space-x-2 text-lg">
-          <FaPizzaSlice />
-          <span>Orders</span>
-        </a>
-        <a href="#" className="flex items-center space-x-2 text-lg">
-          <FaHome />
-          <span>Restaurants</span>
-        </a>
-        <a href="#" className="flex items-center space-x-2 text-lg mt-auto">
-          <FiLogOut />
-          <span>Logout</span>
-        </a>
-      </nav>
-    </aside>
-  );
-};
+import VendorOrderManager from "./VendorOrderManager";
 
 // Header Component for product manager
 const Header = ({ searchTerm, setSearchTerm }) => {

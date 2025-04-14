@@ -1,18 +1,18 @@
 // src/App.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import business from "../assets/bussiness.jpg";
 import conference from "../assets/Conference.jpg";
 import family from "../assets/Family.jpg";
 import travel from "../assets/travel.jpg";
-import { FaArrowRight, FaPlus } from "react-icons/fa6";
-import { useAuth } from "../store/auth";
-import { OchiFooter } from "../component/Footer";
-import { BorderAnimaButton, ButtonBtmUp } from "../component/Button";
-import gsap from "gsap";
-import { NavBar } from "../component/NavBar";
+import { FaArrowRight} from "react-icons/fa6";
+import { OchiFooter } from "../component/ComponentsUtils/Footer";
+import { BorderAnimaButton, ButtonBtmUp } from "../component/Theme/Button";
+import { NavBar } from "../component/ComponentsUtils/NavBar";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useEvent } from "../store/eventContext";
+import { FaTimes } from "react-icons/fa";
+
 
 const cardVariants = {
   hidden: { y: 100, opacity: 0 },
@@ -42,36 +42,12 @@ const cardVariants2 = {
 };
 
 const EventSelection = () => {
-  const { isLoggedin, user } = useAuth();
-
-  const [restaurants, setRestaurants] = useState([]);
-  const [isRestaurantLoading, setIsRestaurantLoading] = useState(false);
-  const [bakeries, setBakeries] = useState([]);
-  const [isBakeryLoading, setIsBakeryLoading] = useState(false);
-  const [halls, setHalls] = useState([]);
-  const [isHallLoading, setIsHallLoading] = useState(false);
-  const [decorators, setDecorators] = useState([]);
-  const [isDecoratorLoading, setIsDecoratorLoading] = useState(false);
   const [ref, inView] = useInView({ threshold: 0.2 });
   const [footerRef, footerInView] = useInView({ threshold: 0.2 });
+  const [showCreateEventForm, setShowCreateEventForm] = useState(false);
+  const [category, setCategory] = useState("Family Function");
 
   // Fetch all vendors
-  const fetchVendors = async (category, page = 1, limit = 10) => {
-    let data = [];
-    setIsVendorLoading(true);
-    try {
-      const res = await axiosInstance.get(
-        `/vendor/getAllVendors?category=${category}&page=${page}&limit=${limit}`
-      );
-      data = res.data;
-    } catch (error) {
-      console.error("Error fetching vendors", error);
-      data = [];
-    } finally {
-      setIsVendorLoading(false);
-    }
-    return data;
-  };
 
   const cards = [
     {
@@ -102,15 +78,10 @@ const EventSelection = () => {
     },
   ];
 
-  const [showCards, setShowCards] = useState(false);
-
-  const [showCreateEventForm, setShowCreateEventForm] = useState(false);
-
   const handleShowCreateEventForm = () => {
     setShowCreateEventForm(!showCreateEventForm);
   };
 
-  const [category, setCategory] = useState("Family Function");
 
   return (
     <div className=" overflow-hidden min-h-screen font-['Founders_Grotesk']">
@@ -125,9 +96,6 @@ const EventSelection = () => {
           handleShowCreateEventForm={handleShowCreateEventForm}
         />
       )}
-
-      {/* Uncommented Header component */}
-      {/* <HomePage/> */}
 
       {/* Hero Section */}
       <motion.section
@@ -222,8 +190,6 @@ const EventSelection = () => {
   );
 };
 
-
-import { FaTimes } from "react-icons/fa";
 
 const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
   const { createEvent } = useEvent();

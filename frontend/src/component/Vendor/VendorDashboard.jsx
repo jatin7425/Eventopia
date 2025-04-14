@@ -1,21 +1,17 @@
 import { Link, useParams } from "react-router-dom";
-import { useAuth } from "../store/auth";
-import { useVendor } from "../store/vendorContext";
-import { BASE_URL } from '../config/urls';
+import { useAuth } from "../../store/auth";
+import { useVendor } from "../../store/vendorContext";
+import { BASE_URL } from "../../config/urls";
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import VendorProductManager from "./VendorProductManager";
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance } from "../../lib/axios";
 import { FaEdit, FaPlus, FaTimes, FaTimesCircle } from "react-icons/fa";
-import vendorDefaultBanner from "../assets/vendorDefaultBanner.jpg"
-import vendorDefaultLogo from "../assets/vendorDefaultLogo.jpg"
-import gsap from 'gsap';
-
-
+import vendorDefaultBanner from "../../assets/vendorDefaultBanner.jpg";
+import vendorDefaultLogo from "../../assets/vendorDefaultLogo.jpg";
+import gsap from "gsap";
 
 export default function VendorDashboard() {
-
-
   const {
     addVendor,
     updateVendor,
@@ -25,24 +21,17 @@ export default function VendorDashboard() {
   } = useVendor();
   const { user } = useAuth();
   const { vendorId } = useParams();
-
-  // console.log(Productdeleted, ProductAdded, productUpdated)
-
-  const [list, setList] = useState([])
-
+  
   // Fetch a single vendor by ID
-
-  const [vendorList, setVendorList] = useState([])
+  const [vendorList, setVendorList] = useState([]);
 
   const fetchVendorById = async (vendorId) => {
     setIsVendorLoading(true);
     try {
       const res = await axiosInstance.get(`/vendor/getVendorById/${vendorId}`);
       // console.log(res?.data?.Products)
-      setVendorList(prev => [...prev, res?.data])
+      setVendorList((prev) => [...prev, res?.data]);
     } catch (error) {
-
-
       console.error("Error fetching vendor", error);
       toast.error("Failed to fetch vendor");
     } finally {
@@ -53,36 +42,31 @@ export default function VendorDashboard() {
   useEffect(() => {
     user?.vendorOwnerShip.forEach(async (vendorId) => {
       await fetchVendorById(vendorId);
-    })
+    });
   }, [user]);
 
-  const [vendor, setVendor] = useState()
-  const [currentVendor, setCurrentVendor] = useState()
+  const [vendor, setVendor] = useState();
+  const [currentVendor, setCurrentVendor] = useState();
 
   useEffect(() => {
     if (vendorId) {
-      const vendor = vendorList.find(vendor => vendor.data._id === vendorId)
+      const vendor = vendorList.find((vendor) => vendor.data._id === vendorId);
       if (vendor) {
-        setVendor(vendor.data)
-        setCurrentVendor(vendorId)
+        setVendor(vendor.data);
+        setCurrentVendor(vendorId);
       } else {
-        setVendor(vendorList[0]?.data)
-        setCurrentVendor(vendorList[0]?.data?._id)
+        setVendor(vendorList[0]?.data);
+        setCurrentVendor(vendorList[0]?.data?._id);
       }
     } else {
-      setVendor(vendorList[0]?.data)
-      setCurrentVendor(vendorList[0]?.data?._id)
+      setVendor(vendorList[0]?.data);
+      setCurrentVendor(vendorList[0]?.data?._id);
     }
-    // console.log(vendor)
-  }, [vendorList])
-
-
+  }, [vendorList]);
 
   const [OpenAddVenderForm, setOpenAddVenderForm] = useState(false);
-  const handleOpenAddVenderForm = () => setOpenAddVenderForm(!OpenAddVenderForm);
-
-  // console.log(user)
-
+  const handleOpenAddVenderForm = () =>
+    setOpenAddVenderForm(!OpenAddVenderForm);
   if (user?.vendorOwnerShip?.length == 0) {
     return (
       <div className="min-h-screen relative w-full dark:bg-[#1a1a1a] flex items-center justify-center dark:text-white p-6">
@@ -108,24 +92,18 @@ export default function VendorDashboard() {
     );
   }
 
-  // console.log(user?.vendorOwnerShip)
-
-  const [openVenderList, setOpenVenderList] = useState(false)
-  const handleOpenVenderList = () => setOpenVenderList(!openVenderList)
-
+  const [openVenderList, setOpenVenderList] = useState(false);
+  const handleOpenVenderList = () => setOpenVenderList(!openVenderList);
 
   const RenderVenderList = () => {
     const listRef = useRef([]);
     const vendorRefs = useRef([]);
-
-    // console.log(vendorList)
-
-    vendorList.forEach(vendors => {
-
-      if (!listRef.current.some(v => v.data._id === vendors.data._id)) {
-        listRef.current.push(vendors)
+    
+    vendorList.forEach((vendors) => {
+      if (!listRef.current.some((v) => v.data._id === vendors.data._id)) {
+        listRef.current.push(vendors);
       }
-    })
+    });
     useEffect(() => {
       // Animate each h1 element with a delay of 100ms
       vendorRefs.current.forEach((ref, index) => {
@@ -176,25 +154,32 @@ export default function VendorDashboard() {
         ))}
       </div>
     );
-  }
+  };
 
   const containerRef = useRef(null);
 
   useEffect(() => {
     if (openVenderList) {
-      gsap.to(containerRef.current, { duration: 0.3, minWidth: '200px', minHeight: '280px', scaleY: 1 });
+      gsap.to(containerRef.current, {
+        duration: 0.3,
+        minWidth: "200px",
+        minHeight: "280px",
+        scaleY: 1,
+      });
     } else {
-      gsap.to(containerRef.current, { duration: 0.3, minWidth: '0px', minHeight: '0px', scaleY: 1 });
+      gsap.to(containerRef.current, {
+        duration: 0.3,
+        minWidth: "0px",
+        minHeight: "0px",
+        scaleY: 1,
+      });
     }
-
-
-
   }, [openVenderList]);
 
-  const [openBannerForm, setOpenBannerForm] = useState(false)
-  const [HoveringOnBanner, setHoveringOnBanner] = useState(false)
-  const handleOpenBannerForm = () => setOpenBannerForm(!openBannerForm)
-  const handleHoverBanner = () => setHoveringOnBanner(!HoveringOnBanner)
+  const [openBannerForm, setOpenBannerForm] = useState(false);
+  const [HoveringOnBanner, setHoveringOnBanner] = useState(false);
+  const handleOpenBannerForm = () => setOpenBannerForm(!openBannerForm);
+  const handleHoverBanner = () => setHoveringOnBanner(!HoveringOnBanner);
 
   return (
     <div className="min-h-screen w-full dark:bg-[#1a1a1a] text-gray-600 bg-zinc-300 dark:text-white">
@@ -224,14 +209,16 @@ export default function VendorDashboard() {
             onClick={handleOpenVenderList}
           >
             <FaPlus
-              className={`${openVenderList ? "rotate-45" : ""
-                } transition-all duration-100`}
+              className={`${
+                openVenderList ? "rotate-45" : ""
+              } transition-all duration-100`}
             />
           </div>
 
           <div
-            className={`${openVenderList ? "" : "hidden"
-              } transition-all duration-300 pb-2 pr-2 max-h-96 h-max overflow-y-auto`}
+            className={`${
+              openVenderList ? "" : "hidden"
+            } transition-all duration-300 pb-2 pr-2 max-h-96 h-max overflow-y-auto`}
           >
             <RenderVenderList />
           </div>
@@ -242,15 +229,18 @@ export default function VendorDashboard() {
           <div
             onMouseEnter={handleHoverBanner}
             onMouseLeave={handleHoverBanner}
-            className={`absolute top-0 left-0 w-full h-full ${HoveringOnBanner && 'bg-black/50'} flex items-center justify-center`}>
-            {HoveringOnBanner &&
+            className={`absolute top-0 left-0 w-full h-full ${
+              HoveringOnBanner && "bg-black/50"
+            } flex items-center justify-center`}
+          >
+            {HoveringOnBanner && (
               <div
                 className="text-white bg-white/30 px-2 py-1 rounded-lg text-xl cursor-pointer m-2 whitespace-nowrap flex justify-center items-center gap-2"
                 onClick={handleOpenBannerForm}
               >
                 <FaEdit /> Edit the banner
               </div>
-            }
+            )}
           </div>
           <img
             src={
@@ -290,15 +280,12 @@ export default function VendorDashboard() {
       </div>
     </div>
   );
-
-
 }
 
 const AddVendorForm = ({ handleOpenAddVenderForm }) => {
   const [step, setStep] = useState(1);
   const [shopCategory, setShopCategory] = useState("");
   const [formData, setFormData] = useState({
-
     ShopName: "",
     ShopPhone: "",
     ShopEmail: "",
@@ -338,9 +325,8 @@ const AddVendorForm = ({ handleOpenAddVenderForm }) => {
   };
 
   const handleClose = () => {
-    handleOpenAddVenderForm()
-  }
-
+    handleOpenAddVenderForm();
+  };
 
   return (
     <>
@@ -540,11 +526,18 @@ const AddVendorForm = ({ handleOpenAddVenderForm }) => {
             )}
 
             {step < 3 ? (
-              <button type="button" onClick={handleNext} className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 ">
+              <button
+                type="button"
+                onClick={handleNext}
+                className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 "
+              >
                 Next
               </button>
             ) : (
-              <button type="submit" className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 ">
+              <button
+                type="submit"
+                className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 "
+              >
                 Submit
               </button>
             )}
@@ -586,10 +579,11 @@ const BannerForm = ({ handleOpenBannerForm, vendorId }) => {
 
   return (
     <>
-      <div
-        className="max-w-xl w-[90%] mx-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 bg-white/90 backdrop-blur-sm dark:bg-zinc-800 shadow-xl rounded-lg mt-10 z-20"
-      >
-        <button onClick={handleOpenBannerForm} className="absolute top-4 right-4 p-2">
+      <div className="max-w-xl w-[90%] mx-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 bg-white/90 backdrop-blur-sm dark:bg-zinc-800 shadow-xl rounded-lg mt-10 z-20">
+        <button
+          onClick={handleOpenBannerForm}
+          className="absolute top-4 right-4 p-2"
+        >
           <FaTimesCircle size={20} />
         </button>
         <h1 className="text-3xl font-semibold text-center text-gray-700 dark:text-gray-200 mb-8 ">
@@ -605,9 +599,15 @@ const BannerForm = ({ handleOpenBannerForm, vendorId }) => {
           </div>
         )}
         <br />
-        <form className="flex flex-col gap-6 justify-center items-center w-full" onSubmit={handleSubmit}>
+        <form
+          className="flex flex-col gap-6 justify-center items-center w-full"
+          onSubmit={handleSubmit}
+        >
           <div className="flex flex-col">
-            <label htmlFor="ShopBanner" className="text-lg text-gray-600 dark:text-gray-300">
+            <label
+              htmlFor="ShopBanner"
+              className="text-lg text-gray-600 dark:text-gray-300"
+            >
               Shop Banner
             </label>
             <input
@@ -618,7 +618,10 @@ const BannerForm = ({ handleOpenBannerForm, vendorId }) => {
               className="px-3 py-3 outline-none rounded-md bg-zinc-700/20  w-full"
             />
           </div>
-          <button type="submit" className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 ">
+          <button
+            type="submit"
+            className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 "
+          >
             Submit
           </button>
         </form>

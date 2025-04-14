@@ -1,44 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-
-export const LoadingAnimation = () => {
-  const dotsRef = useRef([]);
-
-  useEffect(() => {
-    gsap.to(dotsRef.current, {
-      scale: 1.5,
-      opacity: 0.5,
-      repeat: -1,
-      stagger: {
-        each: 0.2,
-        yoyo: true,
-      },
-    });
-  }, []);
-
-  return (
-    <div className="flex justify-center items-center h-screen bg-gray-900">
-      <div className="flex space-x-2">
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            ref={(el) => (dotsRef.current[i] = el)}
-            className="w-6 h-6 bg-blue-500 rounded-full"
-            initial={{ opacity: 0.3, scale: 1 }}
-            animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.5, 1] }}
-            transition={{
-              repeat: Infinity,
-              duration: 1,
-              ease: "easeInOut",
-              delay: i * 0.2,
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
+import { useEffect, useState } from "react";
 
 export const OchiLoadingScreen = () => {
   const [progress, setProgress] = useState(0);

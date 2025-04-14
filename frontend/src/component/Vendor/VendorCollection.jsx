@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DefaultImg from "../../assets/default-product-image.png";
-import { NavBar } from "../NavBar";
-import { OchiFooter } from "../Footer";
+import { NavBar } from "../ComponentsUtils/NavBar";
+import { OchiFooter } from "../ComponentsUtils/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Link, useParams } from "react-router-dom";

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ThemeToggle } from "../ToggleTheme";
-import { ArrowBigLeft, ArrowLeft } from "lucide-react";
+import { ThemeToggle } from "../Theme/ToggleTheme";
 import { BsArrowLeft } from "react-icons/bs";
 import { Link } from "react-router-dom";
 

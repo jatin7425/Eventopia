@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo-nobg.png";
-import { useAuth } from "../store/auth.jsx";
+import logo from "../../assets/logo-nobg.png";
+import { useAuth } from "../../store/auth.jsx";
 import { CgProfile } from "react-icons/cg";
 import "locomotive-scroll/dist/locomotive-scroll.css";
 import { motion, useAnimation } from "framer-motion";
-import { ThemeToggle } from "./ToggleTheme";
-import { ButtonArrow } from "./Button.jsx";
-
+import { ThemeToggle } from "../Theme/ToggleTheme";
+import { ButtonArrow } from "../Theme/Button.jsx";
 
 export const NavBar = ({ homeLink, aniDelay }) => {
   const { isLoggedin, user } = useAuth();
@@ -85,7 +84,8 @@ export const NavBar = ({ homeLink, aniDelay }) => {
         initial={{ y: -150 }}
         animate={{ y: 10 }}
         transition={{ duration: 1, delay: aniDelay }}
-        className="w-full bg-transparent text-white py-2">
+        className="w-full bg-transparent text-white py-2"
+      >
         <div className="container mx-auto flex justify-between items-center px-6">
           <Link to={"/"} className="max-md:hidden">
             <img src={logo} alt="logo" className="w-20 mr-6  " />
@@ -133,11 +133,12 @@ export const NavBar = ({ homeLink, aniDelay }) => {
               </Link>
             ) : (
               <>
-                <Link
-                  to={"/auth"}
-                  className=" "
-                >
-                  <ButtonArrow title={"Login"} bgColor={"bg-blue-600"} circleBg={"bg-white"}  />
+                <Link to={"/auth"} className=" ">
+                  <ButtonArrow
+                    title={"Login"}
+                    bgColor={"bg-blue-600"}
+                    circleBg={"bg-white"}
+                  />
                 </Link>
                 <button
                   button
@@ -161,7 +162,11 @@ export const NavBar = ({ homeLink, aniDelay }) => {
               </>
             )}
           </div>
-          <div className={`w-full max-w-64 min-h-screen md:hidden flex flex-col justify-between fixed top-0 right-0 h-full -mt-1 -mr-5 dark:bg-white/10 bg-black/10 backdrop-blur-xl z-40 ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300`}>
+          <div
+            className={`w-full max-w-64 min-h-screen md:hidden flex flex-col justify-between fixed top-0 right-0 h-full -mt-1 -mr-5 dark:bg-white/10 bg-black/10 backdrop-blur-xl z-40 ${
+              isSidebarOpen ? "translate-x-0" : "translate-x-full"
+            } transition-transform duration-300`}
+          >
             <nav className="w-full">
               <ul className="flex flex-col w-full m-auto text-black dark:text-white  ">
                 <div className="flex gap-3 ml-auto p-5 justify-start w-full">
@@ -174,7 +179,7 @@ export const NavBar = ({ homeLink, aniDelay }) => {
                   <li
                     key={menu.name}
                     className="w-full py-3 px-4 h-max text-end hover:bg-gray-500/10 backdrop-blur-sm group"
-                    onClick={() => window.location.href = menu.link} // Trigger navigation
+                    onClick={() => (window.location.href = menu.link)} // Trigger navigation
                   >
                     <a
                       href={menu.link}
@@ -184,7 +189,6 @@ export const NavBar = ({ homeLink, aniDelay }) => {
                       {menu.name}
                     </a>
                   </li>
-
                 ))}
               </ul>
             </nav>
@@ -236,9 +240,15 @@ export const NavBar = ({ homeLink, aniDelay }) => {
               )}
             </div>
           </div>
-          <button onClick={toggleSidebar} className="text-2xl fixed z-50 top-8 right-2 flex flex-col gap-1 md:hidden">
+          <button
+            onClick={toggleSidebar}
+            className="text-2xl fixed z-50 top-8 right-2 flex flex-col gap-1 md:hidden"
+          >
             <motion.div
-              animate={{ rotate: isSidebarOpen ? 45 : 0, y: isSidebarOpen ? 6 : 0 }}
+              animate={{
+                rotate: isSidebarOpen ? 45 : 0,
+                y: isSidebarOpen ? 6 : 0,
+              }}
               className="w-7 h-1 bg-black dark:bg-white rounded"
             ></motion.div>
             <motion.div
@@ -246,7 +256,10 @@ export const NavBar = ({ homeLink, aniDelay }) => {
               className="w-7 h-1 bg-black dark:bg-white rounded"
             ></motion.div>
             <motion.div
-              animate={{ rotate: isSidebarOpen ? -45 : 0, y: isSidebarOpen ? -6 : 0 }}
+              animate={{
+                rotate: isSidebarOpen ? -45 : 0,
+                y: isSidebarOpen ? -6 : 0,
+              }}
               className="w-7 h-1 bg-black dark:bg-white rounded"
             ></motion.div>
           </button>

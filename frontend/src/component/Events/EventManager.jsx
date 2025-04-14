@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance } from "../../lib/axios";
 import { Link } from "react-router-dom";
-import { useEvent } from "../store/eventContext";
-import { useAuth } from "../store/auth";
-import { ButtonBtmUp } from "./Button";
-import VendorProductsComponent from "./Vendor/VendorProductsComponent";
+import { useEvent } from "../../store/eventContext";
+import { useAuth } from "../../store/auth";
+import { ButtonBtmUp } from "../Theme/Button";
+import VendorProductsComponent from "../Vendor/VendorProductsComponent";
 import toast from "react-hot-toast";
-import { useEventCart } from "../store/eventCartContext";
+import { useEventCart } from "../../store/eventCartContext";
 import { ShoppingCart, ClipboardList, Users } from "lucide-react";
+import MyCalendar from "../Calendar/MyCalendar";
+import InvitationManager from "../Events/InvitationManager";
 
 const EventManager = ({}) => {
   const dropdownRef = useRef(null);
@@ -22,15 +24,7 @@ const EventManager = ({}) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [eventAccodCategory, setEventAccodCategory] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [showDescriptionBox, setShowDescriptionBox] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
-
-  // console.log(cart)
-
-  const handleIsDescriptionOpen = () => {
-    setIsDescriptionOpen(!isDescriptionOpen);
-  };
 
   // Category selection handler
   const handleCategorySelection = (category) => {
@@ -106,30 +100,41 @@ const EventManager = ({}) => {
     };
   }, []);
 
-   const [isDescriptionOpen2, setIsDescriptionOpen2] = useState(false);
+  const [isDescriptionOpen2, setIsDescriptionOpen2] = useState(false);
 
-   const handleIsDescriptionOpen2 = () => {
-     setIsDescriptionOpen2(!isDescriptionOpen2);
-   };
+  const handleIsDescriptionOpen2 = () => {
+    setIsDescriptionOpen2(!isDescriptionOpen2);
+  };
 
   const [attendeesOption, setAttendeesOption] = useState(false);
   const [addTodoOption, setaddTodoOption] = useState(false);
   const [openCartOption, setOpenCartOption] = useState(true);
+  const [openCalendar, setOpenCalendar] = useState(false);
 
   const handleAttendeesOption = () => {
     setAttendeesOption(true);
     setaddTodoOption(false);
     setOpenCartOption(false);
+    setOpenCalendar(false);
   };
 
   const handleAddTodoOption = () => {
     setaddTodoOption(true);
     setOpenCartOption(false);
     setAttendeesOption(false);
+    setOpenCalendar(false);
   };
 
   const handleOpenCartOption = () => {
     setOpenCartOption(true);
+    setaddTodoOption(false);
+    setAttendeesOption(false);
+    setOpenCalendar(false);
+  };
+
+  const handleOpenCalendar = () => {
+    setOpenCalendar(true);
+    setOpenCartOption(false);
     setaddTodoOption(false);
     setAttendeesOption(false);
   };
@@ -176,7 +181,7 @@ const EventManager = ({}) => {
 
         {/* ------------------------Category Dropdown------------------------- */}
         <div
-          className="h-full text-end md:w-64 w-full dark:text-black z-[99]"
+          className="h-full text-end md:w-64 w-full dark:text-black z-[40]"
           ref={dropdownRef}
         >
           <div className="relative md:w-64 w-full mx-auto">
@@ -188,7 +193,7 @@ const EventManager = ({}) => {
             >
               {selectedEvent?.category || "Select Category"}
               <ChevronDown
-                className="w-5 h-5 transition-transform"
+                className="w-5 h-5 transition-transform "
                 style={{
                   transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                 }}
@@ -250,7 +255,7 @@ const EventManager = ({}) => {
                 }
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                transition={{ }}
+                transition={{}}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleIsDescriptionOpen2();
@@ -315,7 +320,21 @@ const EventManager = ({}) => {
               w="w-32"
               h="h-10"
               onClick={() => setOpenCartOption(!openCartOption)}
-              
+            />
+          </span>
+
+          {/* Calendar Button */}
+          <span onClick={handleOpenCalendar}>
+            <ButtonBtmUp
+              title={"Calendar"}
+              icon={<ClipboardList size={18} />}
+              bgColor="bg-blue-600"
+              textColor="text-white"
+              hoverBgColor="bg-blue-700"
+              rounded="rounded-lg"
+              w="w-32"
+              h="h-10"
+              onClick={() => setOpenCalendar(!openCalendar)}
             />
           </span>
 
@@ -331,49 +350,13 @@ const EventManager = ({}) => {
               rounded="rounded-lg"
               w="w-32"
               h="h-10"
-              
-            />
-          </span>
-
-          {/* Todo Button */}
-          <span onClick={handleAddTodoOption}>
-            <ButtonBtmUp
-              title={addTodoOption ? "Close Todo" : "View Todo"}
-              icon={<ClipboardList size={18} />}
-              bgColor="bg-blue-600"
-              textColor="text-white"
-              hoverBgColor="bg-blue-700"
-              rounded="rounded-lg"
-              w="w-32"
-              h="h-10"
             />
           </span>
         </div>
 
         {/* Main Content Section */}
 
-        {attendeesOption && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="w-full h-fit border border-zinc-500 rounded-lg  overflow-hidden"
-          >
-            <div className="flex max-md:flex-col-reverse items-center justify-between gap-5 ">
-              <div className="w-full h-fit flex">
-                <div className="w-full min-h-[20vw] bg-zinc-100 dark:bg-zinc-800 border-r px-4 py-2 ">
-                  Accept
-                </div>
-                <div className="w-full min-h-[20vw] bg-zinc-100 dark:bg-zinc-800 border-r px-4 py-2 ">
-                  Not Response
-                </div>
-                <div className="w-full min-h-[20vw] bg-zinc-100 dark:bg-zinc-800 px-4 py-2 ">
-                  Decline
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
+        {attendeesOption && <InvitationManager event={event} />}
 
         {addTodoOption && (
           <motion.div
@@ -397,12 +380,27 @@ const EventManager = ({}) => {
             className="w-full h-fit border-t-2 border-zinc-500"
           >
             <hr className="border-gray-300 dark:border-zinc-500" />
-            <VendorProductsComponent event={event} />
+            <VendorProductsComponent event={event} cart={cart} />
+          </motion.div>
+        )}
+
+        {openCalendar && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="w-full h-fit border-t-2 border-zinc-500"
+          >
+            <div className="h-full w-full">
+              <MyCalendar />
+            </div>
           </motion.div>
         )}
       </div>
     </div>
   );
 };
+
+
 
 export default EventManager;

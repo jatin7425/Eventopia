@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import { FaCamera } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useAuth } from "../store/auth";
+import { useAuth } from "../../store/auth";
 import { motion } from "framer-motion";
 
 const ProfileSetting = ({ userData }) => {
-  
-
   const { updateprofile } = useAuth();
   // console.log(userData)
   // States for Password Reset Tab (case 2)
@@ -95,7 +93,7 @@ const ProfileSetting = ({ userData }) => {
       },
     };
 
-    updateprofile(updatedData)
+    updateprofile(updatedData);
     console.log("Account Updated Data:", updatedData);
     toast.success("Account details updated successfully!");
 
@@ -365,15 +363,11 @@ const ProfileSetting = ({ userData }) => {
                 </table>
               </div>
 
-              <h2 className="block p-2 text-lg font-bold mt-10">
-                Address
-              </h2>
+              <h2 className="block p-2 text-lg font-bold mt-10">Address</h2>
               <div className="shadow-inner xs:p-4 bg-zinc-200 dark:bg-[#1a1a1a]/50 rounded-xl">
                 <table cellPadding={5} className="w-full">
                   <tr className="w-full">
-                    <th className="text-start w-max whitespace-nowrap">
-                      City
-                    </th>
+                    <th className="text-start w-max whitespace-nowrap">City</th>
                     <td className="w-full px-10">
                       {userData?.address?.[0]?.city || "loading..."}
                     </td>
@@ -411,7 +405,6 @@ const ProfileSetting = ({ userData }) => {
         return <></>;
     }
   };
-  
 
   const tabs = ["Account Details", "Account Update", "Reset Password"];
   const [currentTab1, setCurrentTab1] = useState(0); // Use the correct state name

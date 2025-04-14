@@ -1,11 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../store/auth.jsx";
 import toast, { LoaderIcon } from "react-hot-toast";
 import { GoEye, GoEyeClosed } from "react-icons/go";
-import { ThemeToggle } from "../component/ToggleTheme.jsx";
 
 function AuthPage() {
-  const { user, login, logout, signup, isAuthLoading } = useAuth();
+  const {  login, signup, isAuthLoading } = useAuth();
   const [isSignPage, setIsSignPage] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);

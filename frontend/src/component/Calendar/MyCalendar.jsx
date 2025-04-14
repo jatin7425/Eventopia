@@ -1,27 +1,45 @@
-import { useState, useEffect } from 'react';
-import { useEvent } from '../../store/eventContext';
+import { useState, useEffect } from "react";
+import { useEvent } from "../../store/eventContext";
 import {
-  startOfWeek, endOfWeek, eachDayOfInterval, format,
-  addWeeks, subWeeks, addMonths, subMonths, isSameMonth,
-  startOfDay, addHours, isSameDay, parse, isToday,
-  startOfMonth, endOfMonth, eachDayOfInterval as eachDayOfMonth
-} from 'date-fns';
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  format,
+  addWeeks,
+  subWeeks,
+  addMonths,
+  subMonths,
+  isSameMonth,
+  isSameDay,
+  isToday,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval as eachDayOfMonth,
+} from "date-fns";
 
 const MyCalendar = () => {
-  const { calendarEntries, event, updateCalendarEntry, addCalendarToEvent, getCalendarEntries, deleteCalendarEntry, isEventLoading } = useEvent();
+  const {
+    calendarEntries,
+    event,
+    updateCalendarEntry,
+    addCalendarToEvent,
+    getCalendarEntries,
+    deleteCalendarEntry,
+    isEventLoading,
+  } = useEvent();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedTab, setSelectedTab] = useState('calendar');
-  const [viewMode, setViewMode] = useState('month');
+  const [selectedTab, setSelectedTab] = useState("calendar");
+  const [viewMode, setViewMode] = useState("month");
   const [newEvent, setNewEvent] = useState({
-    title: '',
-    date: format(new Date(), 'yyyy-MM-dd'),
-    startTime: '09:00',
-    endTime: '10:00',
-    description: '',
-    priority: 'medium'
+    title: "",
+    date: format(new Date(), "yyyy-MM-dd"),
+    startTime: "09:00",
+    endTime: "10:00",
+    description: "",
+    priority: "medium",
   });
 
-  console.log(calendarEntries)
+  console.log(calendarEntries);
 
   useEffect(() => {
     getCalendarEntries(event._id);
@@ -32,11 +50,11 @@ const MyCalendar = () => {
 
     try {
       // Basic client-side validation
-      const [startH, startM] = newEvent.startTime.split(':').map(Number);
-      const [endH, endM] = newEvent.endTime.split(':').map(Number);
+      const [startH, startM] = newEvent.startTime.split(":").map(Number);
+      const [endH, endM] = newEvent.endTime.split(":").map(Number);
 
       if (endH < startH || (endH === startH && endM <= startM)) {
-        toast.error('End time must be after start time');
+        toast.error("End time must be after start time");
         return;
       }
 
@@ -44,24 +62,26 @@ const MyCalendar = () => {
 
       // Reset form
       setNewEvent({
-        title: '',
-        date: format(new Date(), 'yyyy-MM-dd'),
-        startTime: '09:00',
-        endTime: '10:00',
-        description: '',
-        priority: 'medium'
+        title: "",
+        date: format(new Date(), "yyyy-MM-dd"),
+        startTime: "09:00",
+        endTime: "10:00",
+        description: "",
+        priority: "medium",
       });
-
     } catch (error) {
-      toast.error('Failed to create event');
+      toast.error("Failed to create event");
     }
   };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'high': return 'bg-red-500';
-      case 'medium': return 'bg-yellow-500';
-      default: return 'bg-green-500';
+      case "high":
+        return "bg-red-500";
+      case "medium":
+        return "bg-yellow-500";
+      default:
+        return "bg-green-500";
     }
   };
 
@@ -73,41 +93,57 @@ const MyCalendar = () => {
 
     return (
       <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-zinc-700">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="bg-white dark:bg-zinc-800 p-2 text-center text-sm font-medium dark:text-white">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div
+            key={day}
+            className="bg-white dark:bg-zinc-800 p-2 text-center text-sm font-medium dark:text-white"
+          >
             {day}
           </div>
         ))}
 
-        {Array(startDay).fill(null).map((_, i) => (
-          <div key={`empty-${i}`} className="bg-white dark:bg-zinc-800 min-h-[100px]" />
-        ))}
+        {Array(startDay)
+          .fill(null)
+          .map((_, i) => (
+            <div
+              key={`empty-${i}`}
+              className="bg-white dark:bg-zinc-800 min-h-[100px]"
+            />
+          ))}
 
-        {daysInMonth.map(day => {
-          const dayEvents = (calendarEntries == undefined || calendarEntries.length === 0) ? [] : calendarEntries?.filter(entry =>
-            isSameDay(new Date(entry.date), day)
-          );
+        {daysInMonth.map((day) => {
+          const dayEvents =
+            calendarEntries == undefined || calendarEntries.length === 0
+              ? []
+              : calendarEntries?.filter((entry) =>
+                  isSameDay(new Date(entry.date), day)
+                );
           return (
             <div
               key={day}
               className={`bg-white dark:bg-zinc-800 min-h-[100px] p-2 border-t border-gray-100 dark:border-zinc-700
-                ${!isSameMonth(day, currentDate) ? 'opacity-50' : ''}`}
+                ${!isSameMonth(day, currentDate) ? "opacity-50" : ""}`}
             >
               <div className="flex justify-between items-center">
-                <span className={`text-sm ${isToday(day) ?
-                  'bg-blue-500 text-white rounded-full px-2 pt-1' :
-                  'dark:text-white'
-                  }`}>
-                  {format(day, 'd')}
+                <span
+                  className={`text-sm ${
+                    isToday(day)
+                      ? "bg-blue-500 text-white rounded-full px-2 pt-1"
+                      : "dark:text-white"
+                  }`}
+                >
+                  {format(day, "d")}
                 </span>
               </div>
               <div className="mt-1 space-y-1">
-                {dayEvents.map(entry => (
+                {dayEvents.map((entry) => (
                   <div key={entry._id} className="calendar-event">
                     <div className={`priority-${entry.priority}`} />
                     <div>
                       <strong>{entry.title}</strong>
-                      <div>{entry.startTime} - {entry.endTime}</div>
+                      <div>
+                        {entry.startTime} - {entry.endTime}
+                      </div>
                       {entry.description && <div>{entry.description}</div>}
                     </div>
                   </div>
@@ -157,10 +193,11 @@ const MyCalendar = () => {
             <div key={day} className="bg-white dark:bg-zinc-800">
               {/* Date Header */}
               <div
-                className={`p-2 text-sm ${isSameMonth(day, currentDate)
-                  ? "text-gray-800 dark:text-white"
-                  : "text-gray-400 dark:text-zinc-500"
-                  }`}
+                className={`p-2 text-sm ${
+                  isSameMonth(day, currentDate)
+                    ? "text-gray-800 dark:text-white"
+                    : "text-gray-400 dark:text-zinc-500"
+                }`}
               >
                 {format(day, "EEE d")}
               </div>
@@ -206,8 +243,6 @@ const MyCalendar = () => {
     );
   };
 
-
-
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-zinc-900">
       <div className="max-w-7xl mx-auto p-4">
@@ -251,19 +286,21 @@ const MyCalendar = () => {
           <div className="flex gap-2 ml-auto">
             <button
               onClick={() => setSelectedTab("calendar")}
-              className={`px-4 pt-3 pb-2 rounded-lg ${selectedTab === "calendar"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
-                }`}
+              className={`px-4 pt-3 pb-2 rounded-lg ${
+                selectedTab === "calendar"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+              }`}
             >
               Calendar
             </button>
             <button
               onClick={() => setSelectedTab("event")}
-              className={`px-4 pt-3 pb-2 rounded-lg ${selectedTab === "event"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
-                }`}
+              className={`px-4 pt-3 pb-2 rounded-lg ${
+                selectedTab === "event"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+              }`}
             >
               Add Event
             </button>
@@ -277,10 +314,11 @@ const MyCalendar = () => {
                 <button
                   key={view}
                   onClick={() => setViewMode(view.toLowerCase())}
-                  className={`px-4 pt-3 pb-2 rounded-lg ${viewMode === view.toLowerCase()
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
-                    }`}
+                  className={`px-4 pt-3 pb-2 rounded-lg ${
+                    viewMode === view.toLowerCase()
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+                  }`}
                 >
                   {view}
                 </button>
