@@ -1,1 +1,2 @@
-public/uploads/products
+public/uploads/products/*
+public/uploads/vendors/*
