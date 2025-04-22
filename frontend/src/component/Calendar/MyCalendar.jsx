@@ -28,6 +28,7 @@ const MyCalendar = () => {
     isEventLoading,
   } = useEvent();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [TaskDets, setTaskDets] = useState(null)
   const [selectedTab, setSelectedTab] = useState("calendar");
   const [viewMode, setViewMode] = useState("month");
   const [newEvent, setNewEvent] = useState({
@@ -43,7 +44,7 @@ const MyCalendar = () => {
 
   useEffect(() => {
     getCalendarEntries(event._id);
-  }, [getCalendarEntries]);
+  }, []);
 
   const handleAddEvent = async () => {
     if (!newEvent.title) return;
@@ -74,6 +75,8 @@ const MyCalendar = () => {
     }
   };
 
+
+
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
@@ -83,6 +86,35 @@ const MyCalendar = () => {
       default:
         return "bg-green-500";
     }
+  };
+
+  const TaskDetails = ({TaskDets}) => {
+    return (
+      <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow-lg w-fit h-fit fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+        <h2 className="text-2xl font-bold text-zinc-700 dark:text-zinc-300 mb-4">
+          Task Details
+        </h2>
+        <p className="text-zinc-700 dark:text-zinc-300 mb-2">
+          <span className="font-semibold">Title:</span> {TaskDets?.title}
+        </p>
+        <p className="text-zinc-700 dark:text-zinc-300 mb-2">
+          <span className="font-semibold">Date:</span> {TaskDets?.date}
+        </p>
+        <p className="text-zinc-700 dark:text-zinc-300 mb-2">
+          <span className="font-semibold">Start Time:</span> {TaskDets?.startTime}
+        </p>
+        <p className="text-zinc-700 dark:text-zinc-300 mb-2">
+          <span className="font-semibold">End Time:</span> {TaskDets?.endTime}
+        </p>
+        <p className="text-zinc-700 dark:text-zinc-300 mb-2">
+          <span className="font-semibold">Description:</span> {TaskDets?.description}
+        </p>
+        <p className="text-zinc-700 dark:text-zinc-300 mb-2">
+          <span className="font-semibold">Priority:</span> {TaskDets?.priority}
+        </p>
+        <button className="bg-zinc-700 text-white px-4 py-2 rounded-lg w-full" onClick={() => setTaskDets(null)}>Close</button>
+      </div>
+    );
   };
 
   const renderMonthView = () => {
@@ -119,17 +151,18 @@ const MyCalendar = () => {
               : Entries?.filter((entry) =>
                 isSameDay(new Date(entry.date), day)
               );
-          return (
+          return (// In the month view day cell div
             <div
               key={day}
               className={`bg-white dark:bg-zinc-800 min-h-[100px] p-2 border-t border-gray-100 dark:border-zinc-700
-                ${!isSameMonth(day, currentDate) ? "opacity-50" : ""}`}
+                ${!isSameMonth(day, currentDate) ? "opacity-50" : ""}
+                ${dayEvents.length > 0 ? "bg-amber-100 dark:bg-amber-900" : ""}`} // Add this line
             >
               <div className="flex justify-between items-center">
                 <span
                   className={`text-sm ${isToday(day)
-                      ? "bg-blue-500 text-white rounded-full px-2 pt-1"
-                      : "dark:text-white"
+                    ? "bg-blue-500 text-white rounded-full px-2 pt-1"
+                    : "dark:text-white"
                     }`}
                 >
                   {format(day, "d")}
@@ -137,7 +170,11 @@ const MyCalendar = () => {
               </div>
               <div className="mt-1 space-y-1">
                 {dayEvents.map((entry) => (
-                  <div key={entry._id} className="calendar-event">
+                  <div key={entry._id} className={`first-letter:calendar-event  ${getPriorityColor(
+                    entry.priority
+                  )} p-2 rounded-md cursor-pointer`}
+                  onClick={() => setTaskDets(entry)}
+                  >
                     <div className={`priority-${entry.priority}`} />
                     <div>
                       <strong>{entry.title}</strong>
@@ -197,13 +234,17 @@ const MyCalendar = () => {
                 : Entries?.filter((entry) =>
                   isSameDay(new Date(entry.date), day)
                 );
-            return (
-              <div key={day} className="bg-white dark:bg-zinc-800">
+            return (// In the week view day column div
+              <div
+                key={day}
+                className={`bg-white dark:bg-zinc-800 ${events.length > 0 ? "bg-amber-100 dark:bg-amber-900" : ""
+                  }`}
+              >
                 {/* Date Header */}
                 <div
                   className={`p-2 text-sm ${isSameMonth(day, currentDate)
-                      ? "text-gray-800 dark:text-white"
-                      : "text-gray-400 dark:text-zinc-500"
+                    ? "text-gray-800 dark:text-white"
+                    : "text-gray-400 dark:text-zinc-500"
                     }`}
                 >
                   {format(day, "EEE d")}
@@ -218,23 +259,24 @@ const MyCalendar = () => {
                     />
                   ))}
                   {/* Events */}
-                  {events.filter((e) => isSameDay(new Date(e.start), day))
-                    .map((event) => {
-                      const start = new Date(event.start);
-                      const end = new Date(event.end);
-                      const top =
-                        (start.getHours() + start.getMinutes() / 60) * 50;
+                  {/* Events */}
+                  {events.filter((entry) => isSameDay(new Date(entry.date), day))
+                    .map((entry) => {
+                      const start = new Date(`${entry.date.split('T')[0]}T${entry.startTime}`);
+                      const end = new Date(`${entry.date.split('T')[0]}T${entry.endTime}`);
+                      const top = (start.getHours() + start.getMinutes() / 60) * 50;
                       const height = ((end - start) / (1000 * 60 * 60)) * 50;
 
                       return (
                         <div
-                          key={event.id}
+                          key={entry._id}  // Changed from event.id to entry._id
                           className={`absolute left-1 right-1 ${getPriorityColor(
-                            event.priority
+                            entry.priority
                           )} rounded p-1 text-white text-sm cursor-pointer`}
                           style={{ top: `${top}px`, height: `${height}px` }}
+                          onClick={() => setTaskDets(entry)}
                         >
-                          {event.title}
+                          {entry.title}
                           <div className="text-xs opacity-75">
                             {format(start, "HH:mm")} - {format(end, "HH:mm")}
                           </div>
@@ -252,6 +294,7 @@ const MyCalendar = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-zinc-900">
+      {TaskDets && <TaskDetails TaskDets={TaskDets} />}
       <div className="max-w-7xl mx-auto p-4">
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex items-center gap-4">
@@ -294,8 +337,8 @@ const MyCalendar = () => {
             <button
               onClick={() => setSelectedTab("calendar")}
               className={`px-4 pt-3 pb-2 rounded-lg ${selectedTab === "calendar"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
                 }`}
             >
               Calendar
@@ -303,8 +346,8 @@ const MyCalendar = () => {
             <button
               onClick={() => setSelectedTab("event")}
               className={`px-4 pt-3 pb-2 rounded-lg ${selectedTab === "event"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
                 }`}
             >
               Add Event
@@ -320,8 +363,8 @@ const MyCalendar = () => {
                   key={view}
                   onClick={() => setViewMode(view.toLowerCase())}
                   className={`px-4 pt-3 pb-2 rounded-lg ${viewMode === view.toLowerCase()
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 dark:bg-zinc-700 dark:text-white"
                     }`}
                 >
                   {view}

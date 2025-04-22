@@ -178,8 +178,9 @@ export function EventProvider({ children }) {
                 `/event/${eventId}/calendar`,
                 calendarData
             );
-            toast.success('Calendar entry added successfully');
+            toast.success(data.message);
             getEventById(eventId); // Refresh event data
+            getCalendarEntries(eventId);
             return data;
         } catch (error) {
             console.error('Error adding calendar entry', error);

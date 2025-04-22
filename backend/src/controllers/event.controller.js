@@ -842,6 +842,8 @@ export const addCalendarToEvent = async (req, res) => {
             }
         );
 
+        console.log("addCalendarToEvent ----------------------> ", result)
+
         // Check if any document was matched/modified
         if (result.matchedCount === 0) {
             return res.status(404).json({ message: 'Event not found or unauthorized' });
@@ -986,8 +988,8 @@ export const getCalendarEntries = async (req, res) => {
 
         // Use all fields if no valid filters provided
         const selectedFields = validFields.length > 0
-            ? validFields
-            : Array.from(ALLOWED_CALENDAR_FIELDS);
+            ? [...validFields, '_id']  // Add _id to requested fields
+            : [...Array.from(ALLOWED_CALENDAR_FIELDS), '_id'];
 
         const event = await Event.findById(eventId)
             .select('calendar organizer')
@@ -1006,12 +1008,13 @@ export const getCalendarEntries = async (req, res) => {
             : calendarEntries;
 
         // Project only selected fields
-        const projectedEntries = filteredEntries.map(entry => {
-            return selectedFields.reduce((acc, field) => {
-                acc[field] = entry[field];
+        const projectedEntries = filteredEntries.map(entry => ({
+            _id: entry._id,  // Always include ID
+            ...selectedFields.reduce((acc, field) => {
+                if (field !== '_id') acc[field] = entry[field];
                 return acc;
-            }, {});
-        });
+            }, {})
+        }));
 
         console.log(projectedEntries)
 

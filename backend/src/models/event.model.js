@@ -76,7 +76,7 @@ const eventSchema = new mongoose.Schema({
             updatedAt: { type: Date, default: Date.now }, // Last update date
         },
     ],
-    calender: [
+    calendar: [
         {
             _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
             title: { type: String, required: true },
