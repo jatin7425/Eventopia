@@ -16,6 +16,7 @@ import EventManager from "../component/Events/EventManager";
 import SubscriptionAds from "../component/ComponentsUtils/SubscriptionAds";
 import { Menu } from "lucide-react";
 import VendorProductsComponent from "../component/Vendor/VendorProductsComponent";
+import VendorDashboard from "../component/Vendor/VendorDashboard";
 
 
 const ProfileDashboard = () => {
@@ -45,7 +46,7 @@ const ProfileDashboard = () => {
           </div>
         );
       case "myVendors":
-        return <VendorProductsComponent />;
+        return <VendorDashboard />;
       default:
         return <ProfileSetting userData={user} />;
     }
@@ -163,7 +164,7 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
                   <span className="-mb-2 text-lg">{item.title}</span>
                   {item.link === "notifications" && (
                     <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 pt-1 rounded-full">
-                      3
+                      {}
                     </span>
                   )}
                 </Link>

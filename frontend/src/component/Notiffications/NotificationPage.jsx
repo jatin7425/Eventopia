@@ -21,6 +21,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const NotificationIcon = ({ type }) => {
   const iconMap = {
@@ -59,8 +60,9 @@ const NotificationItem = ({
   };
 
   const handleRespond = async (response) => {
+    console.log(notification.respondLink)
     try {
-      await axiosInstance.patch(
+      await axios.patch(
         `${notification.respondLink}/?response=${response}`
       );
       // Update notification status after response

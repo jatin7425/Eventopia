@@ -11,8 +11,6 @@ export const createEvent = async (req, res) => {
         const User = await User.findById(user._id);
         const { name, description, date, startTime, endTime, location, category, status, budget } = req.body;
 
-        // console.log(User);
-        console.log(req.body);
         const event = new Event({
             name,
             description,
@@ -30,9 +28,6 @@ export const createEvent = async (req, res) => {
         await User.save();
         User.eventToAttend.push(event._id);
         await User.save();
-
-        console.log(User);
-        console.log(event);
 
         res.status(201).json({ message: 'Event created successfully', event });
     } catch (error) {
@@ -193,7 +188,6 @@ export const addTodoToEvent = async (req, res) => {
     try {
         const { eventId } = req.params;
         const { title, description, status } = req.body;
-        console.log(eventId)
 
         const event = await Event.findById(eventId);
         if (!event) {
@@ -215,8 +209,6 @@ export const addTodoToEvent = async (req, res) => {
         });
         await event.save();
 
-        console.log(event)
-
         res.status(200).json({ message: 'To-Do added successfully', event });
     } catch (error) {
         res.status(500).json({ message: 'Error adding to-do', error: error.message });
@@ -229,8 +221,6 @@ export const deleteTodoFromEvent = async (req, res) => {
         const { eventId } = req.params;
         const { index } = req.body;
         const userId = req.user._id;
-
-        console.log(`${eventId} \n\n ${userId} \n\n ${eventId}`);
 
         const event = await Event.findById(eventId);
         if (!event) {
@@ -256,8 +246,6 @@ export const updateTodoInEvent = async (req, res) => {
         const { eventId } = req.params;
         const { index, title, description, status } = req.body;
         const userId = req.user._id;
-
-        console.log(req.body)
 
         const event = await Event.findById(eventId);
         if (!event) {
@@ -329,8 +317,6 @@ export const removeFromCart = async (req, res) => {
     try {
         const { eventId, cartId } = req.params;
 
-        console.log(`Event ID: ${eventId}, Cart ID: ${cartId}`);
-
         // Find the event by its ID
         const event = await Event.findById(eventId);
         if (!event) {
@@ -349,7 +335,6 @@ export const removeFromCart = async (req, res) => {
             cart: event.cart
         });
     } catch (error) {
-        console.error(`Error occurred: ${error.message}`);
         res.status(500).json({ message: "Error removing item from cart", error: error.message });
     }
 };
@@ -364,8 +349,6 @@ export const updateCartQuantity = async (req, res) => {
         if (quantity < 1) {
             return res.status(400).json({ message: "Quantity must be at least 1" });
         }
-
-        console.log(eventId, cartId, quantity)
 
         const newCartId = new mongoose.Types.ObjectId(cartId);
 
@@ -385,7 +368,6 @@ export const updateCartQuantity = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error)
         res.status(500).json({ message: "Error updating cart quantity", error: error });
     }
 };
@@ -481,7 +463,6 @@ export const getEventCart = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error retrieving cart:", error);
         res.status(500).json({ message: "Error retrieving cart", error: error.message });
     }
 };
@@ -710,7 +691,6 @@ export const respondToEventInvite = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Response error:', error);
         res.status(500).json({
             message: 'Error processing invitation response',
             error: error.message
@@ -793,7 +773,6 @@ export const getEventStats = async (req, res) => {
             message: 'Error fetching stats',
             error: error.message
         });
-        console.error(error);
     }
 };
 
@@ -1012,8 +991,6 @@ export const getCalendarEntries = async (req, res) => {
                 return acc;
             }, {});
         });
-
-        console.log(projectedEntries)
 
         res.status(200).json({
             eventId,

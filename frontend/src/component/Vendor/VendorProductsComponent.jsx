@@ -2,15 +2,7 @@
 import React, { useState } from "react";
 import {
   FaSearch,
-  FaHamburger,
-  FaPizzaSlice,
-  FaHome,
 } from "react-icons/fa";
-import Food from "../../assets/food.jpg";
-import Decoration from "../../assets/decoration.jpg";
-import Hall from "../../assets/hall.jpg";
-import Conference from "../../assets/conferenceimg.jpg";
-import Bakery from "../../assets/bakery.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoIosSearch } from "react-icons/io";
 import { useEventCart } from "../../store/eventCartContext";
@@ -178,8 +170,8 @@ const OrderSummary = ({ cartItems, onConfirmOrder }) => {
   // Ensure cartItems is an array before using reduce()
   // TotalCartItems TotalBilling
 
-  const deliveryCharge = cartItems.TotalCartItems > 0 ? 10 : 0;
-  const total = cartItems.TotalBilling + deliveryCharge;
+  const deliveryCharge = cartItems?.TotalCartItems > 0 ? 10 : 0;
+  const total = cartItems?.TotalBilling + deliveryCharge;
 
   return (
     <aside className="h-fit bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white ml-5 p-6 rounded-lg w-1/3 flex flex-col shadow-lg dark:shadow-white/10 max-lg:sticky mt-7 top-[30px] self-start max-xl:hidden">
@@ -189,13 +181,13 @@ const OrderSummary = ({ cartItems, onConfirmOrder }) => {
         </h3>
       </div>
       <div className="mt-3 flex-1 overflow-auto max-h-80">
-        {cartItems.TotalCartItems <= 0 && (
+        {cartItems?.TotalCartItems <= 0 && (
           <p className="text-gray-700 dark:text-gray-400 mt-2">
             Your cart is empty.
           </p>
         )}
       </div>
-      {cartItems.TotalCartItems > 0 && (
+      {cartItems?.TotalCartItems > 0 && (
         <div className="mt-4 space-y-1">
           <p className="text-zinc-800 dark:text-white ">
             Total items: {cartItems?.TotalCartItems}
@@ -231,7 +223,7 @@ const OrderSummary = ({ cartItems, onConfirmOrder }) => {
       <button
         onClick={onConfirmOrder}
         className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg w-full disabled:opacity-50"
-        disabled={cartItems.length === 0}
+        disabled={cartItems?.length === 0}
       >
         Confirm Order
       </button>
