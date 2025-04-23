@@ -992,11 +992,6 @@ export const getCalendarEntries = async (req, res) => {
             }, {})
         }));
 
-<<<<<<< HEAD
-        // console.log(projectedEntries)
-
-=======
->>>>>>> 31aaf450f6216b793c66ae15db1383b02499f0b9
         res.status(200).json({
             eventId,
             organizer: event.organizer,
