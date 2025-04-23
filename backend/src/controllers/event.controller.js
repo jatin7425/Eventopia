@@ -955,9 +955,6 @@ export const deleteCalendarFromEvent = async (req, res) => {
 };
 
 
-
-
-
 // Get Calendar Entries
 
 // Allowed fields for calendar entries
@@ -1016,7 +1013,7 @@ export const getCalendarEntries = async (req, res) => {
             }, {})
         }));
 
-        console.log(projectedEntries)
+        // console.log(projectedEntries)
 
         res.status(200).json({
             eventId,

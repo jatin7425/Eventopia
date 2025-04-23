@@ -382,10 +382,19 @@ const MyCalendar = () => {
             <div className="grid gap-4">
               <input
                 type="text"
-                placeholder="Event title"
+                placeholder="Task title"
                 value={newEvent.title}
                 onChange={(e) =>
                   setNewEvent({ ...newEvent, title: e.target.value })
+                }
+                className="px-2 pt-3 pb-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={newEvent.description}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, description: e.target.value })
                 }
                 className="px-2 pt-3 pb-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
               />
