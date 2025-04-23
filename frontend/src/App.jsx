@@ -12,6 +12,7 @@ import ProductCollection from './component/ProductCard/ProductCollection';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AIChatSupport from './component/AIChat/AIChatSupport';
 import VendorOrderManager from './component/Vendor/VendorOrderManager';
+import EventInvitaion from './component/EventAcception/EventInvitaion';
 
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/subscriptionPage" element={<SubscriptionPage />} />
         <Route path="/aichatbot" element={<AIChatSupport />} />
         <Route path="/vendorordermanager" element={<VendorOrderManager />} />
+        <Route path="/eventinvitaion" element={<EventInvitaion />} />
       </Routes>
       <Toaster />
     </div>

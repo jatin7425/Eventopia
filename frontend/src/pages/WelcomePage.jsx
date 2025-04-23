@@ -117,7 +117,7 @@ function WelcomePage() {
 }
 
 
-const LandingSection = () => {
+export const LandingSection = () => {
   const { isLoggedin, user } = useAuth();
   const paragraphRef = useRef(null);
   const buttonRef = useRef(null);
@@ -236,9 +236,9 @@ const FoodImgCycle = [
             <motion.div
               className="flex gap-10 whitespace-nowrap"
               initial={{ x: 0 }}
-              animate={{ x: ["0%", "-99.5%"] }}
+              animate={{ x: ["0%", "-99.545%"] }}
               transition={{
-                duration: 10,
+                duration: 15,
                 ease: "linear",
                 repeat: Infinity,
                 repeatType: "loop",

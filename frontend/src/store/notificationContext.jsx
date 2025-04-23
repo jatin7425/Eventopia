@@ -1,8 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { axiosInstance } from '../lib/axios';
-import toast from 'react-hot-toast';
-import { Navigate } from 'react-router-dom';
-import { useEventCart } from './eventCartContext';
 const NotificationContext = createContext();
 
 export function useNotification() {
