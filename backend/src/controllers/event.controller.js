@@ -494,6 +494,113 @@ export const clearCart = async (req, res) => {
     }
 };
 
+export const cartCheckout = async (req, res) => {
+    console.log("object")
+    try {
+        const { eventId } = req.params;
+        const userId = req.user._id;
+
+        console.log(`{eventId}: ${eventId}`);
+
+        // Validate event ID first
+        if (!mongoose.Types.ObjectId.isValid(eventId)) {
+            console.log("Invalid event ID")
+            return res.status(400).json({ message: "Invalid event ID" });
+        }
+
+        // 1. Get event with cart populated
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        // 3. Validate cart contents
+        if (event.cart.length === 0) {
+            return res.status(400).json({ message: "Cart is empty" });
+        }
+
+        // 4. Get unique vendors and validate their existence
+        const vendorIds = [...new Set(event.cart.map(item => item.vendor.toString()))];
+        const vendors = await Vendor.find({ _id: { $in: vendorIds } });
+
+        // Check for missing vendors
+        if (vendors.length !== vendorIds.length) {
+            const missingVendors = vendorIds.filter(id =>
+                !vendors.some(v => v._id.toString() === id)
+            );
+            return res.status(400).json({
+                message: "Some vendors no longer exist",
+                missingVendors
+            });
+        }
+
+        // 5. Process orders for each vendor
+        const processedOrders = [];
+
+        for (const vendor of vendors) {
+            const vendorCartItems = event.cart.filter(
+                item => item.vendor.toString() === vendor._id.toString()
+            );
+
+            // Validate products and quantities
+            for (const item of vendorCartItems) {
+                const product = vendor.Products.id(item.product);
+                if (!product) {
+                    return res.status(400).json({
+                        message: `Product ${item.product} not found in ${vendor.ShopName}`,
+                        vendorId: vendor._id,
+                        productId: item.product
+                    });
+                }
+
+                // Optional: Check product availability
+                if (product.availableQuantity < item.quantity) {
+                    return res.status(400).json({
+                        message: `Insufficient stock for ${product.productName}`,
+                        available: product.availableQuantity,
+                        requested: item.quantity
+                    });
+                }
+            }
+
+            console.log(vendorCartItems)
+
+            // Create clean order objects
+            const orders = vendorCartItems.map(item => ({
+                product: item.product,
+                quantity: item.quantity,
+                orderedBy: userId,
+                event: eventId,
+            }));
+
+            // Add orders to vendor and save
+            vendor.Orders.push(...orders);
+            await vendor.save();
+            processedOrders.push(...orders);
+        }
+
+        // 6. Clear cart only after all vendors are processed
+        event.cart = [];
+        await event.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Checkout completed successfully",
+            processedOrdersCount: processedOrders.length,
+            clearedCartItems: event.cart.length
+        });
+
+    } catch (error) {
+        console.log(error)
+        // Handle partial failure scenario
+        res.status(500).json({
+            success: false,
+            message: "Checkout failed - some orders may have been processed",
+            error: error.message
+        });
+    }
+};
+
 // Add new attendee with validation
 export const addAttendee = async (req, res) => {
     try {

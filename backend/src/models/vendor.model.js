@@ -106,6 +106,16 @@ const vendorSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        Orders: [
+            {
+                _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+                product: { type: mongoose.Schema.Types.ObjectId },
+                quantity: { type: Number, default: 1 },
+                orderedBy : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+                event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
+                orderedAt : { type: Date, default: Date.now }
+            },
+        ],
         Products: [productSchema], // Products sold by the vendor
         PlaceImages: {
             type: [String],

@@ -16,6 +16,7 @@ import {
     updateCartQuantity,
     getEventCart,
     clearCart,
+    cartCheckout,
     addAttendee,
     getEventStats,
     addCalendarToEvent,
@@ -42,6 +43,8 @@ router.post("/:eventId/cart/:vendorId", protectRoute, addToCart);
 router.delete("/:eventId/cart/:cartId", protectRoute, removeFromCart);
 router.put("/:eventId/cart/:cartId", protectRoute, updateCartQuantity);
 router.get("/:eventId/cart/", protectRoute, getEventCart);
+router.delete("/:eventId/cart/clear", protectRoute, clearCart);
+router.patch("/:eventId/cartCheckout", protectRoute, cartCheckout);
 router.delete("/:eventId/cart/clear", protectRoute, clearCart);
 router.post('/:eventId/attendees', protectRoute, addAttendee);
 router.patch('/:eventId/attendees/respond', protectRoute, respondToEventInvite);

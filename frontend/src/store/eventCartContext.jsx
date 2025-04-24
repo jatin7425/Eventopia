@@ -83,7 +83,7 @@ export const EventCartProvider = ({ children }) => {
         }
     };
 
-    const clearEventCart = async (eventId) => {
+    const clearEventCart = async () => {
         try {
             const response = await axiosInstance.delete(
                 `/event/${eventId}/cart/clear`
@@ -96,6 +96,19 @@ export const EventCartProvider = ({ children }) => {
         }
     };
 
+    const cartCheckout = async () => {
+        try {
+            console.log(eventId);
+            const response = await axiosInstance.patch(
+                `/event/${eventId}/cartCheckout`
+            );
+            toast.success("Cart checked out successfully!");
+            return response.data;
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Error checking out cart");
+        }
+    }
+
     useEffect(() => {
         getEventCart(1, 10)
     }, [eventId]);
@@ -105,14 +118,15 @@ export const EventCartProvider = ({ children }) => {
         <EventContext.Provider
             value={{
                 eventId,
-                setEventId,
                 cart,
+                setEventId,
+                setVendorId,
                 addToCart,
                 removeFromCart,
                 updateCartQuantity,
                 getEventCart,
                 clearEventCart,
-                setVendorId,
+                cartCheckout,
             }}
         >
             {children}
