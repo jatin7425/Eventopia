@@ -16,7 +16,9 @@ import {
     updateProduct,
     getVendorOfCurrentUser,
     addBannerToVendor,
-    getProductByVendorId
+    getProductByVendorId,
+    getVendorOrders,
+    respondToOrders,
 } from "../controllers/vendor.controller.js";
 
 
@@ -65,5 +67,7 @@ router.put("/updateProduct/:vendorId/products/:productId", protectRoute, handleB
 router.delete("/deleteProduct/:vendorId/products/:productId", protectRoute, deleteProduct); // Delete a product
 router.post("/addBannerToVendor/:id", protectRoute, uploadVendorBanner.single('ShopBanner'), addBannerToVendor); // Add banner to vendor
 router.get("/getProductByVendorId/:id", getProductByVendorId); // Get product by vendor
+router.get("/protectRoute/:vendorId", protectRoute, getVendorOrders);
+router.put("/:vendorId/orders/respond/", protectRoute, respondToOrders);
 
 export default router;

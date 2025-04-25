@@ -15,7 +15,7 @@ import { ButtonBtmUp } from "../Theme/Button";
 
 export const VendorProductCard = ({
   Edit,
-  Delete,
+  destroy,
   title,
   price,
   description,
@@ -33,7 +33,7 @@ export const VendorProductCard = ({
             <FaEdit />
           </button>
 
-          <button className="bg-black/10 rounded-full p-2" onClick={Delete}>
+          <button className="bg-black/10 rounded-full p-2" onClick={destroy}>
             <RiDeleteBin6Line />
           </button>
         </div>

@@ -299,7 +299,7 @@ const ProductItem = ({ product, onEdit, onDelete }) => {
   return (
     <VendorProductCard
       Edit={EditProduct}
-      Delete={DeleteProduct}
+      destroy={DeleteProduct}
       title={product.productName}
       price={product.productPrice}
       description={product.productDescription}
@@ -412,8 +412,8 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
   };
 
   const handleManageOrder = () => {
-    setManageOrder(true);
     setShop(false);
+    setManageOrder(true);
   };
 
   return (
@@ -427,10 +427,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
                 ? "text-white bg-blue-500 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
             } transition-all duration-300`}
-            onClick={() => {
-              setShop(true);
-              setManageOrder(false);
-            }}
+            onClick={handleShop}
           >
             {shop ? (
               <motion.span
@@ -449,10 +446,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
                 ? "text-white bg-blue-500 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
             } transition-all duration-300`}
-            onClick={() => {
-              setShop(false);
-              setManageOrder(true);
-            }}
+            onClick={handleManageOrder}
           >
             {manageOrder ? (
               <motion.span
@@ -513,7 +507,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             exit={{ opacity: 0, y: -20 }}
             className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4 font-['Gilroy']"
           >
-            <VendorOrderManager />
+            <VendorOrderManager vendorId={currentvendor} />
           </motion.div>
         )}
       </main>

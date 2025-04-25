@@ -1,5 +1,7 @@
 import Vendor from "../models/vendor.model.js"; // Adjust the path as needed
 import User from "../models/user.model.js";
+import Event from "../models/event.model.js";
+import mongoose from "mongoose";
 import path from 'path';
 import fs from 'fs';
 
@@ -9,15 +11,15 @@ const deleteOldImage = (imagePath) => {
     if (imagePath) {
         // Remove any URL prefix if present (e.g., http://localhost:3000/)
         const cleanPath = imagePath.replace(/^https?:\/\/[^\/]+/, '');
-        
+
         // Remove leading slash if present
         const relativePath = cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath;
-        
+
         // Construct the full path
         const fullPath = path.join(process.cwd(), 'public', relativePath);
-        
+
         console.log('Attempting to delete image at:', fullPath); // Debug log
-        
+
         try {
             if (fs.existsSync(fullPath)) {
                 fs.unlinkSync(fullPath);
@@ -37,7 +39,7 @@ export const createVendor = async (req, res) => {
         const user = req.user; // The current authenticated user
         const vendorData = req.body;
 
-        
+
         const currentUser = await User.findOne(user._id);
 
         const vendor = await Vendor.create({
@@ -234,7 +236,7 @@ export const addBannerToVendor = async (req, res) => {
                 message: "Vendor not found",
             });
         }
-        
+
         vendor.ShopBanner = req.file ? `/uploads/vendors/${req.file.filename}` : null;
         await vendor.save();
 
@@ -258,7 +260,7 @@ export const addProductToVendor = async (req, res) => {
         const { id } = req.params; // Vendor ID
         const user = req.user;
         const product = req.body;
-        
+
         const vendor = await Vendor.findById(id);
 
         if (!vendor) {
@@ -488,10 +490,10 @@ export const updateProduct = async (req, res) => {
             try {
                 // Extract base64 data and metadata
                 const { data } = updateData.image;
-                
+
                 // Remove the data:image/xxx;base64, prefix
                 const base64Data = data.split(';base64,').pop();
-                
+
                 // Generate unique filename
                 const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
                 const relativePath = `/uploads/products/${uniqueFilename}`;
@@ -513,7 +515,7 @@ export const updateProduct = async (req, res) => {
 
                 // Update image path in database
                 updateFields["Products.$.productImage"] = relativePath;
-                
+
                 // console.log('Image saved successfully:', relativePath);
             } catch (error) {
                 // console.error('Error processing image:', error);
@@ -632,7 +634,7 @@ export const getVendorOfCurrentUser = async (req, res) => {
             message: "Error fetching vendor",
             error: error.message,
         });
-    }   
+    }
 }
 
 export const getProductByVendorId = async (req, res) => {
@@ -655,7 +657,7 @@ export const getProductByVendorId = async (req, res) => {
         }
 
         // Fetch only required `Products` slice using `$slice`
-        const vendor = await Vendor.findById(vendorId, { 
+        const vendor = await Vendor.findById(vendorId, {
             Products: { $slice: [skip, limit] } // Paginate products
         });
 
@@ -689,6 +691,240 @@ export const getProductByVendorId = async (req, res) => {
             success: false,
             message: "Error fetching products",
             error: error.message,
+        });
+    }
+};
+
+export const getVendorOrders = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        const userId = req.user._id;
+
+        // Validate vendor ID format
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return res.status(400).json({ message: 'Invalid vendor ID format' });
+        }
+
+        // Verify vendor ownership/collaboration
+        const vendor = await Vendor.findOne({
+            _id: vendorId,
+            $or: [
+                { owner: userId },
+                { collaborators: userId }
+            ]
+        });
+
+        if (!vendor) {
+            return res.status(404).json({
+                message: 'Vendor not found or unauthorized access'
+            });
+        }
+
+        // Get all orders for this vendor
+        const orders = vendor.Orders;
+
+        // Get unique event IDs from orders
+        const eventIds = [...new Set(orders.map(o => o.event.toString()))];
+
+        // Get event details
+        const events = await Event.find({ _id: { $in: eventIds } })
+            .populate('organizer', 'name email phone');
+
+        // Create event-order mapping
+        const eventOrderMap = await Promise.all(events.map(async (event) => {
+            const eventOrders = orders.filter(o =>
+                o.event.toString() === event._id.toString()
+            );
+
+            // Resolve product details for each order
+            const orderDetails = await Promise.all(eventOrders.map(async (order) => {
+                const product = vendor.Products.id(order.product);
+                if (!product) return null;
+
+                return {
+                    _id: order._id,
+                    name: product.productName,
+                    img: product.productImage,
+                    price: product.productPrice,
+                    totalitems: order.quantity,
+                    totalPrice: product.productPrice * order.quantity,
+                    availability: product.available,
+                    status: order.status || 'pending'
+                };
+            }));
+
+            return {
+                eventID: event._id,
+                eventName: event.name,
+                organiser: event.organizer.name,
+                location: event.location,
+                date: event.date.toISOString().split('T')[0],
+                starttime: event.startTime,
+                endtime: event.endTime,
+                phone: event.organizer.phone || 'N/A',
+                email: event.organizer.email,
+                orders: orderDetails.filter(Boolean),
+                totalOrderAmount: orderDetails.reduce((sum, o) => sum + (o?.totalPrice || 0), 0),
+                Link: `/vendor/${vendorId}/orders/respond`
+            };
+        }));
+
+        res.status(200).json(eventOrderMap);
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Error fetching orders',
+            error: error.message
+        });
+    }
+};
+
+export const respondToOrders = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        const { eventID, orders } = req.body; // Array of orders with status updates
+        const userId = req.user._id;
+
+        // Validate vendor ID format
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return res.status(400).json({ message: 'Invalid vendor ID format' });
+        }
+
+        // Validate orders array
+        if (!Array.isArray(orders) || orders.length === 0) {
+            return res.status(400).json({ message: 'Invalid orders format - expected array' });
+        }
+
+        // Validate each order in the array
+        const validOrders = orders.every(order =>
+            mongoose.Types.ObjectId.isValid(order._id) &&
+            ['confirmed', 'declined'].includes(order.status)
+        );
+
+        if (!validOrders) {
+            return res.status(400).json({
+                message: 'Invalid order format - each order must have valid _id and status (confirmed/declined)'
+            });
+        }
+
+        // Find vendor and validate access
+        const vendor = await Vendor.findOne({
+            _id: vendorId,
+            $or: [
+                { owner: userId },
+                { collaborators: userId }
+            ]
+        });
+
+        if (!vendor) {
+            return res.status(404).json({ message: 'Vendor not found or unauthorized' });
+        }
+
+        const results = {
+            totalOrders: orders.length,
+            successfulUpdates: 0,
+            failedUpdates: 0,
+            notFoundIds: [],
+            updatedOrders: []
+        };
+
+        // Process each order update
+        await Promise.all(orders.map(async (orderRequest) => {
+            try {
+                const order = vendor.Orders.id(orderRequest._id);
+                if (!order) {
+                    results.notFoundIds.push(orderRequest._id);
+                    results.failedUpdates++;
+                    return;
+                }
+
+                order.status = orderRequest.status;
+                order.updatedAt = new Date();
+                results.successfulUpdates++;
+                results.updatedOrders.push({
+                    _id: order._id,
+                    status: order.status,
+                    updatedAt: order.updatedAt
+                });
+            } catch (error) {
+                results.failedUpdates++;
+                console.error(`Error updating order ${orderRequest._id}:`, error);
+            }
+        }));
+
+        const UserFromEvent = await Event.findOne({ _id: eventID }).populate('organizer', 'notification');
+        const existingUser = await User.findOne({ _id: UserFromEvent.organizer }).select('+notification');
+
+        // Notification logic
+        let notificationSent = false;
+        if (existingUser) {
+            try {
+                const notificationPayload = {
+                    type: 'Message',
+                    sender: userId,
+                    vendor: vendorId,
+                    message: `Your order has been ${orders[0].status === 'confirmed' ? 'confirmed' : 'declined'} by the vendor: ${vendor.name}.`,
+                    seen: false,
+                    createdAt: new Date()
+                };
+
+                // Check for existing notification
+                const existingNotification = existingUser.notification.find(n =>
+                    // Compare all relevant fields (excluding seen/createdAt)
+                    n.type === notificationPayload.type &&
+                    n.sender.equals(notificationPayload.sender) &&
+                    n.vendor.equals(notificationPayload.event) &&
+                    n.message === notificationPayload.message &&
+                    n.respondLink === notificationPayload.respondLink
+                );
+
+                const updateOperation = existingNotification ?
+                    {
+                        $set: {
+                            'notification.$[elem].seen': false,
+                            'notification.$[elem].createdAt': new Date(),
+                        }
+                    } : {
+                        $push: { notification: notificationPayload },
+                        $inc: { notificationCount: 1 }
+                    };
+
+                const updateOptions = {
+                    new: true,
+                    runValidators: true,
+                    arrayFilters: existingNotification ?
+                        [{ 'elem.vendor': vendorId, 'elem.type': 'eventInvite' }] :
+                        undefined
+                };
+
+                await User.findByIdAndUpdate(
+                    existingUser._id,
+                    updateOperation,
+                    updateOptions
+                );
+
+                notificationSent = true;
+            } catch (error) {
+                res.status(500).json({
+                    message: 'Error processing orders',
+                    error: error.message
+                });
+            }
+        }
+
+        // Save all changes at once
+        await vendor.save();
+
+        res.status(200).json({
+            message: `Processed ${orders.length} orders`,
+            ...results,
+            successRate: `${(results.successfulUpdates / orders.length * 100).toFixed(1)}%`
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error processing orders',
+            error: error.message
         });
     }
 };

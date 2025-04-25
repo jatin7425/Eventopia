@@ -495,16 +495,13 @@ export const clearCart = async (req, res) => {
 };
 
 export const cartCheckout = async (req, res) => {
-    console.log("object")
     try {
         const { eventId } = req.params;
         const userId = req.user._id;
 
-        console.log(`{eventId}: ${eventId}`);
 
         // Validate event ID first
         if (!mongoose.Types.ObjectId.isValid(eventId)) {
-            console.log("Invalid event ID")
             return res.status(400).json({ message: "Invalid event ID" });
         }
 
@@ -563,7 +560,6 @@ export const cartCheckout = async (req, res) => {
                 }
             }
 
-            console.log(vendorCartItems)
 
             // Create clean order objects
             const orders = vendorCartItems.map(item => ({
@@ -591,7 +587,6 @@ export const cartCheckout = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error)
         // Handle partial failure scenario
         res.status(500).json({
             success: false,
@@ -928,7 +923,6 @@ export const addCalendarToEvent = async (req, res) => {
             }
         );
 
-        console.log("addCalendarToEvent ----------------------> ", result)
 
         // Check if any document was matched/modified
         if (result.matchedCount === 0) {

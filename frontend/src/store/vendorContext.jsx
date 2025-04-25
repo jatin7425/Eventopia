@@ -15,6 +15,7 @@ export function VendorProvider({ children }) {
     const [isVendorLoading, setIsVendorLoading] = useState(false);
     const [productUpdated, setProductUpdated] = useState(0);
 
+
     // Fetch all vendors
     const fetchVendors = async () => {
         setIsVendorLoading(true);
@@ -202,6 +203,15 @@ export function VendorProvider({ children }) {
         }
     };
 
+    const getVendorOrders = async (vendorId) => {
+        try {
+            const res = await axiosInstance.get(`/vendor/protectRoute/${vendorId}`);
+            return res.data
+        } catch (error) {
+            console.error("Error deleting product", error);
+        }
+    }
+
     useEffect(() => {
         fetchVendors(); // Automatically fetch all vendors on mount
     }, []);
@@ -213,6 +223,7 @@ export function VendorProvider({ children }) {
                 vendor,
                 products,
                 isVendorLoading,
+                productUpdated,
                 setIsVendorLoading,
                 fetchVendorById,
                 addVendor,
@@ -223,8 +234,8 @@ export function VendorProvider({ children }) {
                 deleteProduct,
                 rateVendor,
                 rateProduct,
-                productUpdated,
                 addBannerToVendor,
+                getVendorOrders,
             }}
         >
             {children}

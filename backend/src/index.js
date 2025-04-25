@@ -32,7 +32,6 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.use("/api/auth", authRoutes);
 app.use("/api/event", eventRoutes);
 app.use("/api/vendor", vendorRoutes);
-app.use("/api/vendor", vendorRoutes);
 app.use("/api/ollamaChat", ollamaChatRoutes);
 app.use("/api/notification", notificationRoutes);
 
