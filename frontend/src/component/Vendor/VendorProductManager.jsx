@@ -14,6 +14,7 @@ import { VendorProductCard } from "../ComponentsUtils/ProductCard";
 import { ButtonBtmUp } from "../Theme/Button";
 import { motion } from "framer-motion";
 import VendorOrderManager from "./VendorOrderManager";
+import VendorColaborator from "../Colaborator/VendorColaborator";
 
 // Header Component for product manager
 const Header = ({ searchTerm, setSearchTerm }) => {
@@ -405,22 +406,32 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
 
   const [shop, setShop] = useState(true);
   const [manageOrder, setManageOrder] = useState(false);
+  const [colaborators, setColaborators] = useState(false);
 
   const handleShop = () => {
     setShop(true);
     setManageOrder(false);
+    setColaborators(false);
   };
 
   const handleManageOrder = () => {
     setShop(false);
     setManageOrder(true);
+    setColaborators(false);
   };
+
+  const handleColaborators = () => {
+    setColaborators(true);
+    setShop(false);
+    setManageOrder(false);
+  }
 
   return (
     <div className="flex  min-h-screen dark:text-white rounded-lg">
       {/* <Sidebar /> */}
       <main className="w-full overflow-y-auto">
         <div className="relative flex items-center gap-1 py- bg-transparent rounded-lg max-sm:mt-8 mb-3 font-['Gilroy'] font-bold ">
+          {/* Shop Button  */}
           <button
             className={`relative px-4 py-2 rounded-md ${
               shop
@@ -440,6 +451,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             <span className="relative "> Shop</span>
           </button>
 
+          {/* Manage Orders Button */}
           <button
             className={`relative px-4 py-2 rounded-md ${
               manageOrder
@@ -457,6 +469,26 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
               />
             ) : null}
             <span className="relative ">Manage Orders</span>
+          </button>
+
+          {/* Colaborators Button */}
+          <button
+            className={`relative px-4 py-2 rounded-md ${
+              colaborators
+                ? "text-white bg-blue-500 shadow-md"
+                : "text-gray-500 dark:text-gray-400 bg-transparent"
+            } transition-all duration-300`}
+            onClick={handleColaborators}
+          >
+            {colaborators ? (
+              <motion.span
+                className="absolute inset-0 bg-blue-500 rounded-md z-0"
+                layoutId="activeTab"
+                initial={false}
+                transition={{ stiffness: 500, damping: 30 }}
+              />
+            ) : null}
+            <span className="relative "> Colaborator</span>
           </button>
         </div>
 
@@ -508,6 +540,18 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4 font-['Gilroy']"
           >
             <VendorOrderManager vendorId={currentvendor} />
+          </motion.div>
+        )}
+
+        {/* Colaborators Section */}
+        {colaborators && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4 font-['Gilroy']"
+          >
+            <VendorColaborator/>
           </motion.div>
         )}
       </main>

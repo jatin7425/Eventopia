@@ -66,7 +66,6 @@ export const VendorProductCard = ({
   );
 };
 
-
 export const CartCard = ({ cart }) => {
   const { removeFromCart, updateCartQuantity, getEventCart, item, updateCart } =
     useEventCart();
@@ -278,3 +277,4 @@ export const CartCard = ({ cart }) => {
     </section>
   );
 };
+ 
