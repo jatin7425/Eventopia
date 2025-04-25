@@ -12,6 +12,7 @@ import { useEventCart } from "../../store/eventCartContext";
 import { ShoppingCart, ClipboardList, Users } from "lucide-react";
 import MyCalendar from "../Calendar/MyCalendar";
 import InvitationManager from "../Events/InvitationManager";
+import UserEventColaborator from "../Colaborator/UserEventColaborator";
 
 const EventManager = ({}) => {
   const dropdownRef = useRef(null);
@@ -106,38 +107,38 @@ const EventManager = ({}) => {
     setIsDescriptionOpen2(!isDescriptionOpen2);
   };
 
-  const [attendeesOption, setAttendeesOption] = useState(false);
-  const [addTodoOption, setaddTodoOption] = useState(false);
   const [openCartOption, setOpenCartOption] = useState(true);
+  const [attendeesOption, setAttendeesOption] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
+  const [colaborator, setColaborator] = useState(false);
 
   const handleAttendeesOption = () => {
     setAttendeesOption(true);
-    setaddTodoOption(false);
     setOpenCartOption(false);
     setOpenCalendar(false);
-  };
-
-  const handleAddTodoOption = () => {
-    setaddTodoOption(true);
-    setOpenCartOption(false);
-    setAttendeesOption(false);
-    setOpenCalendar(false);
+    setColaborator(false);
   };
 
   const handleOpenCartOption = () => {
     setOpenCartOption(true);
-    setaddTodoOption(false);
     setAttendeesOption(false);
     setOpenCalendar(false);
+    setColaborator(false);
   };
 
   const handleOpenCalendar = () => {
     setOpenCalendar(true);
     setOpenCartOption(false);
-    setaddTodoOption(false);
     setAttendeesOption(false);
+    setColaborator(false);
   };
+
+  const handleColaborator = () => {
+    setColaborator(true);
+    setOpenCartOption(false);
+    setAttendeesOption(false);
+    setOpenCalendar(false);
+  }
 
   return (
     <div
@@ -307,68 +308,98 @@ const EventManager = ({}) => {
 
       <div className="h-fit px-6 md:px-10 py-4 space-y-6">
         {/* Top Buttons Section */}
-        <div className="flex justify-end items-center gap-3 md:gap-5">
+        <div className="flex justify-start items-center gap-3 md:gap-5 font-['Gilroy'] ">
           {/* View Cart Button */}
-          <span onClick={handleOpenCartOption}>
-            <ButtonBtmUp
-              title="View Cart"
-              icon={<ShoppingCart size={18} />}
-              bgColor="bg-blue-600"
-              textColor="text-white"
-              hoverBgColor="bg-blue-700"
-              rounded="rounded-lg"
-              w="w-32"
-              h="h-10"
-              onClick={() => setOpenCartOption(!openCartOption)}
-            />
-          </span>
-
-          {/* Calendar Button */}
-          <span onClick={handleOpenCalendar}>
-            <ButtonBtmUp
-              title={"Calendar"}
-              icon={<ClipboardList size={18} />}
-              bgColor="bg-blue-600"
-              textColor="text-white"
-              hoverBgColor="bg-blue-700"
-              rounded="rounded-lg"
-              w="w-32"
-              h="h-10"
-              onClick={() => setOpenCalendar(!openCalendar)}
-            />
-          </span>
+          <button
+            className={`relative px-4 py-2 rounded-md ${
+              openCartOption
+                ? "text-white bg-blue-600 shadow-md"
+                : "text-gray-500 dark:text-gray-400 bg-transparent"
+            } transition-all duration-300`}
+            onClick={handleOpenCartOption}
+          >
+            {openCartOption ? (
+              <motion.span
+                className="absolute inset-0 bg-blue-600 rounded-md z-0"
+                layoutId="activeTab"
+                initial={false}
+                transition={{ stiffness: 500, damping: 30 }}
+              />
+            ) : null}
+            <span className="relative ">Cart</span>
+          </button>
 
           {/* Attendees Button */}
-          <span onClick={handleAttendeesOption}>
-            <ButtonBtmUp
-              title="Attendees"
-              icon={<Users size={18} />}
-              bgColor="bg-blue-600"
-              textColor="text-white"
-              hoverBgColor="bg-blue-700"
-              activeBgColor="bg-blue-700"
-              rounded="rounded-lg"
-              w="w-32"
-              h="h-10"
-            />
-          </span>
+          <button
+            className={`relative px-4 py-2 rounded-md ${
+              attendeesOption
+                ? "text-white bg-blue-600 shadow-md"
+                : "text-gray-500 dark:text-gray-400 bg-transparent"
+            } transition-all duration-300`}
+            onClick={handleAttendeesOption}
+          >
+            {attendeesOption ? (
+              <motion.span
+                className="absolute inset-0 bg-blue-600 rounded-md z-0"
+                layoutId="activeTab"
+                initial={false}
+                transition={{ stiffness: 500, damping: 30 }}
+              />
+            ) : null}
+            <span className="relative ">Attendees</span>
+          </button>
+
+          {/* Calendar Button */}
+          <button
+            className={`relative px-4 py-2 rounded-md ${
+              openCalendar
+                ? "text-white bg-blue-600 shadow-md"
+                : "text-gray-500 dark:text-gray-400 bg-transparent"
+            } transition-all duration-300`}
+            onClick={handleOpenCalendar}
+          >
+            {openCalendar ? (
+              <motion.span
+                className="absolute inset-0 bg-blue-600 rounded-md z-0"
+                layoutId="activeTab"
+                initial={false}
+                transition={{ stiffness: 500, damping: 30 }}
+              />
+            ) : null}
+            <span className="relative ">Calendar</span>
+          </button>
+
+          {/* Colaborator Button */}
+          <button
+            className={`relative px-4 py-2 rounded-md ${
+              colaborator
+                ? "text-white bg-blue-600 shadow-md"
+                : "text-gray-500 dark:text-gray-400 bg-transparent"
+            } transition-all duration-300`}
+            onClick={handleColaborator}
+          >
+            {colaborator ? (
+              <motion.span
+                className="absolute inset-0 bg-blue-600 rounded-md z-0"
+                layoutId="activeTab"
+                initial={false}
+                transition={{ stiffness: 500, damping: 30 }}
+              />
+            ) : null}
+            <span className="relative ">Colaborator</span>
+          </button>
         </div>
 
         {/* Main Content Section */}
 
-        {attendeesOption && <InvitationManager event={event} />}
-
-        {addTodoOption && (
+        {attendeesOption && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full h-fit"
+            className="w-full h-fit border-t-2 border-zinc-500"
           >
-            <div className="h-full flex max-md:flex-col-reverse items-center justify-between gap-5 md:px-10 px-4 pb-10">
-              <TodoList event={event} />
-              <TodoForm selectedEvent={selectedEvent} />
-            </div>
+            <InvitationManager event={event} />
           </motion.div>
         )}
 
@@ -393,6 +424,19 @@ const EventManager = ({}) => {
           >
             <div className="h-full w-full">
               <MyCalendar />
+            </div>
+          </motion.div>
+        )}
+
+        {colaborator && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="w-full h-fit border-t-2 border-zinc-500"
+          >
+            <div className="h-full w-full">
+              <UserEventColaborator/>
             </div>
           </motion.div>
         )}
