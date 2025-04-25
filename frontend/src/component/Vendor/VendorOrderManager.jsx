@@ -138,43 +138,50 @@ const VendorOrderManager = ({ vendorId }) => {
             transition={{ duration: 0.5, type: "spring" }}
           >
             <div className="flex flex-col gap-3 p-4">
-              {events.map((event) => (
-                <motion.div
-                  key={event.eventID}
-                  onClick={() => handleSelectedEvent(event)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`${selectedEvent?.eventID === event.eventID
-                    ? "bg-zinc-700 ring-2 ring-blue-500"
-                    : "bg-zinc-800 hover:bg-zinc-750"
+              {events.length > 0 ? (
+                events.map((event) => (
+                  <motion.div
+                    key={event.eventID}
+                    onClick={() => handleSelectedEvent(event)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`${
+                      selectedEvent?.eventID === event.eventID
+                        ? "bg-zinc-700 ring-2 ring-blue-500"
+                        : "bg-zinc-800 hover:bg-zinc-750"
                     } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
-                  layout
-                >
-                  <h3 className="text-lg font-semibold text-white">
-                    {event.eventName}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    <div>
-                      <p className="text-sm text-zinc-400">Organiser</p>
-                      <p className="text-zinc-300">{event.organiser}</p>
+                    layout
+                  >
+                    <h3 className="text-lg font-semibold text-white">
+                      {event.eventName}
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <div>
+                        <p className="text-sm text-zinc-400">Organiser</p>
+                        <p className="text-zinc-300">{event.organiser}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-zinc-400">Location</p>
+                        <p className="text-zinc-300">{event.location}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-zinc-400">Date</p>
+                        <p className="text-zinc-300">{event.date}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-zinc-400">Time</p>
+                        <p className="text-zinc-300">
+                          {event.starttime} - {event.endtime}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-zinc-400">Location</p>
-                      <p className="text-zinc-300">{event.location}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-zinc-400">Date</p>
-                      <p className="text-zinc-300">{event.date}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-zinc-400">Time</p>
-                      <p className="text-zinc-300">
-                        {event.starttime} - {event.endtime}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))
+              ) : (
+                <div className="text-center p-6 text-zinc-400">
+                  No events available
+                </div>
+              )}
             </div>
           </motion.div>
 
@@ -207,54 +214,65 @@ const VendorOrderManager = ({ vendorId }) => {
                   </div>
 
                   <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                    {selectedEvent.orders.map((order) => (
-                      <motion.div
-                        key={order._id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="bg-zinc-700 p-4 rounded-lg shadow border border-zinc-600"
-                        whileHover={{ scale: 1.01 }}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="text-lg font-medium text-white">
-                              {order.name}
-                            </h4>
-                            <p className="text-zinc-300">
-                              ₹{order.price} × {order.totalitems}
-                            </p>
+                    {selectedEvent.orders?.length > 0 ? (
+                      selectedEvent.orders.map((order) => (
+                        <motion.div
+                          key={order._id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="bg-zinc-700 p-4 rounded-lg shadow border border-zinc-600"
+                          whileHover={{ scale: 1.01 }}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="text-lg font-medium text-white">
+                                {order.name}
+                              </h4>
+                              <p className="text-zinc-300">
+                                ₹{order.price} × {order.totalitems}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-white font-medium">
+                                ₹{order.totalPrice}
+                              </p>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-white font-medium">
-                              ₹{order.totalPrice}
-                            </p>
+                          <div className="mt-3 flex justify-between items-center">
+                            <span
+                              className={`px-2 py-1 rounded text-xs ${
+                                order.availability
+                                  ? "bg-green-800 text-green-200"
+                                  : "bg-red-800 text-red-200"
+                              }`}
+                            >
+                              {order.availability ? "In Stock" : "Out of Stock"}
+                            </span>
+                            <button
+                              className={`text-xs px-3 py-1 rounded transition-colors ${
+                                order.status === "confirmed"
+                                  ? "bg-green-600 hover:bg-green-700"
+                                  : order.status === "declined"
+                                  ? "bg-red-600 hover:bg-red-700"
+                                  : "bg-blue-600 hover:bg-blue-700"
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusToggle(order._id, order.status);
+                              }}
+                            >
+                              {order.status.charAt(0).toUpperCase() +
+                                order.status.slice(1)}
+                            </button>
                           </div>
-                        </div>
-                        <div className="mt-3 flex justify-between items-center">
-                          <span
-                            className={`px-2 py-1 rounded text-xs ${order.availability
-                              ? "bg-green-800 text-green-200"
-                              : "bg-red-800 text-red-200"
-                              }`}
-                          >
-                            {order.availability ? "In Stock" : "Out of Stock"}
-                          </span>
-                          <button
-                            className={`text-xs px-3 py-1 rounded transition-colors ${order.status === 'confirmed' ? 'bg-green-600 hover:bg-green-700' :
-                              order.status === 'declined' ? 'bg-red-600 hover:bg-red-700' :
-                                'bg-blue-600 hover:bg-blue-700'
-                              }`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleStatusToggle(order._id, order.status);
-                            }}
-                          >
-                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                          </button>
-                        </div>
-                      </motion.div>
-                    ))}
+                        </motion.div>
+                      ))
+                    ) : (
+                      <div className="text-center p-6 text-zinc-400">
+                        No orders for this event
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ) : (
@@ -310,10 +328,11 @@ const VendorOrderManager = ({ vendorId }) => {
                       onClick={() => handleSelectedEvent(event)}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`${selectedEvent?.eventID === event.eventID
-                        ? "bg-zinc-700 ring-2 ring-blue-500"
-                        : "bg-zinc-800 hover:bg-zinc-750"
-                        } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
+                      className={`${
+                        selectedEvent?.eventID === event.eventID
+                          ? "bg-zinc-700 ring-2 ring-blue-500"
+                          : "bg-zinc-800 hover:bg-zinc-750"
+                      } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     >
                       <h3 className="text-lg font-semibold text-white">
                         {event.eventName}
@@ -413,24 +432,29 @@ const VendorOrderManager = ({ vendorId }) => {
                       </div>
                       <div className="mt-3 flex justify-between items-center">
                         <span
-                          className={`px-2 py-1 rounded text-xs ${order.availability
-                            ? "bg-green-800 text-green-200"
-                            : "bg-red-800 text-red-200"
-                            }`}
+                          className={`px-2 py-1 rounded text-xs ${
+                            order.availability
+                              ? "bg-green-800 text-green-200"
+                              : "bg-red-800 text-red-200"
+                          }`}
                         >
                           {order.availability ? "In Stock" : "Out of Stock"}
                         </span>
                         <button
-                          className={`text-xs px-3 py-1 rounded transition-colors ${order.status === 'confirmed' ? 'bg-green-600 hover:bg-green-700' :
-                            order.status === 'declined' ? 'bg-red-600 hover:bg-red-700' :
-                              'bg-blue-600 hover:bg-blue-700'
-                            }`}
+                          className={`text-xs px-3 py-1 rounded transition-colors ${
+                            order.status === "confirmed"
+                              ? "bg-green-600 hover:bg-green-700"
+                              : order.status === "declined"
+                              ? "bg-red-600 hover:bg-red-700"
+                              : "bg-blue-600 hover:bg-blue-700"
+                          }`}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleStatusToggle(order._id, order.status);
                           }}
                         >
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          {order.status.charAt(0).toUpperCase() +
+                            order.status.slice(1)}
                         </button>
                       </div>
                     </motion.div>
@@ -523,14 +547,16 @@ const VendorOrderManager = ({ vendorId }) => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => {
-                        setEvents(prev =>
-                          prev.map(event =>
+                        setEvents((prev) =>
+                          prev.map((event) =>
                             event.eventID === selectedEvent.eventID
                               ? {
-                                ...event,
-                                orders: event.orders.map(order =>
-                                  ({ ...order, status: 'declined' }))
-                              }
+                                  ...event,
+                                  orders: event.orders.map((order) => ({
+                                    ...order,
+                                    status: "declined",
+                                  })),
+                                }
                               : event
                           )
                         );
