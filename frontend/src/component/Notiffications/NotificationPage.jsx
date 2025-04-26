@@ -29,6 +29,7 @@ const NotificationIcon = ({ type }) => {
     vendorCollabInvite: <FaHandshake className="text-green-500 text-xl" />,
     eventCollabInvite: <FaUsers className="text-purple-500 text-xl" />,
     WelcomeMessage: <FaBell className="text-yellow-500 text-xl" />,
+    Message: <FaBell className="text-yellow-500 text-xl" />,
   };
   return iconMap[type] || <FaEnvelope className="text-zinc-500 text-xl" />;
 };
@@ -65,12 +66,8 @@ const NotificationItem = ({
       await axios.patch(
         `${notification.respondLink}/?response=${response}`
       );
-      // Update notification status after response
       if (response) {
         onMarkRead(notification._id);
-        // if (notification.event) {
-        //   navigate(`/events/${notification.event}`);
-        // }
       } else {
         onDismiss(notification._id);
       }
@@ -125,7 +122,7 @@ const NotificationItem = ({
         </div>
       </div>
 
-      {!["WelcomeMessage", "Message"].includes(notification.type) &&
+      {!["WelcomeMessage", "Message", 'OrderUpdate'].includes(notification.type) &&
         (notification.seen === false ? (
           <div
             className={`flex gap-2 ${

@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
             type: [
                 {
                     _id: { type: mongoose.Schema.Types.ObjectId },
-                    type: { type: String, enum: ["eventInvite", "vendorCollabInvite ", "WelcomeMessage", "Message"] },
+                    type: { type: String, enum: ["eventInvite", "vendorCollabInvite ", 'OrderUpdate', "WelcomeMessage", "Message"] },
                     sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
                     receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
                     event: { type: mongoose.Schema.Types.ObjectId, ref: "Event" },
@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["Admin", "Manager", "user"],
+            enum: ["Admin", "SuperAdmin", "user"],
             default: "user"
         },
         profilePicture: { type: String, default: "" }, // URL to profile picture

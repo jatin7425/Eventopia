@@ -69,7 +69,7 @@ export const EventCartProvider = ({ children }) => {
         }
     };
 
-    const getEventCart = async (page = 1, limit = 10) => {
+    const getEventCart = async (page = 1, limit = 5) => {
         if (eventId != undefined) {
             try {
                 const response = await axiosInstance.get(

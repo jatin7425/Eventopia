@@ -801,6 +801,8 @@ export const respondToOrders = async (req, res) => {
             return res.status(400).json({ message: 'Invalid orders format - expected non-empty array' });
         }
 
+        const user = User.findById(userId);
+
         // Validate each order
         const validOrders = orders.every(order => 
             order && 
@@ -884,7 +886,7 @@ export const respondToOrders = async (req, res) => {
             type: 'OrderUpdate',
             sender: userId,
             vendor: new mongoose.Types.ObjectId(vendorId),
-            message: `Your ${orders.length} order(s) have been ${statusMessage}: ${vendor.name}.`,
+            message: `Your ${orders.length} order(s) have been ${statusMessage}: ${user.fullName}.`,
             seen: false,
             createdAt: new Date()
         };

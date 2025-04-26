@@ -377,7 +377,7 @@ export const getEventCart = async (req, res) => {
     try {
         const { eventId } = req.params;
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || 5;
         const skip = (page - 1) * limit;
 
         // Validate Event ID

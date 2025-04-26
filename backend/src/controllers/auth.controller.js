@@ -7,6 +7,9 @@ import twilio from "twilio";
 import crypto from "crypto";
 import Event from "../models/event.model.js";
 
+const passwordPattern = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+const emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -38,13 +41,11 @@ export const signup = async (req, res) => {
             return res.status(400).json({ message: "All fields are required." });
         }
 
-        const passwordPattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-
         if (!passwordPattern.test(password)) {
             return res.status(400).json({ message: "Password must be at least 8 characters long and include a letter and a number." });
         }
 
-        if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+        if (email && emailPattern.test(email)) {
             return res.status(400).json({ message: "Invalid email format." });
         }
 

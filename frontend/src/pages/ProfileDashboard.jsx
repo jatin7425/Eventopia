@@ -17,6 +17,7 @@ import SubscriptionAds from "../component/ComponentsUtils/SubscriptionAds";
 import { Menu } from "lucide-react";
 import VendorProductsComponent from "../component/Vendor/VendorProductsComponent";
 import VendorDashboard from "../component/Vendor/VendorDashboard";
+import { useNotification } from "../store/notificationContext";
 
 
 const ProfileDashboard = () => {
@@ -37,7 +38,7 @@ const ProfileDashboard = () => {
         return <NotificationPage />;
       case "home":
         return <Navigate to={"/"} />;
-      
+
 
       case "myEvents":
         return (
@@ -65,6 +66,7 @@ const ProfileDashboard = () => {
 };
 
 const Sidebar = ({ selectedSideBarElement, userData }) => {
+  const { notifications } = useNotification();
   const { logout } = useAuth();
   const isOnline = useOnlineStatus();
   const { page } = useParams();
@@ -112,11 +114,10 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
       <div
         onClick={toggleSidebar}
         className={`flex items-center justify-between px-4 py-2 absolute text-xl top-3 cursor-pointer lg:hidden rounded-full text-white
-        ${
-          isSidebarOpen
+        ${isSidebarOpen
             ? "max-lg:-translate-x-0 right-0 "
             : "max-lg:translate-x-full -right-4 backdrop-blur-md "
-        }`}
+          }`}
       >
         {!isSidebarOpen ? (
           <Menu size={24} className="text-black dark:text-white" />
@@ -146,25 +147,23 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
                   onClick={() => setActiveIcon(item.link)}
                   to={`/user/${item.link}`}
                   className={`flex items-center gap-3 py-2 px-4 rounded-lg font-medium transition group 
-                    ${
-                      activeIcon === item.link
-                        ? "bg-blue-700 text-white dark:text-zinc-100"
-                        : "text-zinc-700 dark:text-zinc-400 hover:bg-blue-600 hover:text-zinc-100 dark:hover:text-zinc-100"
+                    ${activeIcon === item.link
+                      ? "bg-blue-700 text-white dark:text-zinc-100"
+                      : "text-zinc-700 dark:text-zinc-400 hover:bg-blue-600 hover:text-zinc-100 dark:hover:text-zinc-100"
                     }`}
                 >
                   <span
-                    className={`text-xl ${
-                      activeIcon === item.link
+                    className={`text-xl ${activeIcon === item.link
                         ? "text-zinc-100"
                         : "text-zinc-700 dark:text-zinc-400 group-hover:text-white"
-                    }`}
+                      }`}
                   >
                     {item.icon}
                   </span>
                   <span className="-mb-2 text-lg">{item.title}</span>
                   {item.link === "notifications" && (
                     <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 pt-1 rounded-full">
-                      {}
+                      { notifications?.TotalUnSeenNotification }
                     </span>
                   )}
                 </Link>
@@ -250,13 +249,12 @@ const ShopSummary = () => {
             <div className="text-center" key={index}>
               {/* Icon with unique background */}
               <div
-                className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-md ${
-                  index === 0
+                className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-md ${index === 0
                     ? "bg-blue-100 text-blue-600"
                     : index === 1
-                    ? "bg-yellow-100 text-yellow-600"
-                    : "bg-green-100 text-green-600"
-                }`}
+                      ? "bg-yellow-100 text-yellow-600"
+                      : "bg-green-100 text-green-600"
+                  }`}
               >
                 <span className="material-icons text-3xl">
                   {achievement.icon}
