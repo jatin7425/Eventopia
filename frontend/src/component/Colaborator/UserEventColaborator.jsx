@@ -1,14 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Trash2 } from "lucide-react";
+import { CirclePlus, CircleX, Trash2 } from "lucide-react";
 import React, { useState } from "react";
-import { RiAddCircleLine } from "react-icons/ri";
+import { RiAddCircleLine, RiCropLine, RiCrossLine } from "react-icons/ri";
 
 const UserEventColaborator = () => {
   const [colaborators, setColaborators] = useState([
     {
       id: 1,
       name: "John Doe",
-      email: "",
+      email: "abc@gmail.com",
       phonenumber: "+1234567890",
       imgPath:
         "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
@@ -16,7 +16,7 @@ const UserEventColaborator = () => {
     {
       id: 2,
       name: "Jane Smith",
-      email: "",
+      email: "abc@gmail.com",
       phonenumber: "+1987654321",
       imgPath:
         "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
@@ -24,7 +24,7 @@ const UserEventColaborator = () => {
     {
       id: 3,
       name: "Alex Johnson",
-      email: "",
+      email: "abc@gmail.com",
       phonenumber: "+1122334455",
       imgPath:
         "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
@@ -86,21 +86,46 @@ const UserEventColaborator = () => {
     visible: { opacity: 1, x: 0 },
   };
 
+  const [isHover, setIsHover] = useState(false);
+
   return (
-    <div className="mt-5 rounded-lg shadow">
+    <div className="mt-5 rounded-lg ">
       <div className="px-3 py-2 bg-white dark:bg-zinc-800 rounded-lg shadow">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 relative ">
           <h1 className="text-2xl font-bold ">User Colaborator</h1>
 
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors ${
-              showAddForm ? "text-blue-600" : "text-gray-500"
-            } hover:text-blue-600`}
-            aria-label={showAddForm ? "Close form" : "Add colaborator"}
-          >
-            <RiAddCircleLine className={``} size={24} />
-          </button>
+          <div className="relative mr-5 ">
+            <button
+              onClick={() => {
+                setShowAddForm(!showAddForm);
+              }}
+              onMouseEnter={() => setIsHover(true)}
+              onMouseLeave={() => setIsHover(false)}
+              className={`p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors duration-300 relative ${
+                showAddForm ? " text-red-500" : "text-blue-500"
+              } `}
+              aria-label={showAddForm ? "Close form" : "Add colaborator"}
+            >
+              {showAddForm ? (
+                <>
+                  <CircleX size={24} />
+                </>
+              ) : (
+                <>
+                  <CirclePlus className={``} size={24} />
+                </>
+              )}
+            </button>
+            <h3
+              className={`absolute z-10 -left-12 -bottom-10 text-zinc-100 bg-zinc-500 px-3 py-2 w-[8.4rem] rounded-md text-sm font-['Gilroy'] transition-all duration-300 ease-out ${
+                isHover
+                  ? "opacity-100 translate-y-0"
+                  : "opacity- translate-y-2"
+              }`}
+            >
+              Add Colaborator
+            </h3>
+          </div>
         </div>
 
         {/* Add Colaborator Form  */}
@@ -111,7 +136,7 @@ const UserEventColaborator = () => {
               initial="hidden"
               animate="visible"
               exit="hidden"
-              className="p-4 bg-white dark:bg-zinc-800 rounded-lg shadow mb-4"
+              className="p-4 bg-white dark:bg-zinc-800 rounded-lg shadow mb-4 border-b "
             >
               <motion.div variants={itemVariants} className="space-y-3">
                 <input
@@ -120,7 +145,7 @@ const UserEventColaborator = () => {
                   value={newColaborator.name}
                   onChange={handleInputChange}
                   placeholder="Full Name"
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none dark:bg-zinc-700 dark:text-white"
+                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none dark:bg-zinc-700 dark:text-white"
                   required
                 />
                 <input
@@ -129,7 +154,7 @@ const UserEventColaborator = () => {
                   value={newColaborator.email}
                   onChange={handleInputChange}
                   placeholder="Email Address"
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none dark:bg-zinc-700 dark:text-white"
+                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none dark:bg-zinc-700 dark:text-white"
                 />
                 <input
                   type="tel"
@@ -137,7 +162,7 @@ const UserEventColaborator = () => {
                   value={newColaborator.phonenumber}
                   onChange={handleInputChange}
                   placeholder="Phone Number"
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none dark:bg-zinc-700 dark:text-white"
+                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none dark:bg-zinc-700 dark:text-white"
                 />
               </motion.div>
 
@@ -150,7 +175,7 @@ const UserEventColaborator = () => {
                     setShowAddForm(false);
                     setNewColaborator({ name: "", email: "", phonenumber: "" });
                   }}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-zinc-700 rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-600 transition-colors"
+                  className="px-4 py-2 text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-700 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors"
                 >
                   Cancel
                 </button>
@@ -168,7 +193,7 @@ const UserEventColaborator = () => {
 
         <div className="space-y-3">
           {colaborators.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-zinc-800 rounded-lg shadow">
+            <div className="p-8 text-center text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-800 rounded-lg shadow">
               <p className="text-lg">No colaborators added yet</p>
               <button
                 onClick={() => setShowAddForm(true)}
@@ -193,10 +218,10 @@ const UserEventColaborator = () => {
                     className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                   />
                   <div className="min-w-0">
-                    <p className="text-lg font-semibold text-gray-800 dark:text-white truncate">
+                    <p className="text-lg font-semibold text-zinc-800 dark:text-white truncate">
                       {colaborator.name}
                     </p>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-600 dark:text-zinc-400">
                       {colaborator.email && (
                         <span className="truncate">{colaborator.email}</span>
                       )}
@@ -209,7 +234,7 @@ const UserEventColaborator = () => {
 
                 <button
                   onClick={() => removeColaborator(colaborator.id)}
-                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+                  className="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
                   aria-label="Remove colaborator"
                 >
                   <Trash2

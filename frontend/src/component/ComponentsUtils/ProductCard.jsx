@@ -70,7 +70,7 @@ export const CartCard = ({ cart }) => {
   const { removeFromCart, updateCartQuantity, getEventCart, item, updateCart } =
     useEventCart();
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(6);
 
   const updateQuantity = (id, quantity, change) => {
     const newQuantity = Math.max(1, quantity + change); // Prevent negative/zero values
