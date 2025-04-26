@@ -728,7 +728,7 @@ export const getVendorOrders = async (req, res) => {
 
         // Get event details
         const events = await Event.find({ _id: { $in: eventIds } })
-            .populate('organizer', 'name email phone');
+            .populate('organizer');
 
         // Create event-order mapping
         const eventOrderMap = await Promise.all(events.map(async (event) => {
@@ -756,13 +756,14 @@ export const getVendorOrders = async (req, res) => {
             return {
                 eventID: event._id,
                 eventName: event.name,
-                organiser: event.organizer.name,
+                organiser: event.organizer.fullName || 'N/A',
+                username: event.organizer.userName || 'N/A',
                 location: event.location,
                 date: event.date.toISOString().split('T')[0],
                 starttime: event.startTime,
                 endtime: event.endTime,
                 phone: event.organizer.phone || 'N/A',
-                email: event.organizer.email,
+                email: event.organizer.email || 'N/A',
                 orders: orderDetails.filter(Boolean),
                 totalOrderAmount: orderDetails.reduce((sum, o) => sum + (o?.totalPrice || 0), 0),
                 Link: `/vendor/${vendorId}/orders/respond`
@@ -790,6 +791,8 @@ export const respondToOrders = async (req, res) => {
             return res.status(400).json({ message: 'Invalid vendor ID format' });
         }
 
+        console.log(orders);
+
         // Validate orders array
         if (!Array.isArray(orders) || orders.length === 0) {
             return res.status(400).json({ message: 'Invalid orders format - expected array' });
@@ -798,7 +801,7 @@ export const respondToOrders = async (req, res) => {
         // Validate each order in the array
         const validOrders = orders.every(order =>
             mongoose.Types.ObjectId.isValid(order._id) &&
-            ['confirmed', 'declined'].includes(order.status)
+            ['confirmed', 'declined', 'pending'].includes(order.status)
         );
 
         if (!validOrders) {

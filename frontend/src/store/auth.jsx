@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { axiosInstance } from '../lib/axios';
 import toast from 'react-hot-toast';
-import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
