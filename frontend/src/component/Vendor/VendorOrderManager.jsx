@@ -79,24 +79,9 @@ const VendorOrderManager = ({ vendorId }) => {
   };
 
   // Toggle button handler
-  const handleStatusToggle = (orderId, currentStatus) => {
+  const handleStatusToggle = (orderId, newStatus) => {
     setProdstatus((prevProdstatus) => {
       const index = prevProdstatus.findIndex((item) => item._id === orderId);
-
-      let latestStatus = currentStatus;
-
-      if (index !== -1) {
-        latestStatus = prevProdstatus[index].status;
-      }
-
-      let newStatus;
-      if (latestStatus === "pending") {
-        newStatus = "confirmed";
-      } else if (latestStatus === "confirmed") {
-        newStatus = "declined";
-      } else {
-        newStatus = "pending";
-      }
 
       let updatedProdstatus;
 
@@ -115,12 +100,8 @@ const VendorOrderManager = ({ vendorId }) => {
         ];
       }
 
-      console.log(updatedProdstatus);
-
       return updatedProdstatus;
     });
-
-    // updateOrderStatus(orderId, newStatus); // You can uncomment this if you want
   };
 
   console.log(events);
@@ -154,11 +135,10 @@ const VendorOrderManager = ({ vendorId }) => {
                     onClick={() => handleSelectedEvent(event)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`${
-                      selectedEvent?.eventID === event.eventID
-                        ? "bg-zinc-700 ring-2 ring-blue-500"
-                        : "bg-zinc-800 hover:bg-zinc-750"
-                    } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
+                    className={`${selectedEvent?.eventID === event.eventID
+                      ? "bg-zinc-700 ring-2 ring-blue-500"
+                      : "bg-zinc-800 hover:bg-zinc-750"
+                      } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     layout
                   >
                     <h3 className="text-lg font-semibold text-white">
@@ -250,33 +230,41 @@ const VendorOrderManager = ({ vendorId }) => {
                           </div>
                           <div className="mt-3 flex justify-between items-center">
                             <span
-                              className={`px-2 py-1 rounded text-xs ${
-                                order.availability
-                                  ? "bg-green-800 text-green-200"
-                                  : "bg-red-800 text-red-200"
-                              }`}
+                              className={`px-2 py-1 rounded text-xs ${order.availability
+                                ? "bg-green-800 text-green-200"
+                                : "bg-red-800 text-red-200"
+                                }`}
                             >
                               {order.availability ? "In Stock" : "Out of Stock"}
                             </span>
-                            <button
-                              className={`text-xs px-3 py-1 rounded transition-colors ${
-                                order.status === "confirmed"
-                                  ? "bg-green-600 hover:bg-green-700"
-                                  : order.status === "declined"
-                                  ? "bg-red-600 hover:bg-red-700"
-                                  : "bg-blue-600 hover:bg-blue-700"
-                              }`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleStatusToggle(order._id, order.status);
-                              }}
+                            <div
+                              className="flex items-center rounded-full overflow-hidden text-xs border"
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              {order.status === "confirmed"
-                                ? "Confirmed"
-                                : order.status === "declined"
-                                ? "Declined"
-                                : "Pending"}
-                            </button>
+                              {/* Confirm Button */}
+                              <button
+                                className={`px-3 py-2 text-white transition-all duration-200 active:scale-90 ${order.status === 'confirmed' ? 'bg-green-500' : ''}`}
+                                onClick={() => handleStatusToggle(order._id, "confirmed")}
+                              >
+                                ✔️
+                              </button>
+
+                              {/* Middle Button (Pending) */}
+                              <div
+                                className={`px-6 py-2 border-x border-white flex items-center justify-center transition-all duration-200 active:scale-90 ${order.status === 'pending' ? 'bg-yellow-500' : ''}`}
+                                onClick={() => handleStatusToggle(order._id, "pending")}
+                              >
+                                🕒
+                              </div>
+
+                              {/* Decline Button */}
+                              <button
+                                className={`px-3 py-2 text-white transition-all duration-200 active:scale-90 ${order.status === 'declined' ? 'bg-red-500' : ''}`}
+                                onClick={() => handleStatusToggle(order._id, "declined")}
+                              >
+                                ❌
+                              </button>
+                            </div>
                           </div>
                         </motion.div>
                       ))
@@ -340,11 +328,10 @@ const VendorOrderManager = ({ vendorId }) => {
                       onClick={() => handleSelectedEvent(event)}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`${
-                        selectedEvent?.eventID === event.eventID
-                          ? "bg-zinc-700 ring-2 ring-blue-500"
-                          : "bg-zinc-800 hover:bg-zinc-750"
-                      } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
+                      className={`${selectedEvent?.eventID === event.eventID
+                        ? "bg-zinc-700 ring-2 ring-blue-500"
+                        : "bg-zinc-800 hover:bg-zinc-750"
+                        } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     >
                       <h3 className="text-lg font-semibold text-white">
                         {event.eventName}
@@ -444,33 +431,38 @@ const VendorOrderManager = ({ vendorId }) => {
                       </div>
                       <div className="mt-3 flex justify-between items-center">
                         <span
-                          className={`px-2 py-1 rounded text-xs ${
-                            order.availability
-                              ? "bg-green-800 text-green-200"
-                              : "bg-red-800 text-red-200"
-                          }`}
+                          className={`px-2 py-1 rounded text-xs ${order.availability
+                            ? "bg-green-800 text-green-200"
+                            : "bg-red-800 text-red-200"
+                            }`}
                         >
                           {order.availability ? "In Stock" : "Out of Stock"}
                         </span>
-                        <button
-                          className={`text-xs px-3 py-1 rounded transition-colors ${
-                            order.status === "confirmed"
-                              ? "bg-green-600 hover:bg-green-700"
-                              : order.status === "declined"
-                              ? "bg-red-600 hover:bg-red-700"
-                              : "bg-blue-600 hover:bg-blue-700"
-                          }`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleStatusToggle(order._id, order.status);
-                          }}
+                        <div
+                          className="flex items-center rounded-full overflow-hidden text-xs border"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          {order.status === "confirmed"
-                            ? "Confirmed"
-                            : order.status === "declined"
-                            ? "Declined"
-                            : "Pending"}
-                        </button>
+                          {/* Confirm Button */}
+                          <button
+                            className="px-3 py-2 text-white transition-all duration-200 active:scale-90"
+                            onClick={() => handleStatusToggle(order._id, "confirmed")}
+                          >
+                            ✔️
+                          </button>
+
+                          {/* Middle Button (Pending) */}
+                          <div className="px-4 py-2 border-x border-white flex items-center justify-center transition-all duration-200 active:scale-90">
+                            🕒
+                          </div>
+
+                          {/* Decline Button */}
+                          <button
+                            className="px-3 py-2 text-white transition-all duration-200 active:scale-90"
+                            onClick={() => handleStatusToggle(order._id, "declined")}
+                          >
+                            ❌
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
@@ -566,12 +558,12 @@ const VendorOrderManager = ({ vendorId }) => {
                           prev.map((event) =>
                             event.eventID === selectedEvent.eventID
                               ? {
-                                  ...event,
-                                  orders: event.orders.map((order) => ({
-                                    ...order,
-                                    status: "declined",
-                                  })),
-                                }
+                                ...event,
+                                orders: event.orders.map((order) => ({
+                                  ...order,
+                                  status: "declined",
+                                })),
+                              }
                               : event
                           )
                         );
