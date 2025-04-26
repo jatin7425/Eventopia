@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { CirclePlus, CircleX, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { RiAddCircleLine } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
@@ -86,21 +86,44 @@ const VendorColaborator = () => {
     visible: { opacity: 1, x: 0 },
   };
 
+  const [isHover, setIsHover] = useState(false);
+
+
   return (
     <div className="flex flex-col gap-4 font-['Gilroy']">
-      <div className="flex items-center justify-between gap-4 p-4 bg-white dark:bg-zinc-800 rounded-lg shadow">
+      <div className="flex items-center justify-between gap-4 p-4 bg-white dark:bg-zinc-800 rounded-lg shadow relative ">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
           Colaborators
         </h2>
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors ${
-            showAddForm ? "text-blue-600" : "text-gray-500"
-          } hover:text-blue-600`}
-          aria-label={showAddForm ? "Close form" : "Add colaborator"}
-        >
-          <RiAddCircleLine className={``} size={24} />
-        </button>
+        <div className="relative mr-5">
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+            className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors duration-300 ${
+              showAddForm ? "text-red-600" : "text-blue-500"
+            } `}
+            aria-label={showAddForm ? "Close form" : "Add colaborator"}
+          >
+            {showAddForm ? (
+              <>
+                <CircleX size={24} />
+              </>
+            ) : (
+              <>
+                <CirclePlus className={``} size={24} />
+              </>
+            )}
+          </button>
+
+          <h3
+            className={`absolute z-10 -left-12 -bottom-10 text-zinc-100 bg-zinc-500 px-3 py-2 w-[8.4rem] rounded-md text-sm font-['Gilroy'] transition-all duration-300 ease-out ${
+              isHover ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+            }`}
+          >
+            Add Colaborator
+          </h3>
+        </div>
       </div>
 
       {/* Add Colaborator Form */}

@@ -6,25 +6,31 @@ import { useVendor } from "../../store/vendorContext";
 import { axiosInstance } from "../../lib/axios";
 
 const VendorOrderManager = ({ vendorId }) => {
-  const { getVendorOrders } = useVendor()
-  const [events, setEvents] = useState([])
+  const { getVendorOrders } = useVendor();
+  const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [actionStatus, setActionStatus] = useState(null);
-  const [showEventList, setShowEventList] = useState(true);
   const [showOrderPanel, setShowOrderPanel] = useState(false);
+  const [showEventList, setShowEventList] = useState(true);
   const [prodstatus, setProdstatus] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      let orders = await getVendorOrders(vendorId)
+      let orders = await getVendorOrders(vendorId);
       if (orders) {
-        setEvents(orders)
+        setEvents(orders);
       }
     }
     fetchData();
-  }, [])
+  }, []);
 
+  const getDataToRender = (orders) => {
+    return orders.map((order) => {
+      const modifiedOrder = prodstatus.find((item) => item._id === order._id);
+      return modifiedOrder ? { ...order, status: modifiedOrder.status } : order;
+    });
+  };
 
   const handleSelectedEvent = (event) => {
     setSelectedEvent(event);
@@ -57,28 +63,25 @@ const VendorOrderManager = ({ vendorId }) => {
   const handleOrderResponse = async () => {
     try {
       // Send updates to API
-      const res = await axiosInstance.put(
-        selectedEvent.Link,
-        {
-          eventID: selectedEvent.eventID,
-          orders: prodstatus
-        }
-      );
+      const res = await axiosInstance.put(selectedEvent.Link, {
+        eventID: selectedEvent.eventID,
+        orders: prodstatus,
+      });
 
       // Handle successful response
       if (res.data.success) {
-        toast.success('Orders updated successfully!');
+        toast.success("Orders updated successfully!");
       }
     } catch (error) {
-      toast.error('Failed to update orders');
+      toast.error("Failed to update orders");
       console.error("Error updating orders:", error);
     }
   };
 
   // Toggle button handler
   const handleStatusToggle = (orderId, currentStatus) => {
-    setProdstatus(prevProdstatus => {
-      const index = prevProdstatus.findIndex(item => item._id === orderId);
+    setProdstatus((prevProdstatus) => {
+      const index = prevProdstatus.findIndex((item) => item._id === orderId);
 
       let latestStatus = currentStatus;
 
@@ -87,12 +90,12 @@ const VendorOrderManager = ({ vendorId }) => {
       }
 
       let newStatus;
-      if (latestStatus === 'pending') {
-        newStatus = 'confirmed';
-      } else if (latestStatus === 'confirmed') {
-        newStatus = 'declined';
+      if (latestStatus === "pending") {
+        newStatus = "confirmed";
+      } else if (latestStatus === "confirmed") {
+        newStatus = "declined";
       } else {
-        newStatus = 'pending';
+        newStatus = "pending";
       }
 
       let updatedProdstatus;
@@ -100,10 +103,16 @@ const VendorOrderManager = ({ vendorId }) => {
       if (index !== -1) {
         // Update the existing one
         updatedProdstatus = [...prevProdstatus];
-        updatedProdstatus[index] = { ...updatedProdstatus[index], status: newStatus };
+        updatedProdstatus[index] = {
+          ...updatedProdstatus[index],
+          status: newStatus,
+        };
       } else {
         // Add a new one
-        updatedProdstatus = [...prevProdstatus, { _id: orderId, status: newStatus }];
+        updatedProdstatus = [
+          ...prevProdstatus,
+          { _id: orderId, status: newStatus },
+        ];
       }
 
       console.log(updatedProdstatus);
@@ -114,8 +123,7 @@ const VendorOrderManager = ({ vendorId }) => {
     // updateOrderStatus(orderId, newStatus); // You can uncomment this if you want
   };
 
-
-  console.log(events)
+  console.log(events);
 
   return (
     <div className="p-4">
@@ -146,10 +154,11 @@ const VendorOrderManager = ({ vendorId }) => {
                     onClick={() => handleSelectedEvent(event)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`${selectedEvent?.eventID === event.eventID
-                      ? "bg-zinc-700 ring-2 ring-blue-500"
-                      : "bg-zinc-800 hover:bg-zinc-750"
-                      } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
+                    className={`${
+                      selectedEvent?.eventID === event.eventID
+                        ? "bg-zinc-700 ring-2 ring-blue-500"
+                        : "bg-zinc-800 hover:bg-zinc-750"
+                    } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     layout
                   >
                     <h3 className="text-lg font-semibold text-white">
@@ -215,7 +224,7 @@ const VendorOrderManager = ({ vendorId }) => {
 
                   <div className="flex-1 overflow-y-auto p-4 space-y-3">
                     {selectedEvent.orders?.length > 0 ? (
-                      selectedEvent.orders.map((order) => (
+                      getDataToRender(selectedEvent.orders).map((order) => (
                         <motion.div
                           key={order._id}
                           initial={{ opacity: 0, y: 10 }}
@@ -241,27 +250,32 @@ const VendorOrderManager = ({ vendorId }) => {
                           </div>
                           <div className="mt-3 flex justify-between items-center">
                             <span
-                              className={`px-2 py-1 rounded text-xs ${order.availability
-                                ? "bg-green-800 text-green-200"
-                                : "bg-red-800 text-red-200"
-                                }`}
+                              className={`px-2 py-1 rounded text-xs ${
+                                order.availability
+                                  ? "bg-green-800 text-green-200"
+                                  : "bg-red-800 text-red-200"
+                              }`}
                             >
                               {order.availability ? "In Stock" : "Out of Stock"}
                             </span>
                             <button
-                              className={`text-xs px-3 py-1 rounded transition-colors ${order.status === "confirmed"
-                                ? "bg-green-600 hover:bg-green-700"
-                                : order.status === "declined"
+                              className={`text-xs px-3 py-1 rounded transition-colors ${
+                                order.status === "confirmed"
+                                  ? "bg-green-600 hover:bg-green-700"
+                                  : order.status === "declined"
                                   ? "bg-red-600 hover:bg-red-700"
                                   : "bg-blue-600 hover:bg-blue-700"
-                                }`}
+                              }`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleStatusToggle(order._id, order.status);
                               }}
                             >
-                              {order.status.charAt(0).toUpperCase() +
-                                order.status.slice(1)}
+                              {order.status === "confirmed"
+                                ? "Confirmed"
+                                : order.status === "declined"
+                                ? "Declined"
+                                : "Pending"}
                             </button>
                           </div>
                         </motion.div>
@@ -326,10 +340,11 @@ const VendorOrderManager = ({ vendorId }) => {
                       onClick={() => handleSelectedEvent(event)}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`${selectedEvent?.eventID === event.eventID
-                        ? "bg-zinc-700 ring-2 ring-blue-500"
-                        : "bg-zinc-800 hover:bg-zinc-750"
-                        } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
+                      className={`${
+                        selectedEvent?.eventID === event.eventID
+                          ? "bg-zinc-700 ring-2 ring-blue-500"
+                          : "bg-zinc-800 hover:bg-zinc-750"
+                      } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     >
                       <h3 className="text-lg font-semibold text-white">
                         {event.eventName}
@@ -404,7 +419,7 @@ const VendorOrderManager = ({ vendorId }) => {
                 </div>
 
                 <div className="p-4 space-y-3 overflow-y-auto">
-                  {selectedEvent.orders.map((order) => (
+                  {getDataToRender(selectedEvent.orders).map((order) => (
                     <motion.div
                       key={order._id}
                       initial={{ opacity: 0, y: 10 }}
@@ -429,29 +444,32 @@ const VendorOrderManager = ({ vendorId }) => {
                       </div>
                       <div className="mt-3 flex justify-between items-center">
                         <span
-                          className={`px-2 py-1 rounded text-xs ${order.availability
-                            ? "bg-green-800 text-green-200"
-                            : "bg-red-800 text-red-200"
-                            }`}
+                          className={`px-2 py-1 rounded text-xs ${
+                            order.availability
+                              ? "bg-green-800 text-green-200"
+                              : "bg-red-800 text-red-200"
+                          }`}
                         >
                           {order.availability ? "In Stock" : "Out of Stock"}
                         </span>
                         <button
-                          className={`text-xs px-3 py-1 rounded transition-colors ${(prodstatus.find(item => item._id === order._id)?.status || order.status) === "confirmed"
-                            ? "bg-green-600 hover:bg-green-700"
-                            : (prodstatus.find(item => item._id === order._id)?.status || order.status) === "declined"
+                          className={`text-xs px-3 py-1 rounded transition-colors ${
+                            order.status === "confirmed"
+                              ? "bg-green-600 hover:bg-green-700"
+                              : order.status === "declined"
                               ? "bg-red-600 hover:bg-red-700"
                               : "bg-blue-600 hover:bg-blue-700"
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleStatusToggle(order._id, order.status);
                           }}
                         >
-                          {(() => {
-                            const latestStatus = prodstatus.find(item => item._id === order._id)?.status || order.status;
-                            return latestStatus.charAt(0).toUpperCase() + latestStatus.slice(1);
-                          })()}
+                          {order.status === "confirmed"
+                            ? "Confirmed"
+                            : order.status === "declined"
+                            ? "Declined"
+                            : "Pending"}
                         </button>
                       </div>
                     </motion.div>
@@ -548,12 +566,12 @@ const VendorOrderManager = ({ vendorId }) => {
                           prev.map((event) =>
                             event.eventID === selectedEvent.eventID
                               ? {
-                                ...event,
-                                orders: event.orders.map((order) => ({
-                                  ...order,
-                                  status: "declined",
-                                })),
-                              }
+                                  ...event,
+                                  orders: event.orders.map((order) => ({
+                                    ...order,
+                                    status: "declined",
+                                  })),
+                                }
                               : event
                           )
                         );
