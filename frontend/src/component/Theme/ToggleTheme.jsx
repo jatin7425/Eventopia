@@ -70,7 +70,7 @@ export const ImagesToggleBtn = ({ size = 12 }) => {
     return (
         <button
             onClick={toggleTheme}
-            className={`relative w-${size} h-${size} flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 shadow-md transition-all duration-300 focus:outline-none`}
+            className={`relative w-${size} h-${size} flex items-center justify-center rounded-full bg-gray-700 dark:bg-gray-500 shadow-md transition-all duration-300 focus:outline-none`}
             aria-label="Toggle Dark Mode"
         >
             {theme === 'dark' ? (
@@ -91,7 +91,7 @@ export const ImagesToggleBtn = ({ size = 12 }) => {
             ) : (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`w-${size / 1.5} h-${size / 1.5} text-blue-500`}
+                    className={`w-${size / 1.5} h-${size / 1.5} text-blue-200`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

@@ -120,7 +120,7 @@ const UserEventColaborator = () => {
               className={`absolute z-10 -left-12 -bottom-10 text-zinc-100 bg-zinc-500 px-3 py-2 w-[8.4rem] rounded-md text-sm font-['Gilroy'] transition-all duration-300 ease-out ${
                 isHover
                   ? "opacity-100 translate-y-0"
-                  : "opacity- translate-y-2"
+                  : "opacity-0 translate-y-2"
               }`}
             >
               Add Colaborator
