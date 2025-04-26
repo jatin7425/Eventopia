@@ -5,7 +5,7 @@ const AdminMain = () => {
   const admin = [
     {
       id: 1,
-      name: "John Doe",
+      name: "Faizal Ahmed",
       imgPath:
         "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
     },
