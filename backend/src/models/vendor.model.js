@@ -113,7 +113,8 @@ const vendorSchema = new mongoose.Schema(
                 quantity: { type: Number, default: 1 },
                 orderedBy : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
                 event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
-                orderedAt : { type: Date, default: Date.now }
+                orderedAt : { type: Date, default: Date.now },
+                status: { type: String, enum: ["confirmed", "Confirmed", "pending", "Pending", "declined", "Declined"  ], default: "Pending"}
             },
         ],
         Products: [productSchema], // Products sold by the vendor

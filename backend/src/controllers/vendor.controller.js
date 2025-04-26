@@ -783,7 +783,7 @@ export const getVendorOrders = async (req, res) => {
 export const respondToOrders = async (req, res) => {
     try {
         const { vendorId } = req.params;
-        const { eventID, orders } = req.body; // Array of orders with status updates
+        const { eventID, orders } = req.body;
         const userId = req.user._id;
 
         // Validate vendor ID format
@@ -791,22 +791,27 @@ export const respondToOrders = async (req, res) => {
             return res.status(400).json({ message: 'Invalid vendor ID format' });
         }
 
-        console.log(orders);
+        // Validate event ID format
+        if (!mongoose.Types.ObjectId.isValid(eventID)) {
+            return res.status(400).json({ message: 'Invalid event ID format' });
+        }
 
         // Validate orders array
         if (!Array.isArray(orders) || orders.length === 0) {
-            return res.status(400).json({ message: 'Invalid orders format - expected array' });
+            return res.status(400).json({ message: 'Invalid orders format - expected non-empty array' });
         }
 
-        // Validate each order in the array
-        const validOrders = orders.every(order =>
+        // Validate each order
+        const validOrders = orders.every(order => 
+            order && 
+            typeof order === 'object' &&
             mongoose.Types.ObjectId.isValid(order._id) &&
             ['confirmed', 'declined', 'pending'].includes(order.status)
         );
 
         if (!validOrders) {
             return res.status(400).json({
-                message: 'Invalid order format - each order must have valid _id and status (confirmed/declined)'
+                message: 'Invalid order format - each order must have valid _id and status'
             });
         }
 
@@ -831,7 +836,7 @@ export const respondToOrders = async (req, res) => {
             updatedOrders: []
         };
 
-        // Process each order update
+        // Process order updates
         await Promise.all(orders.map(async (orderRequest) => {
             try {
                 const order = vendor.Orders.id(orderRequest._id);
@@ -855,68 +860,71 @@ export const respondToOrders = async (req, res) => {
             }
         }));
 
-        const UserFromEvent = await Event.findOne({ _id: eventID }).populate('organizer', 'notification');
-        const existingUser = await User.findOne({ _id: UserFromEvent.organizer }).select('+notification');
+        // Save vendor changes first
+        await vendor.save();
 
         // Notification logic
-        let notificationSent = false;
-        if (existingUser) {
-            try {
-                const notificationPayload = {
-                    type: 'Message',
-                    sender: userId,
-                    vendor: vendorId,
-                    message: `Your order has been ${orders[0].status === 'confirmed' ? 'confirmed' : 'declined'} by the vendor: ${vendor.name}.`,
-                    seen: false,
-                    createdAt: new Date()
-                };
-
-                // Check for existing notification
-                const existingNotification = existingUser.notification.find(n =>
-                    // Compare all relevant fields (excluding seen/createdAt)
-                    n.type === notificationPayload.type &&
-                    n.sender.equals(notificationPayload.sender) &&
-                    n.vendor.equals(notificationPayload.event) &&
-                    n.message === notificationPayload.message &&
-                    n.respondLink === notificationPayload.respondLink
-                );
-
-                const updateOperation = existingNotification ?
-                    {
-                        $set: {
-                            'notification.$[elem].seen': false,
-                            'notification.$[elem].createdAt': new Date(),
-                        }
-                    } : {
-                        $push: { notification: notificationPayload },
-                        $inc: { notificationCount: 1 }
-                    };
-
-                const updateOptions = {
-                    new: true,
-                    runValidators: true,
-                    arrayFilters: existingNotification ?
-                        [{ 'elem.vendor': vendorId, 'elem.type': 'eventInvite' }] :
-                        undefined
-                };
-
-                await User.findByIdAndUpdate(
-                    existingUser._id,
-                    updateOperation,
-                    updateOptions
-                );
-
-                notificationSent = true;
-            } catch (error) {
-                res.status(500).json({
-                    message: 'Error processing orders',
-                    error: error.message
-                });
-            }
+        const event = await Event.findOne({ _id: eventID }).populate('organizer');
+        if (!event || !event.organizer) {
+            return res.status(404).json({ message: 'Event not found or has no organizer' });
         }
 
-        // Save all changes at once
-        await vendor.save();
+        const existingUser = await User.findById(event.organizer._id).select('+notification');
+        if (!existingUser) {
+            return res.status(404).json({ message: 'Organizer user not found' });
+        }
+
+        // Determine notification message
+        const statuses = [...new Set(orders.map(o => o.status))];
+        const statusMessage = statuses.length === 1 ? 
+            `${statuses[0]} by the vendor` : 
+            'updated by the vendor';
+
+        const notificationPayload = {
+            type: 'OrderUpdate',
+            sender: userId,
+            vendor: new mongoose.Types.ObjectId(vendorId),
+            message: `Your ${orders.length} order(s) have been ${statusMessage}: ${vendor.name}.`,
+            seen: false,
+            createdAt: new Date()
+        };
+
+        try {
+            // Check for existing notification
+            const existingNotification = existingUser.notification.find(n =>
+                n.type === notificationPayload.type &&
+                n.sender.equals(notificationPayload.sender) &&
+                n.vendor.equals(notificationPayload.vendor) &&
+                n.message === notificationPayload.message
+            );
+
+            const updateOperation = existingNotification ? {
+                $set: {
+                    'notification.$[elem].seen': false,
+                    'notification.$[elem].createdAt': new Date(),
+                }
+            } : {
+                $push: { notification: notificationPayload },
+                $inc: { notificationCount: 1 }
+            };
+
+            const updateOptions = {
+                new: true,
+                arrayFilters: existingNotification ? 
+                    [{ 'elem.vendor': notificationPayload.vendor, 'elem.type': notificationPayload.type }] : 
+                    undefined
+            };
+
+            await User.findByIdAndUpdate(
+                existingUser._id,
+                updateOperation,
+                updateOptions
+            );
+
+        } catch (error) {
+            console.error('Notification error:', error);
+            // Don't fail the request, just log the error
+        }
 
         res.status(200).json({
             message: `Processed ${orders.length} orders`,
