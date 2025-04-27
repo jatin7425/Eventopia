@@ -8,50 +8,57 @@ import { ChevronDown, ChevronUp, Edit, Filter, Trash, X } from 'lucide-react'
 
 function CollectionHandler() {
     const { collection } = useParams()
-    const { getCollectionData, CollectionData, setCollectionData, loading, error } = useAdmin()
-    const [filters, setFilters] = useState({})
+    const { getCollectionData, CollectionData, setCollectionData, deleteCollectionItem, loading, error } = useAdmin()
+    const [localFilters, setLocalFilters] = useState({})
+    const [appliedFilters, setAppliedFilters] = useState({})
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [showFilters, setShowFilters] = useState(false)
     const [expandedRows, setExpandedRows] = useState(new Set())
+    const [ShowDeleteModal, setShowDeleteModal] = useState(false)
+
+    const toggleShowDeleteModal = () => setShowDeleteModal(!ShowDeleteModal)
+
+    // Centralized data fetching
+    const fetchData = async () => {
+        if (collection) {
+            const data = await getCollectionData(collection, currentPage, pageSize, appliedFilters)
+            setCollectionData(data)
+        }
+    }
 
     useEffect(() => {
-        if (collection) {
-            getCollectionData(collection, currentPage, pageSize, filters)
-        }
-    }, [collection, currentPage, pageSize, filters])
+        fetchData()
+    }, [collection, currentPage, pageSize, appliedFilters])
 
-    const Applyfilter = () => {
-        let filteredData = getCollectionData(collection, 1, pageSize, filters)
-        setCollectionData(filteredData)
+    const handleApplyFilters = () => {
+        setAppliedFilters(localFilters)
+        setCurrentPage(1)
         setShowFilters(false)
     }
 
-    const toggleRowExpand = (id) => {
-        const newExpanded = new Set(expandedRows)
-        newExpanded.has(id) ? newExpanded.delete(id) : newExpanded.add(id)
-        setExpandedRows(newExpanded)
-    }
-
     const handleFilterChange = (field, value) => {
-        setFilters(prev => ({
-            ...prev,
-            [field]: value === 'all' ? undefined : value
-        }))
+        setLocalFilters(prev => {
+            const updated = {
+                ...prev,
+                [field]: value === 'all' ? undefined : value
+            };
+            return updated;
+        });
     }
 
     const clearFilters = () => {
-        setFilters({})
+        setLocalFilters({})
+        setAppliedFilters({})
         setCurrentPage(1)
     }
 
     if (!collection) return <div className="p-4">Select a collection</div>
     if (error) return <div className="p-4 text-red-500">Error: {error}</div>
-    if (loading) return <div className="p-4">Loading...</div>
     if (!CollectionData?.data) return <div className="p-4">No data found</div>
 
     return (
-        <div className="p-4">
+        <div className="sm:p-4 p-1 w-full">
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-semibold capitalize">{collection}</h1>
                 <div className="flex gap-2">
@@ -62,7 +69,7 @@ function CollectionHandler() {
                         <Filter size={16} />
                         {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </button>
-                    {Object.keys(filters).length > 0 && (
+                    {Object.keys(appliedFilters).length > 0 && (
                         <button
                             onClick={clearFilters}
                             className="flex items-center gap-2 px-3 py-2 bg-red-100 dark:bg-red-900 rounded-lg"
@@ -75,15 +82,15 @@ function CollectionHandler() {
 
             {showFilters && CollectionData?.filterOptions && (
                 <FilterBuilder
-                    filterOptions={CollectionData?.filterOptions}
+                    filterOptions={CollectionData.filterOptions}
+                    currentFilters={localFilters}
                     onFilterChange={handleFilterChange}
-                    currentFilters={filters}
-                    Applyfilter={Applyfilter}
+                    onApply={handleApplyFilters}
                 />
             )}
 
-            <div className="overflow-x-auto rounded-lg border dark:border-zinc-700 w-full min-w-[600px]">
-                <table className="w-full min-w-[600px]">
+            <div className="overflow-x-auto rounded-lg border dark:border-zinc-700 w-full">
+                <table className="w-full">
                     <thead className="bg-gray-50 dark:bg-zinc-800">
                         <tr>
                             <th className="w-12"></th>
@@ -152,12 +159,13 @@ function CollectionHandler() {
                                             </td>
                                         ))}
                                     <td className="px-4 py-2 max-w-xs truncate">
-                                        <button>
+                                        <button >
                                             <Edit className='text-blue-500' size={16} />
                                         </button>
                                     </td>
                                     <td className="px-4 py-2 max-w-xs truncate">
-                                        <button>
+                                        {ShowDeleteModal && <DeleteModal collection={collection} id={item?._id} deleteCollectionItem={deleteCollectionItem} toggleShowDeleteModal={toggleShowDeleteModal} />}
+                                        <button onClick={toggleShowDeleteModal}>
                                             <Trash className='text-red-500' size={16} />
                                         </button>
                                     </td>
@@ -180,6 +188,7 @@ function CollectionHandler() {
                 </table>
             </div>
 
+
             {CollectionData.pagination && (
                 <Pagination
                     currentPage={currentPage}
@@ -189,6 +198,34 @@ function CollectionHandler() {
                     onPageSizeChange={setPageSize}
                 />
             )}
+        </div>
+    )
+}
+
+const DeleteModal = ({ collection, id, deleteCollectionItem, toggleShowDeleteModal }) => {
+    const handleYes = () => {
+        deleteCollectionItem(collection, id)
+        toggleShowDeleteModal()
+    };
+    return (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/10 backdrop-blur-sm z-50">
+            <div className="bg-white dark:bg-zinc-800 p-4 rounded">
+                <h2 className="text-lg font-semibold mb-2">Delete Collection</h2>
+                <p className="text-gray-600">Are you sure you want to delete this collection?</p>
+                <div className="flex justify-end mt-4"></div>
+                <button
+                    onClick={handleYes}
+                    className="mr-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                    Yes
+                </button>
+                <button
+                    onClick={toggleShowDeleteModal}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                >
+                    No
+                </button>
+            </div>
         </div>
     )
 }

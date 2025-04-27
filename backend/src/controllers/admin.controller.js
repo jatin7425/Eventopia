@@ -276,3 +276,94 @@ export const getCollectionData = async (req, res) => {
         });
     }
 }
+
+// Update Controller
+export const updateCollectionItem = async (req, res) => {
+    try {
+        const { collectionName } = req.params;
+        const { updateData, id } = req.body;
+
+        // Validate input
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid document ID'
+            });
+        }
+
+        if (!updateData || Object.keys(updateData).length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No update data provided'
+            });
+        }
+
+        const Model = getDynamicModel(collectionName);
+
+        const updatedItem = await Model.findByIdAndUpdate(
+            id,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        ).lean();
+
+        if (!updatedItem) {
+            return res.status(404).json({
+                success: false,
+                message: 'Document not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: updatedItem
+        });
+
+    } catch (error) {
+        console.error('Update error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Update operation failed',
+            error: error.message
+        });
+    }
+}
+
+// Delete Controller
+export const deleteCollectionItem = async (req, res) => {
+    try {
+        const { collectionName } = req.params;
+        const { id } = req.body;
+
+        // Validate ID
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid document ID'
+            });
+        }
+
+        const Model = getDynamicModel(collectionName);
+        const deletedItem = await Model.findByIdAndDelete(id).lean();
+
+        if (!deletedItem) {
+            return res.status(404).json({
+                success: false,
+                message: 'Document not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Document deleted successfully',
+            data: deletedItem
+        });
+
+    } catch (error) {
+        console.error('Delete error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Delete operation failed',
+            error: error.message
+        });
+    }
+}

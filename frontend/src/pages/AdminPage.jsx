@@ -15,10 +15,11 @@ const AdminPage = () => {
   return (
     <div className="w-full max-w-[100vw] h-screen bg-gray-50 dark:bg-[#0f0f0f] flex relative">
       {/* Side Bar */}
-      <div className={`h-full bg-white dark:bg-zinc-900 shadow-xl transition-all duration-300 w-64
+      <div className={`h-full bg-white dark:bg-zinc-900 shadow-xl transition-all duration-300 w-64 fixed z-10 left-0 top-0
         ${!isSideBarOpen && "-ml-64"}`}>
         <AdminSideBar Collections={Collections} />
       </div>
+      <div className={`w-64 h-full max-sm:hidden ${!isSideBarOpen && "-ml-64"}`}></div>
 
       {/* Toggle Button */}
       <button

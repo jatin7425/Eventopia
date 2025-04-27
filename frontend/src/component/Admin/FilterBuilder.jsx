@@ -1,10 +1,8 @@
 import React from 'react'
 
-export const FilterBuilder = ({ filterOptions, onFilterChange, currentFilters, Applyfilter }) => {
-    // Validate and normalize filter options
+export const FilterBuilder = ({ filterOptions, currentFilters, onFilterChange, onApply }) => {
     const normalizedOptions = Object.entries(filterOptions || {}).flatMap(([field, options]) => {
         if (typeof options === 'object' && !Array.isArray(options)) {
-            // Handle nested structure
             return Object.entries(options).map(([nestedField, nestedOptions]) => ({
                 field: `${field}.${nestedField}`,
                 options: Array.isArray(nestedOptions) ? nestedOptions : []
@@ -42,10 +40,10 @@ export const FilterBuilder = ({ filterOptions, onFilterChange, currentFilters, A
                 ))}
             </div>
             <button
-                onClick={Applyfilter}
-                className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded w-full sm:w-[95%]'
+                onClick={onApply}
+                className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded w-full sm:w-[95%] transition-colors'
             >
-                Apply filter
+                Apply Filters
             </button>
         </div>
     )

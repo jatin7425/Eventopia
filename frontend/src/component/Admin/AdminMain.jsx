@@ -14,7 +14,6 @@ const AdminMain = ({ Collections, isSideBarOpen }) => {
     Collections && setCollection(Collections)
   }, [Collections])
 
-  // Track which item's menu is open
   const [openMenuId, setOpenMenuId] = useState(null);
 
   const toggleMenu = (id) => {
@@ -35,7 +34,10 @@ const AdminMain = ({ Collections, isSideBarOpen }) => {
     <div className="dark:bg-zinc-800 min-h-screen">
       {showAdminDets && <AdminDets user={user} />}
       <nav>
-        <div className="h-20 flex items-center justify-end px-10 border-b border-gray-600 bg-slate-300 dark:bg-zinc-800 ">
+        <div className="h-20 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-gray-600 bg-slate-300 dark:bg-zinc-800">
+          <div className={`${!isSideBarOpen && 'ml-10'} text-zinc-600 dark:text-zinc-300 text-sm`}>
+            Admin Panel
+          </div>
           <div
             onClick={() => setShowAdminDets(!showAdminDets)}
             className="flex gap-3 items-center cursor-pointer hover:bg-zinc-700 p-2 rounded-md"
@@ -43,38 +45,37 @@ const AdminMain = ({ Collections, isSideBarOpen }) => {
             <img
               src={user?.profilePicture}
               alt="Admin"
-              className="w-10 h-10 border rounded-full object-cover"
+              className="w-8 h-8 sm:w-10 sm:h-10 border rounded-full object-cover"
             />
-            <ChevronRight size={30} className={``} />
+            <ChevronRight size={24} className="hidden sm:block" />
           </div>
         </div>
       </nav>
 
-      <main className="p-4">
-        <div className="w-full flex flex-col gap-4 font-['Gilroy']">
+      <main className="p-4 sm:p-6 lg:p-8">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 font-['Gilroy']">
           {(!param.collection) ? (Collection.map((item) => (
             <Link
               to={`/@bw!n/${item}`}
               key={item.id}
               className={`w-full overflow-hidden shadow-lg ${item == "chats" && 'hidden'}`}
             >
-              <div className="flex justify-between items-center rounded-lg w-full p-4 bg-white dark:bg-zinc-700 shadow">
-                <div className="flex items-center gap-5 w-full">
+              <div className="flex justify-between items-center rounded-lg w-full p-4 bg-white dark:bg-zinc-700 shadow hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-3 sm:gap-5 w-full">
                   <img
                     src={item.imgPath}
                     alt={item.title}
-                    className="w-12 h-12 border rounded-full object-cover"
+                    className="w-10 h-10 sm:w-12 sm:h-12 border rounded-full object-cover"
                   />
-                  <h1 className="font-semibold text-2xl">{item}</h1>
+                  <h1 className="font-semibold text-lg sm:text-xl">{item}</h1>
                 </div>
 
-                {/* Button Group */}
                 <div className="relative">
                   <button
                     onClick={() => toggleMenu(item)}
                     className="p-1 hover:bg-gray-200 dark:hover:bg-zinc-600 rounded"
                   >
-                    <EllipsisVertical />
+                    <EllipsisVertical className="w-5 h-5" />
                   </button>
                   <div
                     className={`absolute top-10 right-0 flex gap-4 bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 ${openMenuId === item.id ? "block" : "hidden"
@@ -97,13 +98,17 @@ const AdminMain = ({ Collections, isSideBarOpen }) => {
               </div>
             </Link>
           ))) : (
-            <CollectionHandler />
+            <div className="w-full col-start-1 -col-end-1 overflow-x-hidden">
+              <CollectionHandler />
+            </div>
           )}
         </div>
-      </main >
-    </div >
+      </main>
+    </div>
   );
 };
+
+// AdminDets component remains same with added responsive classes
 
 const AdminDets = ({ user }) => {
   return (
@@ -113,7 +118,6 @@ const AdminDets = ({ user }) => {
         <div className="relative group">
           <img
             src={user?.profilePicture}
-            alt="Admin"
             className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-zinc-900 shadow-lg hover:border-primary-100 transition-all duration-300"
           />
           <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-primary-300 dark:group-hover:border-primary-600 transition-all duration-300" />
