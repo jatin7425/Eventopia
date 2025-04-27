@@ -23,7 +23,7 @@ const AdminSideBar = ({ Collections }) => {
   }
 
   return (
-    <div className="h-full bg-white dark:bg-zinc-900 flex flex-col justify-between p-4 border-r border-gray-100 dark:border-zinc-700">
+    <div className="h-full bg-white dark:bg-zinc-900 flex flex-col justify-between p-4 border-r border-gray-100 dark:border-zinc-700 fixed top-0 w-64">
       <div className="space-y-1">
         <h1 className="text-xl font-bold px-4 py-6 text-zinc-800 dark:text-zinc-100">
           Admin Console
@@ -34,7 +34,7 @@ const AdminSideBar = ({ Collections }) => {
             <Link
               to={`/@bw!n/${item}`}
               key={item}
-              className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors
+              className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${item == 'chats' && 'hidden'}
                 ${currentPath === item
                   ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 font-medium'
                   : 'text-zinc-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800'}

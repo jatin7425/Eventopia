@@ -36,7 +36,7 @@ const AdminPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 h-full">
-        <AdminMain Collections={Collections} />
+        <AdminMain Collections={Collections} isSideBarOpen={isSideBarOpen} />
       </div>
     </div>
   );

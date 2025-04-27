@@ -1,24 +1,18 @@
-import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
+import { ChevronRight, EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "../../store/auth";
+import CollectionHandler from "./CollectionHandler";
 
-const AdminMain = ({ Collections }) => {
+const AdminMain = ({ Collections, isSideBarOpen }) => {
   const param = useParams();
-  const [Collection, setCollection] = useState();
+  const { user } = useAuth();
+  const [Collection, setCollection] = useState(Collections);
+  const [showAdminDets, setShowAdminDets] = useState(false)
 
   useEffect(() => {
     Collections && setCollection(Collections)
   }, [Collections])
-
-
-  const admin = [
-    {
-      id: 1,
-      name: "Faizal Ahmed",
-      imgPath:
-        "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
-    },
-  ];
 
   // Track which item's menu is open
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -39,29 +33,30 @@ const AdminMain = ({ Collections }) => {
 
   return (
     <div className="dark:bg-zinc-800 min-h-screen">
+      {showAdminDets && <AdminDets user={user} />}
       <nav>
-        <div className="h-20 flex items-center justify-between px-10 border-b border-gray-600 bg-slate-300 dark:bg-zinc-800 ">
-          <div className="font-semibold text-2xl">{param.collection}</div>
-          {admin.map((item) => (
-            <div key={item.id} className="flex gap-5 items-center">
-              <h1 className="font-semibold text-2xl">{item.name}</h1>
-              <img
-                src={item.imgPath}
-                alt="Admin"
-                className="w-10 h-10 border rounded-full object-cover"
-              />
-            </div>
-          ))}
+        <div className="h-20 flex items-center justify-end px-10 border-b border-gray-600 bg-slate-300 dark:bg-zinc-800 ">
+          <div
+            onClick={() => setShowAdminDets(!showAdminDets)}
+            className="flex gap-3 items-center cursor-pointer hover:bg-zinc-700 p-2 rounded-md"
+          >
+            <img
+              src={user?.profilePicture}
+              alt="Admin"
+              className="w-10 h-10 border rounded-full object-cover"
+            />
+            <ChevronRight size={30} className={``} />
+          </div>
         </div>
       </nav>
 
       <main className="p-4">
         <div className="w-full flex flex-col gap-4 font-['Gilroy']">
-          {!param.collection ? Collection.map((item) => (
+          {(!param.collection) ? (Collection.map((item) => (
             <Link
               to={`/@bw!n/${item}`}
               key={item.id}
-              className="w-full overflow-hidden shadow-lg"
+              className={`w-full overflow-hidden shadow-lg ${item == "chats" && 'hidden'}`}
             >
               <div className="flex justify-between items-center rounded-lg w-full p-4 bg-white dark:bg-zinc-700 shadow">
                 <div className="flex items-center gap-5 w-full">
@@ -101,24 +96,59 @@ const AdminMain = ({ Collections }) => {
                 </div>
               </div>
             </Link>
-          )) : (
-            <div className="mb-4 p-4 rounded-lg bg-white dark:bg-zinc-700 shadow">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-5">
-                  <img
-                    src={param.imgPath}
-                    alt={param.title}
-                    className="w-12 h-12 border rounded-full object-cover"
-                  />
-                  <h1 className="font-semibold text-2xl">{param.collection}</h1>
-                </div>
-              </div>
-            </div>
+          ))) : (
+            <CollectionHandler />
           )}
         </div>
       </main >
     </div >
   );
 };
+
+const AdminDets = ({ user }) => {
+  return (
+    <div className="fixed top-20 right-16 z-50 w-64 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-gray-200 dark:border-zinc-700 backdrop-blur-md bg-opacity-90 transition-all duration-300 hover:shadow-3xl">
+      <div className="p-6 flex flex-col items-center gap-4">
+        {/* Profile Image */}
+        <div className="relative group">
+          <img
+            src={user?.profilePicture}
+            alt="Admin"
+            className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-zinc-900 shadow-lg hover:border-primary-100 transition-all duration-300"
+          />
+          <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-primary-300 dark:group-hover:border-primary-600 transition-all duration-300" />
+        </div>
+
+        {/* Profile Info */}
+        <div className="text-center space-y-2">
+          <h1 className="text-xl font-serif font-semibold text-zinc-800 dark:text-zinc-100 tracking-tight">
+            {user?.fullName}
+          </h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">
+            @{user?.userName}
+          </p>
+          <div className="pt-2">
+            <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-700 px-3 py-1 rounded-full">
+              {user?.email}
+            </p>
+          </div>
+        </div>
+
+        {/* Decorative Divider */}
+        <div className="w-full py-4 flex items-center">
+          <div className="flex-1 border-t border-gray-200 dark:border-zinc-700"></div>
+          <span className="px-3 text-zinc-400 dark:text-zinc-500 text-sm">ADMIN</span>
+          <div className="flex-1 border-t border-gray-200 dark:border-zinc-700"></div>
+        </div>
+
+        {/* Status Indicator */}
+        <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+          <span>Active Session</span>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default AdminMain;

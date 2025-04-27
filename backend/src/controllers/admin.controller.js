@@ -235,9 +235,6 @@ export const getCollectionData = async (req, res) => {
         const Model = getDynamicModel(collectionName);
         const skip = (Math.max(1, page) - 1) * limit;
 
-
-        console.log("filters:", JSON.stringify(filters, null, 2));
-
         // Build query with proper nesting and type conversion
         const query = buildQuery(filters);
 

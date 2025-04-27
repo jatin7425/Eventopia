@@ -5,6 +5,6 @@ import { protectRoute } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 router.get("/listCollection", getCollection);
-router.get("/selecteColection/:collectionName", getCollectionData);
+router.post("/selecteColection/:collectionName", getCollectionData);
 
 export default router;
