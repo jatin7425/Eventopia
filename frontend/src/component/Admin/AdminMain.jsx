@@ -1,38 +1,20 @@
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
-const AdminMain = () => {
+const AdminMain = ({ Collections }) => {
+  const param = useParams();
+  const [Collection, setCollection] = useState();
+
+  useEffect(() => {
+    Collections && setCollection(Collections)
+  }, [Collections])
+
+
   const admin = [
     {
       id: 1,
       name: "Faizal Ahmed",
-      imgPath:
-        "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
-    },
-  ];
-
-  const collectionData = [
-    {
-      id: 1,
-      title: "Users",
-      imgPath:
-        "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
-    },
-    {
-      id: 2,
-      title: "Vendors",
-      imgPath:
-        "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
-    },
-    {
-      id: 3,
-      title: "Events",
-      imgPath:
-        "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
-    },
-    {
-      id: 4,
-      title: "Events",
       imgPath:
         "https://images.unsplash.com/photo-1506794778169002-8b11c6b57c99",
     },
@@ -45,10 +27,21 @@ const AdminMain = () => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
 
+  if (!Collection) {
+    return (
+      <div className="dark:bg-zinc-800">
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-gray-900"></div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="dark:bg-zinc-800 min-h-screen">
       <nav>
-        <div className="h-20 flex items-center justify-end px-10 border-b border-gray-600 bg-slate-300 dark:bg-zinc-800">
+        <div className="h-20 flex items-center justify-between px-10 border-b border-gray-600 bg-slate-300 dark:bg-zinc-800 ">
+          <div className="font-semibold text-2xl">{param.collection}</div>
           {admin.map((item) => (
             <div key={item.id} className="flex gap-5 items-center">
               <h1 className="font-semibold text-2xl">{item.name}</h1>
@@ -63,34 +56,34 @@ const AdminMain = () => {
       </nav>
 
       <main className="p-4">
-        <div className="w-full font-['Gilroy']">
-          {collectionData.map((item) => (
-            <div
+        <div className="w-full flex flex-col gap-4 font-['Gilroy']">
+          {!param.collection ? Collection.map((item) => (
+            <Link
+              to={`/@bw!n/${item}`}
               key={item.id}
-              className="mb-4 p-4 rounded-lg bg-white dark:bg-zinc-700 shadow"
+              className="w-full overflow-hidden shadow-lg"
             >
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-5">
+              <div className="flex justify-between items-center rounded-lg w-full p-4 bg-white dark:bg-zinc-700 shadow">
+                <div className="flex items-center gap-5 w-full">
                   <img
                     src={item.imgPath}
                     alt={item.title}
                     className="w-12 h-12 border rounded-full object-cover"
                   />
-                  <h1 className="font-semibold text-2xl">{item.title}</h1>
+                  <h1 className="font-semibold text-2xl">{item}</h1>
                 </div>
 
                 {/* Button Group */}
                 <div className="relative">
                   <button
-                    onClick={() => toggleMenu(item.id)}
+                    onClick={() => toggleMenu(item)}
                     className="p-1 hover:bg-gray-200 dark:hover:bg-zinc-600 rounded"
                   >
                     <EllipsisVertical />
                   </button>
                   <div
-                    className={`absolute top-10 right-0 flex gap-4 bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 ${
-                      openMenuId === item.id ? "block" : "hidden"
-                    }`}
+                    className={`absolute top-10 right-0 flex gap-4 bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 ${openMenuId === item.id ? "block" : "hidden"
+                      }`}
                   >
                     <button
                       className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
@@ -107,11 +100,24 @@ const AdminMain = () => {
                   </div>
                 </div>
               </div>
+            </Link>
+          )) : (
+            <div className="mb-4 p-4 rounded-lg bg-white dark:bg-zinc-700 shadow">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-5">
+                  <img
+                    src={param.imgPath}
+                    alt={param.title}
+                    className="w-12 h-12 border rounded-full object-cover"
+                  />
+                  <h1 className="font-semibold text-2xl">{param.collection}</h1>
+                </div>
+              </div>
             </div>
-          ))}
+          )}
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 };
 

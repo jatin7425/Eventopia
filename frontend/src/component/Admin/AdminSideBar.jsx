@@ -1,59 +1,54 @@
-import React, { useState } from 'react'
-import { ImagesToggleBtn, ThemeToggle, ToggleThemeBtn } from '../Theme/ToggleTheme';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { ImagesToggleBtn } from '../Theme/ToggleTheme';
+import { ChevronRight } from 'lucide-react';
 
-const AdminSideBar = () => {
+const AdminSideBar = ({ Collections }) => {
+  const [collection, setCollection] = useState([]);
+  const param = useParams();
+  const currentPath = param.collection || null;
 
-    const [activeColection, setActiveColection] = useState()
+  useEffect(() => {
+    setCollection(Collections || []);
+  }, [Collections]);
 
-    const collection = [
-      {
-        id: 1,
-        title: "Users",
-        path: "/@bw!n/users",
-      },
-      {
-        id: 2,
-        title: "Vendors",
-        path: "/@bw!n/vendors",
-      },
-      {
-        id: 3,
-        title: "Events",
-        path: "/@bw!n/events",
-      },
-    ];
-
-
-    const handleActiveCollection = (id) => {
-      setActiveColection(id);
-    };
-
-  return (
-    <div className="h-full bg-slate-300 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 flex flex-col justify-between py-5 px-3 ">
-      <div className=" ">
-        <h1 className="text-3xl font-semibold p-4 whitespace-nowrap ">Admin Panel</h1>
-      
-        {collection.map((item) => (
-          <div
-            key={item.id}
-            className={`flex items-center mt-4 px-4 py-2 space-x-4 cursor-pointer rounded-xl hover:bg-zinc-300 dark:hover:bg-zinc-600 hover:text-black dark:hover:text-zinc-100  `}
-          >
-            <span
-              className={`text-xl font-semibold ${
-                activeColection
-                  ? "bg-zinc-300 dark:bg-zinc-600 text-black dark:text-zinc-100"
-                  : ""
-              } `}
-              onClick={() => handleActiveCollection(item.id)}
-            >
-              {item.title}
-            </span>
-          </div>
+  if (!collection.length) {
+    return (
+      <div className="h-full bg-white dark:bg-zinc-900 p-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-10 mb-2 bg-gray-100 dark:bg-zinc-800 animate-pulse rounded-lg" />
         ))}
       </div>
+    );
+  }
 
-      <div className="">
-        <div className="flex items-center justify-between ">
+  return (
+    <div className="h-full bg-white dark:bg-zinc-900 flex flex-col justify-between p-4 border-r border-gray-100 dark:border-zinc-700">
+      <div className="space-y-1">
+        <h1 className="text-xl font-bold px-4 py-6 text-zinc-800 dark:text-zinc-100">
+          Admin Console
+        </h1>
+
+        <div className="space-y-1">
+          {collection.map((item) => (
+            <Link
+              to={`/@bw!n/${item}`}
+              key={item}
+              className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors
+                ${currentPath === item
+                  ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 font-medium'
+                  : 'text-zinc-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800'}
+              `}
+            >
+              <span className="capitalize">{item}</span>
+              <ChevronRight size={16} className={`${currentPath === item ? 'text-primary-500' : 'text-zinc-400'}`} />
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-gray-100 dark:border-zinc-700 pt-4">
+        <div className="px-4">
           <ImagesToggleBtn />
         </div>
       </div>
@@ -61,4 +56,4 @@ const AdminSideBar = () => {
   );
 }
 
-export default AdminSideBar
+export default AdminSideBar;

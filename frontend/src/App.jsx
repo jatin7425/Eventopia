@@ -19,7 +19,7 @@ import AdminPage from './pages/AdminPage';
 const App = () => {
 
   const locomotiveScroll = new LocomotiveScroll();
-  
+
   // Render the routes
   return (
     <div
@@ -39,7 +39,9 @@ const App = () => {
         <Route path="/aichatbot" element={<AIChatSupport />} />
         <Route path="/vendorordermanager" element={<VendorOrderManager />} />
         <Route path="/eventinvitaion" element={<EventInvitaion />} />
-        <Route path="/@bw!n" element={<AdminPage />} />
+        <Route path="/@bw!n" element={<AdminPage />}>
+          <Route path=":collection" element={<AdminPage />} />
+        </Route>
       </Routes>
       <Toaster />
     </div>

@@ -23,16 +23,17 @@ export const getCollection = async (req, res) => {
     try {
         if (Date.now() - lastCacheTime < 300000 && collectionsCache) {
             return res.status(200).json({
-                collections: collectionsCache
+                success: true,
+                data: collectionsCache
             });
         }
 
         const collections = await mongoose.connection.db.listCollections().toArray();
         collectionsCache = collections.map(c => c.name);
-        lastCacheTime = Date.now();
-
+        // Return proper structure
         res.status(200).json({
-            collections: collectionsCache
+            success: true,
+            data: collectionsCache  // Changed from 'collections' to 'data'
         });
     } catch (error) {
         res.status(400).json({
@@ -44,12 +45,6 @@ export const getCollection = async (req, res) => {
 }
 
 // get collections data
-
-const normalizeFilterValues = (values) => {
-    if (!values) return [];
-    return Array.isArray(values) ? values : [values];
-};
-
 const { Types: { ObjectId } } = mongoose;
 
 const processNestedObject = (obj) => {
