@@ -576,7 +576,6 @@ export const cartCheckout = async (req, res) => {
         }
 
         // 6. Clear cart only after all vendors are processed
-        event.cart = [];
         await event.save();
 
         res.status(200).json({
