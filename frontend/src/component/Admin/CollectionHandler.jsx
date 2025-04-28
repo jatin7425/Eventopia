@@ -53,6 +53,12 @@ function CollectionHandler() {
         setCurrentPage(1)
     }
 
+    const toggleRowExpand = (id) => {
+        const newExpanded = new Set(expandedRows)
+        newExpanded.has(id) ? newExpanded.delete(id) : newExpanded.add(id)
+        setExpandedRows(newExpanded)
+    }
+
     if (!collection) return <div className="p-4">Select a collection</div>
     if (error) return <div className="p-4 text-red-500">Error: {error}</div>
     if (!CollectionData?.data) return <div className="p-4">No data found</div>
