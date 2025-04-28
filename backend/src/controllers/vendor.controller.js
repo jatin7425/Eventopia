@@ -886,7 +886,7 @@ export const respondToOrders = async (req, res) => {
             type: 'OrderUpdate',
             sender: userId,
             vendor: new mongoose.Types.ObjectId(vendorId),
-            message: `Your ${orders.length} order(s) have been ${statusMessage}: ${user.fullName}.`,
+            message: `Your ${orders.length} order(s) have been ${statusMessage}.`,
             seen: false,
             createdAt: new Date()
         };

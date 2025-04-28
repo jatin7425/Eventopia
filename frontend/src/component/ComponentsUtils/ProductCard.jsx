@@ -141,37 +141,7 @@ export const CartCard = ({ cart }) => {
             </div>
 
             <div className="flex items-center gap-2">
-              {/* Decrease Quantity Button */}
-              <button
-                onClick={() =>
-                  updateCartQuantity(item?._id, item?.quantity, -1)
-                }
-                disabled={item?.quantity <= 1}
-                className={`px-3 py-2 rounded-lg text-white transition ${
-                  item?.quantity <= 1
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-red-500 hover:bg-red-600"
-                }`}
-              >
-                <Minus size={16} />
-              </button>
-
-              {/* Quantity Input */}
-              <input
-                type="number"
-                value={item?.quantity}
-                onChange={handleInputChange}
-                className="w-12 text-center border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                min="1"
-              />
-
-              {/* Increase Quantity Button */}
-              <button
-                onClick={() => updateCartQuantity(item?._id, 1)}
-                className="px-3 py-2 bg-blue-600 rounded-lg text-white transition hover:bg-blue-700"
-              >
-                <Plus size={16} />
-              </button>
+             
 
               {/* Remove Item Button */}
               <button
