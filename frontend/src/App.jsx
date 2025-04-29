@@ -29,7 +29,6 @@ const App = () => {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/" element={<WelcomePage />} />
         <Route path="/user/:page" element={<ProfileDashboard />} />
-        <Route path="/resetPassword" element={<PasswordReset />} />
         <Route path="/eventSelection" element={<EventSelection />} />
         <Route path="/user/:page/:vendorId" element={<ProfileDashboard />} />
         <Route path="/vendorCollection" element={<VendorCollection />} />

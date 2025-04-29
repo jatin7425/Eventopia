@@ -6,7 +6,7 @@ import { useAuth } from "../../store/auth";
 import { motion } from "framer-motion";
 
 const ProfileSetting = ({ userData }) => {
-  const { updateprofile } = useAuth();
+  const { updateprofile, resetPassword } = useAuth();
   // console.log(userData)
   // States for Password Reset Tab (case 2)
   const [oldPassword, setOldPassword] = useState("");
@@ -59,7 +59,8 @@ const ProfileSetting = ({ userData }) => {
     }
 
     // Perform your password update logic here
-    toast.success("Password updated successfully!");
+    resetPassword(oldPassword, newPassword);
+    
     // Reset password fields if needed
     setOldPassword("");
     setNewPassword("");
@@ -492,11 +493,10 @@ const ProfileSetting = ({ userData }) => {
                 <button
                   key={index}
                   onClick={() => setCurrentTab(index)} // Ensure the correct state setter
-                  className={`relative text-md -mb-1 pb-2 transition ${
-                    index === currentTab
+                  className={`relative text-md -mb-1 pb-2 transition ${index === currentTab
                       ? "text-blue-500"
                       : "text-black dark:text-white/70 hover:text-blue-400"
-                  }`}
+                    }`}
                 >
                   {tab}
                   {index === currentTab && (
