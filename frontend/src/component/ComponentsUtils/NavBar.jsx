@@ -242,7 +242,7 @@ export const NavBar = ({ homeLink, aniDelay }) => {
           </div>
           <button
             onClick={toggleSidebar}
-            className="text-2xl fixed z-50 top-8 right-2 flex flex-col gap-1 md:hidden"
+            className="text-2xl fixed z-[999] top-8 right-2 flex flex-col gap-1 md:hidden"
           >
             <motion.div
               animate={{

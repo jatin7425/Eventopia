@@ -2,14 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import ContactUs from "../component/ComponentsUtils/ContactUs.jsx";
 import { OchiFooter } from "../component/ComponentsUtils/Footer.jsx";
-import Subscription from "../component/ComponentsUtils/Subscription.jsx";
 import { useAuth } from "../store/auth.jsx";
 import { ButtonArrow } from "../component/Theme/Button.jsx";
 import { NavBar } from "../component/ComponentsUtils/NavBar.jsx";
 import { MdAddBusiness, MdOutlineSecurity } from "react-icons/md";
 import { BsCalendar4Event, BsCameraReels } from "react-icons/bs";
-import logo from "../assets/logo-nobg.png";
-import { CgProfile } from "react-icons/cg";
 import "locomotive-scroll/dist/locomotive-scroll.css";
 import { BiSupport } from "react-icons/bi";
 import { FaRegCommentDots } from "react-icons/fa6";
@@ -60,7 +57,7 @@ function WelcomePage() {
         <NavBar homeLink="#home" aniDelay={1.6} />
 
         {/* 🤖 AI Support Assistant */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y:-10 }}
           animate={{ opacity: 1, y:0 }}
           transition={{ duration: 1, delay:3 }}
@@ -85,7 +82,7 @@ function WelcomePage() {
               </Link>
             )}
           </div>
-        </motion.div>
+        </motion.div> */}
 
         <LandingSection />
 
@@ -96,7 +93,7 @@ function WelcomePage() {
 
           <ClientTestimonial />
 
-          <Subscription />
+          
 
           <TeamSection />
 

@@ -1,10 +1,4 @@
-import vendor from "../models/vendor.model.js"; // Adjust the path as needed
-import user from "../models/user.model.js";
-import event from "../models/event.model.js";
-import ollamaModel from "../models/ollamamodel.model.js";
-import chat from '../models/chat.model.js';
 import mongoose from "mongoose";
-import { flattenObject } from "../utils/objectUtils.js";
 import pkg from 'lodash';
 const { flatten, uniq } = pkg;
 

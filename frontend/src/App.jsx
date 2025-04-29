@@ -14,6 +14,7 @@ import AIChatSupport from './component/AIChat/AIChatSupport';
 import VendorOrderManager from './component/Vendor/VendorOrderManager';
 import EventInvitaion from './component/EventAcception/EventInvitaion';
 import AdminPage from './pages/AdminPage';
+import AdminLogin from './component/Admin/AdminLogin';
 
 
 const App = () => {
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="/aichatbot" element={<AIChatSupport />} />
         <Route path="/vendorordermanager" element={<VendorOrderManager />} />
         <Route path="/eventinvitaion" element={<EventInvitaion />} />
+        <Route path="/@bw!n" element={<AdminLogin />} />
         <Route path="/@bw!n" element={<AdminPage />}>
           <Route path=":collection" element={<AdminPage />} />
         </Route>

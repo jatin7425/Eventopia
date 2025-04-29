@@ -45,6 +45,8 @@
     "string-width": "^4.2.3",
     "strip-ansi": "^6.0.1",
     "supports-color": "^8.1.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "sweetalert2": "^11.19.1",
     "tree-kill": "^1.2.2",
     "tslib": "^2.7.0",
