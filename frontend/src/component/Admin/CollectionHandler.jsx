@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
 import { useAdmin } from '../../store/adminContext'
 import { useParams } from 'react-router-dom'
 import { FilterBuilder } from './FilterBuilder'
