@@ -170,7 +170,7 @@ export const updateProfile = async (req, res) => {
         };
 
         // Validate email format if provided
-        if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+        if (email && emailPattern.test(email)) {
             return res.status(400).json({ message: "Invalid email format." });
         }
 
@@ -194,8 +194,6 @@ export const updateProfile = async (req, res) => {
                 country: country || "",
             }];
         }
-
-        console.log("Update Query:", updateQuery);
 
         // Update the user in the database with new: true to get the updated document.
         const updatedUser = await User.findByIdAndUpdate(userId, updateQuery, { new: true, runValidators: true });
@@ -241,10 +239,6 @@ export const checkAuth = async (req, res) => {
 export const resetPassword = async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
-
-        const passwordPattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-
-        console.log(passwordPattern);
 
         // Validate input
         if (!oldPassword || !newPassword) {
@@ -369,40 +363,6 @@ export const requestPasswordReset = async (req, res) => {
         res.status(200).json({ message: 'OTP sent successfully!' });
     } catch (error) {
         console.error('Error in requestPasswordReset:', error.message);
-        res.status(500).json({ message: 'Internal Server Error.' });
-    }
-};
-
-// Reset password
-export const forgetPassword = async (req, res) => {
-    const { email, contact, otp, newPassword } = req.body;
-
-    try {
-        // Find user by email or contact
-        const user = await User.findOne({
-            $or: [{ email }, { contact }],
-        });
-
-        if (!user) {
-            return res.status(404).json({
-                message: `No user exists with this ${email ? 'email' : 'contact'}`,
-            });
-        }
-
-        // Check if OTP is valid
-        if (user.otp !== otp || user.otpExpiry < Date.now()) {
-            return res.status(400).json({ message: 'Invalid or expired OTP.' });
-        }
-
-        // Update password
-        user.password = newPassword;
-        user.otp = undefined;
-        user.otpExpiry = undefined;
-        await user.save();
-
-        res.status(200).json({ message: 'Password reset successful!' });
-    } catch (error) {
-        console.error('Error in resetPassword:', error.message);
         res.status(500).json({ message: 'Internal Server Error.' });
     }
 };

@@ -5,7 +5,6 @@ import AuthPage from './pages/AuthPage';
 import WelcomePage from './pages/WelcomePage';
 import EventSelection from './pages/EventSelection';
 import ProfileDashboard from './pages/ProfileDashboard';
-import PasswordReset from './pages/PasswordReset';
 import LocomotiveScroll from 'locomotive-scroll';
 import VendorCollection from './component/Vendor/VendorCollection';
 import ProductCollection from './component/ProductCard/ProductCollection';
@@ -31,7 +30,6 @@ const App = () => {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/" element={<WelcomePage />} />
         <Route path="/user/:page" element={<ProfileDashboard />} />
-        <Route path="/resetPassword" element={<PasswordReset />} />
         <Route path="/eventSelection" element={<EventSelection />} />
         <Route path="/user/:page/:vendorId" element={<ProfileDashboard />} />
         <Route path="/vendorCollection" element={<VendorCollection />} />

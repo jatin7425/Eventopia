@@ -1,5 +1,5 @@
 import express from "express";
-import { login, logout, signup, updateProfile, checkAuth, resetPassword, userById, getAllUsers, forgetPassword, requestPasswordReset } from "../controllers/auth.controller.js";
+import { login, logout, signup, updateProfile, checkAuth, resetPassword, userById, getAllUsers, requestPasswordReset } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -21,7 +21,5 @@ router.get('/userById/:userId', protectRoute, userById);
 router.get('/getAllUsers', protectRoute, getAllUsers);
 
 router.post('/request-password-reset', requestPasswordReset);
-
-router.post('/reset-password', forgetPassword);
 
 export default router;
