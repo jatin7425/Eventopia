@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
 import { useAdmin } from '../../store/adminContext'
 import { useParams } from 'react-router-dom'
 import { FilterBuilder } from './FilterBuilder'
@@ -8,7 +9,7 @@ import { ChevronDown, ChevronUp, Edit, Filter, Trash, X } from 'lucide-react'
 
 function CollectionHandler() {
     const { collection } = useParams()
-    const { getCollectionData, CollectionData, setCollectionData, deleteCollectionItem, loading, error } = useAdmin()
+    const { getCollectionData, updateCollectionItem, CollectionData, setCollectionData, deleteCollectionItem, loading, error } = useAdmin()
     const [localFilters, setLocalFilters] = useState({})
     const [appliedFilters, setAppliedFilters] = useState({})
     const [currentPage, setCurrentPage] = useState(1)
@@ -16,6 +17,8 @@ function CollectionHandler() {
     const [showFilters, setShowFilters] = useState(false)
     const [expandedRows, setExpandedRows] = useState(new Set())
     const [ShowDeleteModal, setShowDeleteModal] = useState(false)
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
 
     const toggleShowDeleteModal = () => setShowDeleteModal(!ShowDeleteModal)
 
@@ -62,6 +65,29 @@ function CollectionHandler() {
     if (!collection) return <div className="p-4">Select a collection</div>
     if (error) return <div className="p-4 text-red-500">Error: {error}</div>
     if (!CollectionData?.data) return <div className="p-4">No data found</div>
+
+    const handleUpdateClick = (item) => {
+        setSelectedItem(item);
+        setShowUpdateModal(true);
+    };
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await updateCollectionItem(collection, selectedItem._id, selectedItem);
+            setShowUpdateModal(false);
+            await getCollectionData(collection);
+        } catch (error) {
+            console.error('Update failed:', error);
+        }
+    };
+
+    const handleInputChange = (field, value) => {
+        setSelectedItem(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
 
     return (
         <div className="sm:p-4 p-1 w-full">
@@ -113,7 +139,7 @@ function CollectionHandler() {
                                             !isMongoId
                                         );
                                     })
-                                    .slice(0, 3)
+                                    .slice(0, 5)
                                     .map((key) => (
                                         <th key={key} className="px-4 py-3 text-left text-sm font-medium">
                                             <div className="flex items-center gap-2">
@@ -122,16 +148,6 @@ function CollectionHandler() {
                                             </div>
                                         </th>
                                     ))}
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                                <div className="flex items-center gap-2">
-                                    Update
-                                </div>
-                            </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                                <div className="flex items-center gap-2">
-                                    Delete
-                                </div>
-                            </th>
                         </tr>
                     </thead>
 
@@ -158,23 +174,12 @@ function CollectionHandler() {
                                                 !isMongoId
                                             );
                                         })
-                                        .slice(0, 3)
+                                        .slice(0, 5)
                                         .map(([key, value]) => (
                                             <td key={key} className="px-4 py-2 max-w-xs truncate">
                                                 {value?.toString()}
                                             </td>
                                         ))}
-                                    <td className="px-4 py-2 max-w-xs truncate">
-                                        <button >
-                                            <Edit className='text-blue-500' size={16} />
-                                        </button>
-                                    </td>
-                                    <td className="px-4 py-2 max-w-xs truncate">
-                                        {ShowDeleteModal && <DeleteModal collection={collection} id={item?._id} deleteCollectionItem={deleteCollectionItem} toggleShowDeleteModal={toggleShowDeleteModal} />}
-                                        <button onClick={toggleShowDeleteModal}>
-                                            <Trash className='text-red-500' size={16} />
-                                        </button>
-                                    </td>
                                 </tr>
 
                                 {expandedRows.has(item._id) && (
@@ -193,7 +198,6 @@ function CollectionHandler() {
                     </tbody>
                 </table>
             </div>
-
 
             {CollectionData.pagination && (
                 <Pagination
