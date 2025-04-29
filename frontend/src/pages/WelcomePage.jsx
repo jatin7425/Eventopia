@@ -418,7 +418,7 @@ const FeaturesSection = () => {
               exit="exit"
               transition={{ delay: index * 0.2 }}
               viewport={{ once: false, amount: 0.2 }} // Ensures it animates when scrolling back
-              className="dark:bg-zinc-800 dark:text-white sm:p-6 p-4 flex bg-white rounded-r-md border-r border-b border-zinc-600 shadow-[0_14px_40px_-11px_rgba(93,96,127,0.2)]"
+              className="dark:bg-zinc-800 dark:text-white sm:p-6 p-4 flex bg-white rounded-r-md shadow-md shadow-blue-600/50 "
             >
               <div className="dark:text-black">{item.icon}</div>
               <div>
@@ -523,11 +523,11 @@ const ClientTestimonial = () => {
       <div className="md:py-16 gap-8 max-w-7xl max-md:max-w-lg mx-auto relative">
         <div className="bg-blue-100 max-w-[80%] max-md:w-[100vw] max-sm:w-full max-xs:w-full h-full w-full inset-0 mx-auto rounded-3xl absolute max-md:hidden"></div>
         <div
-          className="flex gap-9 flex-nowrap w-full overflow-x-hidden pl-5"
+          className="flex gap-9 flex-nowrap w-full overflow-x-hidden pl-5  "
           ref={scrollRef}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          <div className="w-36 h-full bg-gradient-to-r dark:from-[#1a1a1a] to-[#1a1a1a]/0 absolute left-0 top-0 z-10 max-md:hidden"></div>
+          <div className="w-36 h-full bg-gradient-to-r dark:from-[#1a1a1a] to-[#1a1a1a]/0 absolute left-0 top-0 z-10 max-md:hidden  "></div>
           {testimonials?.map((item, index) => (
             <div
               key={index}
@@ -711,8 +711,8 @@ const TeamCard = ({ member }) => {
 
   return (
     <div
-      className={`dark:bg-zinc-800 dark:text-white bg-white rounded-lg shadow-lg dark:shadow-zinc-600 p-6 transition-transform duration-300 ${
-        isHovered ? "hover:shadow-xl" : "hover:shadow-lg"
+      className={`dark:bg-zinc-800 dark:text-white bg-white rounded-lg shadow-md shadow-blue-600/60 p-6 transition-transform duration-300 ${
+        isHovered ? "hover:shadow-xl-blue" : "hover:shadow-md"
       }`}
       style={{
         transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
