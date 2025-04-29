@@ -98,11 +98,6 @@ const ContactUs = () => {
               placeholder="Email"
               className="w-full rounded-md py-3 px-4 bg-[#f8f9ff] outline-cyan-900"
             />
-            <input
-              type="text"
-              placeholder="Subject"
-              className="w-full rounded-md py-3 px-4 bg-[#f8f9ff] outline-cyan-900"
-            />
             <textarea
               placeholder="Message"
               rows="6"

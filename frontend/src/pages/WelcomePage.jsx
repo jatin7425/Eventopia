@@ -20,7 +20,7 @@ import FoodImg4 from "../assets/FoodImg4.png";
 import FoodImg5 from "../assets/FoodImg16.png";
 import HallImg from "../assets/hall.png";
 import HallImg2 from "../assets/hall2.png";
-
+import { TypeAnimation } from "react-type-animation";
 
 function WelcomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -56,34 +56,6 @@ function WelcomePage() {
       <div className="bg-[#f8f9ff] dark:bg-[#1a1a1a] dark:text-white text-black text-[15px]">
         <NavBar homeLink="#home" aniDelay={1.6} />
 
-        {/* 🤖 AI Support Assistant */}
-        {/* <motion.div
-          initial={{ opacity: 0, y:-10 }}
-          animate={{ opacity: 1, y:0 }}
-          transition={{ duration: 1, delay:3 }}
-          className="fixed z-40 bottom-7 right-7 flex items-center justify-end p-4"
-        >
-          <div className="shadow-lg rounded-lg bg-white dark:bg-gray-800 transition duration-300">
-            {isLoggedin ? (
-              <Link to={"/aichatbot"} className="block">
-                <button className="px-4 pt-3 pb-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-                  <h1 className="text-lg font-bold ">
-                    🤖 AI Support Assistant
-                  </h1>
-                </button>
-              </Link>
-            ) : (
-              <Link to={"/auth"} className="block">
-                <button className="px-4 pt-3 pb-1 bg-gray-600 hover:bg-gray-600 text-white rounded-lg">
-                  <h1 className="text-lg font-bold ">
-                    🤖 AI Support Assistant
-                  </h1>
-                </button>
-              </Link>
-            )}
-          </div>
-        </motion.div> */}
-
         <LandingSection />
 
         <div className="px-4 sm:px-10">
@@ -93,12 +65,12 @@ function WelcomePage() {
 
           <ClientTestimonial />
 
-          
-
           <TeamSection />
 
           <ContactUs />
         </div>
+
+        {/* Footer  */}
         <motion.div
           ref={footerRef}
           initial="hidden"
@@ -113,43 +85,42 @@ function WelcomePage() {
   );
 }
 
-
 export const LandingSection = () => {
   const { isLoggedin, user } = useAuth();
   const paragraphRef = useRef(null);
   const buttonRef = useRef(null);
   const scrollRef = useRef(null);
 
-const FoodImgCycle = [
-  {
-    id: 1,
-    img: FoodImg1,
-  },
-  {
-    id: 2,
-    img: FoodImg2,
-  },
-  {
-    id: 3,
-    img: FoodImg3,
-  },
-  {
-    id: 4,
-    img: FoodImg4,
-  },
-  {
-    id: 5,
-    img: FoodImg5,
-  },
-  {
-    id: 7,
-    img: HallImg,
-  },
-  {
-    id: 8,
-    img: HallImg2,
-  },
-];
+  const FoodImgCycle = [
+    {
+      id: 1,
+      img: FoodImg1,
+    },
+    {
+      id: 2,
+      img: FoodImg2,
+    },
+    {
+      id: 3,
+      img: FoodImg3,
+    },
+    {
+      id: 4,
+      img: FoodImg4,
+    },
+    {
+      id: 5,
+      img: FoodImg5,
+    },
+    {
+      id: 7,
+      img: HallImg,
+    },
+    {
+      id: 8,
+      img: HallImg2,
+    },
+  ];
 
   return (
     <motion.div
@@ -165,11 +136,32 @@ const FoodImgCycle = [
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            Effortless{" "}
-            <span className="text-blue-600 dark:text-blue-500 ">
-              Event Planning{" "}
-            </span>
-            at Your Fingertips!
+            Plan your <span className="text-blue-500">Events</span> <br />
+            <motion.span className="">
+              <TypeAnimation
+                sequence={[
+                  2000,
+                  " on your Fingertips!",
+                  1000,
+                  " with Zero Effort!",
+                  1000,
+                  " From Vision to Reality!",
+                  1000,
+                  " Effortless Elegance, Every Event!",
+                  1000,
+                  "Meetings & Milestones, Stress-Free!",
+                  1000,
+                ]}
+                wrapper="span"
+                speed={30}
+                style={{
+                  fontSize: "40px",
+                  display: "inline-block",
+                  animationDelay: "3000ms",
+                }}
+                repeat={Infinity}
+              />
+            </motion.span>
           </motion.h1>
           <motion.p
             className="text-base font-['Founders_Grotesk_Condensed']"
@@ -221,11 +213,12 @@ const FoodImgCycle = [
             We Collaborated Vendors Near-By You.
           </motion.h1>
 
-          <motion.div 
-          initial={{opacity:0}}
-          animate={{opacity:1}}
-          transition={{duration:2, delay:3.2}}
-          className="overflow-hidden w-[90%] relative">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2, delay: 3.2 }}
+            className="overflow-hidden w-[90%] relative"
+          >
             {/* Gradient Overlay - Left */}
             <div className="h-24 w-40 bg-gradient-to-r dark:from-[#1a1a1a] from-[#F8F9FF] to-transparent absolute left-0 top-0 z-10"></div>
 
@@ -241,8 +234,7 @@ const FoodImgCycle = [
                 repeatType: "loop",
               }}
             >
-              {FoodImgCycle
-              .concat(FoodImgCycle)
+              {FoodImgCycle.concat(FoodImgCycle)
                 .concat(FoodImgCycle)
                 .map((img, index) => (
                   <div
@@ -393,7 +385,7 @@ const FeaturesSection = () => {
       >
         <div
           ref={section2Ref}
-          className={`pb-16 h-fit max-w-2xl text-start max-md:text-center mx-auto w-1/2  ${
+          className={`pb-16 h-fit max-w-2xl text-start max-md:text-center mx-auto w-1/2 ${
             isFixed ? "sticky top-24" : ""
           } ${releaseAnimation ? "release-animation" : ""}`}
         >
@@ -569,49 +561,50 @@ const ClientTestimonial = () => {
 const TeamSection = () => {
   const teamMembers = [
     {
-      imgSrc: "https://readymadeui.com/team-1.webp",
+      imgSrc:
+        "https://media.licdn.com/dms/image/v2/D4D03AQEAHTyQE5JEpA/profile-displayphoto-shrink_100_100/B4DZZTzs0gHwAU-/0/1745162786624?e=1751500800&v=beta&t=wX_ssBUk6QqR95TMgzm_EQr3hI7aoDmYsXfe0F91Gl4",
       name: "Jatin Vishwakarma",
       role: "FrontEnd & Backend Developer",
       socials: [
         {
-          link: "https://facebook.com",
+          link: "https://www.instagram.com/__jatin__2002/?utm_source=ig_web_button_share_sheet",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               fill="currentColor"
-              className="text-gray-600 hover:text-blue-600"
+              className="text-zinc-400 hover:text-pink-600"
               viewBox="0 0 24 24"
             >
-              <path d="M22.675 0h-21.35c-.733 0-1.325.592-1.325 1.325v21.351c0 .732.592 1.324 1.325 1.324h11.49v-9.294h-3.128v-3.622h3.128v-2.672c0-3.1 1.893-4.787 4.656-4.787 1.325 0 2.464.099 2.794.143v3.24h-1.918c-1.504 0-1.794.715-1.794 1.763v2.313h3.588l-.467 3.622h-3.121v9.293h6.116c.733 0 1.325-.592 1.325-1.325v-21.35c0-.733-.592-1.325-1.325-1.325z" />
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
             </svg>
           ),
         },
         {
-          link: "https://twitter.com",
+          link: "https://github.com/jatin7425",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               fill="currentColor"
-              className="text-gray-600 hover:text-blue-400"
+              className="text-zinc-400 dark:hover:text-zinc-100 hover:text-zinc-700 "
               viewBox="0 0 24 24"
             >
-              <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.723-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-2.72 0-4.926 2.206-4.926 4.927 0 .386.043.762.128 1.124-4.094-.205-7.725-2.165-10.162-5.144-.425.729-.667 1.577-.667 2.476 0 1.709.869 3.216 2.191 4.099-.807-.026-1.566-.247-2.23-.616v.062c0 2.385 1.697 4.374 3.946 4.828-.413.111-.849.171-1.296.171-.317 0-.626-.031-.928-.088.627 1.956 2.444 3.381 4.6 3.421-1.683 1.319-3.808 2.105-6.115 2.105-.398 0-.79-.023-1.175-.068 2.179 1.396 4.768 2.211 7.548 2.211 9.057 0 14.01-7.504 14.01-14.008 0-.213-.005-.426-.015-.637.961-.694 1.8-1.56 2.462-2.548l-.047-.02z" />
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
             </svg>
           ),
         },
         {
-          link: "https://linkedin.com",
+          link: "https://www.linkedin.com/in/jatin7425/",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               fill="currentColor"
-              className="text-gray-600 hover:text-blue-700"
+              className="text-zinc-400 hover:text-blue-700"
               viewBox="0 0 24 24"
             >
               <path d="M22.23 0h-20.46c-.974 0-1.77.796-1.77 1.77v20.46c0 .974.796 1.77 1.77 1.77h20.46c.974 0 1.77-.796 1.77-1.77v-20.46c0-.974-.796-1.77-1.77-1.77zm-15.64 20.454h-3.248v-10.89h3.248v10.89zm-1.62-12.419c-1.041 0-1.884-.843-1.884-1.884s.843-1.884 1.884-1.884c1.041 0 1.884.843 1.884 1.884s-.843 1.884-1.884 1.884zm13.72 12.419h-3.248v-5.944c0-1.419-.505-2.386-1.765-2.386-.963 0-1.535.65-1.785 1.278-.092.223-.115.535-.115.849v6.203h-3.248v-10.89h3.248v1.489c.433-.66 1.206-1.6 2.936-1.6 2.14 0 3.742 1.4 3.742 4.409v6.592z" />
@@ -621,49 +614,49 @@ const TeamSection = () => {
       ],
     },
     {
-      imgSrc: "https://readymadeui.com/team-2.webp",
+      imgSrc: "https://avatars.githubusercontent.com/u/200369650?v=4",
       name: "Faizal Ahmed",
       role: "FrontEnd & Backend Developer",
       socials: [
         {
-          link: "https://facebook.com",
+          link: "https://www.instagram.com/faizal_noob_?igsh=Nmx2M3Z1bW5pMXJs",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               fill="currentColor"
-              className="text-gray-600 hover:text-blue-600"
+              className="text-zinc-400 hover:text-pink-600"
               viewBox="0 0 24 24"
             >
-              <path d="M22.675 0h-21.35c-.733 0-1.325.592-1.325 1.325v21.351c0 .732.592 1.324 1.325 1.324h11.49v-9.294h-3.128v-3.622h3.128v-2.672c0-3.1 1.893-4.787 4.656-4.787 1.325 0 2.464.099 2.794.143v3.24h-1.918c-1.504 0-1.794.715-1.794 1.763v2.313h3.588l-.467 3.622h-3.121v9.293h6.116c.733 0 1.325-.592 1.325-1.325v-21.35c0-.733-.592-1.325-1.325-1.325z" />
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
             </svg>
           ),
         },
         {
-          link: "https://twitter.com",
+          link: "https://github.com/Faizal-16",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               fill="currentColor"
-              className="text-gray-600 hover:text-blue-400"
+              className="text-zinc-400 dark:hover:text-zinc-100 hover:text-zinc-700 "
               viewBox="0 0 24 24"
             >
-              <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.723-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-2.72 0-4.926 2.206-4.926 4.927 0 .386.043.762.128 1.124-4.094-.205-7.725-2.165-10.162-5.144-.425.729-.667 1.577-.667 2.476 0 1.709.869 3.216 2.191 4.099-.807-.026-1.566-.247-2.23-.616v.062c0 2.385 1.697 4.374 3.946 4.828-.413.111-.849.171-1.296.171-.317 0-.626-.031-.928-.088.627 1.956 2.444 3.381 4.6 3.421-1.683 1.319-3.808 2.105-6.115 2.105-.398 0-.79-.023-1.175-.068 2.179 1.396 4.768 2.211 7.548 2.211 9.057 0 14.01-7.504 14.01-14.008 0-.213-.005-.426-.015-.637.961-.694 1.8-1.56 2.462-2.548l-.047-.02z" />
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
             </svg>
           ),
         },
         {
-          link: "https://linkedin.com",
+          link: "https://www.linkedin.com/in/faizal-ahmed-a689052a5/",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               fill="currentColor"
-              className="text-gray-600 hover:text-blue-700"
+              className="text-zinc-400 hover:text-blue-700"
               viewBox="0 0 24 24"
             >
               <path d="M22.23 0h-20.46c-.974 0-1.77.796-1.77 1.77v20.46c0 .974.796 1.77 1.77 1.77h20.46c.974 0 1.77-.796 1.77-1.77v-20.46c0-.974-.796-1.77-1.77-1.77zm-15.64 20.454h-3.248v-10.89h3.248v10.89zm-1.62-12.419c-1.041 0-1.884-.843-1.884-1.884s.843-1.884 1.884-1.884c1.041 0 1.884.843 1.884 1.884s-.843 1.884-1.884 1.884zm13.72 12.419h-3.248v-5.944c0-1.419-.505-2.386-1.765-2.386-.963 0-1.535.65-1.785 1.278-.092.223-.115.535-.115.849v6.203h-3.248v-10.89h3.248v1.489c.433-.66 1.206-1.6 2.936-1.6 2.14 0 3.742 1.4 3.742 4.409v6.592z" />
@@ -672,7 +665,6 @@ const TeamSection = () => {
         },
       ],
     },
-    ,
   ];
 
   return (
@@ -749,7 +741,7 @@ const TeamCard = ({ member }) => {
               href={social.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="dark:bg-zinc-100 p-2 dark:text-white w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition"
+              className="text-white hover: p-2 w-9 h-9 flex items-center justify-center rounded-full transition"
             >
               {social.svg}
             </a>

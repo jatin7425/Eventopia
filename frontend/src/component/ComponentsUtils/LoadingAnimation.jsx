@@ -49,13 +49,11 @@ export const OchiLoadingScreen = () => {
           transition={{ delay: 0.5, duration: 1 }}
           className="text-5xl font-bold font-['Founders_Grotesk']"
         >
-          Effortless Event Planning <br /> at Your Fingertips!
+          Plan Your <span className="text-blue-500">Events</span>
         </motion.h1>
 
-        <motion.div
-        className=""
-        >
-          <motion.div className="absolute bottom-4 left-4 text-3xl font-['Founders_Grotesk'] font-bold ">
+        <motion.div className="">
+          <motion.div className="absolute bottom-4 left-4 text-xl font-['Founders_Grotesk'] font-bold animate-pulse ">
             Loading...
           </motion.div>
           <motion.div
