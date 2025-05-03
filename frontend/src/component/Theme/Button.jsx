@@ -43,8 +43,6 @@ export const ButtonBtmUp = ({
   mTitle,
   p,
   display,
-  displayTitle2 = "hidden",
-  title2,
 }) => {
   return (
     <button
@@ -62,7 +60,6 @@ export const ButtonBtmUp = ({
       >
         {title}
       </span>
-      <span className={`${displayTitle2}`}>{title2}</span>
     </button>
   );
 };

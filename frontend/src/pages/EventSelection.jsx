@@ -85,9 +85,10 @@ const EventSelection = () => {
 
   return (
     <div className=" overflow-hidden min-h-screen font-['Founders_Grotesk']">
+      
       {/* Navbar */}
       <div className="h-20 w-full">
-        <NavBar homeLink="/" aniDelay={0.7} />
+        <NavBar homeLink="/" aniDelay={0.7} contactLink="/contactus" />
       </div>
 
       {showCreateEventForm && (
@@ -146,25 +147,22 @@ const EventSelection = () => {
                 <span className="text-lg -mb-2 text-[#6366F1] dark:text-zinc-400 font-semibold">
                   {post.category}
                 </span>
-                <h3 className="text-[22px] font-bold mt-4 -mb-2 ">{post.title}</h3>
+                <h3 className="text-[22px] font-bold mt-4 -mb-2 ">
+                  {post.title}
+                </h3>
                 <div className="flex items-center  gap-1 mt-2">
                   <div className="group flex items-center justify-center gap-1">
-                    <a
-                      className="text-xs font-semibold text-zinc-500 dark:text-zinc-300 dark:group-hover:text-zinc-100 group-hover:text-zinc-700"
-                      href=""
-                    >
-                      <BorderAnimaButton
-                        title={"Create Event"}
-                        textColor={"text-zinc-700 , dark:text-zinc-400"}
-                        borderColor={
-                          "border-zinc-400 group-hover:border-zinc-900 dark:group-hover:border-zinc-100 dark:border-zinc-400"
-                        }
-                        hoverTextColor={
-                          "group-hover:text-black , dark:group-hover:text-white dark:text-zinc-300"
-                        }
-                        h={"h-10"}
-                      />
-                    </a>
+                    <BorderAnimaButton
+                      title={"Create Event"}
+                      textColor={"text-zinc-700 , dark:text-zinc-400"}
+                      borderColor={
+                        "border-zinc-400 group-hover:border-zinc-900 dark:group-hover:border-zinc-100 dark:border-zinc-400"
+                      }
+                      hoverTextColor={
+                        "group-hover:text-black , dark:group-hover:text-white dark:text-zinc-300"
+                      }
+                      h={"h-10"}
+                    />
                     <div className="text-zinc-500 mt-[6px] group-hover:text-blue-600 dark:group-hover:text-blue-500 -rotate-45 dark:text-zinc-400">
                       <FaArrowRight size={18} />
                     </div>
@@ -184,7 +182,7 @@ const EventSelection = () => {
         variants={cardVariants2}
         className="w-full h-max border-t-2"
       >
-        <OchiFooter marginTop={20} />
+        <OchiFooter marginTop={20} contactLink="/contactus" />
       </motion.div>
     </div>
   );
@@ -409,9 +407,6 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                   w="w-20"
                   h="h-10"
                   p="px-4 "
-                  display="max-md:hidden"
-                  displayTitle2="md:hidden"
-                  title2="+"
                 />
               </motion.button>
             )}
@@ -432,9 +427,6 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                   w="w-20"
                   h="h-10"
                   p="px-4 "
-                  display="max-md:hidden"
-                  displayTitle2="md:hidden"
-                  title2="+"
                 />
               </motion.button>
             ) : (
@@ -453,9 +445,6 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                   w="w-full"
                   h="h-10"
                   p="px-4 "
-                  display="max-md:hidden"
-                  displayTitle2="md:hidden"
-                  title2="+"
                 />
               </motion.button>
             )}

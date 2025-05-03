@@ -14,6 +14,8 @@ import VendorOrderManager from "./component/Vendor/VendorOrderManager";
 import EventInvitaion from "./component/EventAcception/EventInvitaion";
 import AdminPage from "./pages/AdminPage";
 import AdminLogin from "./component/Admin/AdminLogin";
+import ContactUs from "./component/ComponentsUtils/ContactUs";
+import ContactUsPage from "./pages/ContactUsPage";
 
 const App = () => {
   const locomotiveScroll = new LocomotiveScroll();
@@ -21,13 +23,14 @@ const App = () => {
   // Render the routes
   return (
     <div
-      className="dark:bg-[#1a1a1a] dark:text-white bg-white font-['Founders_Grotesk'] overflow-hidden "
+      className="dark:bg-[#1a1a1a] dark:text-white bg-white font-['Founders_Grotesk'] "
       data-scroll-container
     >
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/" element={<WelcomePage />} />
         <Route path="/user/:page" element={<ProfileDashboard />} />
+        <Route path="/contactus" element={<ContactUsPage />} />
         <Route path="/eventSelection" element={<EventSelection />} />
         <Route path="/user/:page/:vendorId" element={<ProfileDashboard />} />
         <Route path="/vendorCollection" element={<VendorCollection />} />

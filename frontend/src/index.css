@@ -30,6 +30,30 @@ body {
   background: #1a1a1a;
 }
 
+
+/* src/index.css */
+.sticky {
+  position: sticky;
+}
+
+.release-animation {
+  transform: translateY(10px);
+}
+
+.top-7 {
+  top: 20px;
+}
+
+@media (max-width: 768px) {
+  .sticky {
+    position: static;
+  }
+
+  .release-animation {
+    animation: none;
+  }
+}
+
 /* Vendor Cycle Animation */
 @keyframes scrollX {
   0% {

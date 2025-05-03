@@ -7,8 +7,11 @@ import "locomotive-scroll/dist/locomotive-scroll.css";
 import { motion, useAnimation } from "framer-motion";
 import { ThemeToggle } from "../Theme/ToggleTheme";
 import { ButtonArrow } from "../Theme/Button.jsx";
+import { Contact } from "lucide-react";
+import ContactUs from "./ContactUs.jsx";
+import ContactUsPage from "../../pages/ContactUsPage.jsx";
 
-export const NavBar = ({ homeLink, aniDelay }) => {
+export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
   const { isLoggedin, user } = useAuth();
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
   const [IsSideBarBgOpen, setIsSideBarBgOpen] = useState(false);
@@ -65,7 +68,7 @@ export const NavBar = ({ homeLink, aniDelay }) => {
     },
     {
       name: "Contact",
-      link: "#contact",
+      link: "/#contact",
     },
     {
       name: "About Us",
@@ -103,7 +106,7 @@ export const NavBar = ({ homeLink, aniDelay }) => {
                 </Link>
               </li>
               <li>
-                <a href="#contact" className="hover:text-gray-300">
+                <a href={contactLink} className="hover:text-gray-300">
                   Contact
                 </a>
               </li>

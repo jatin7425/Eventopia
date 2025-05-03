@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ButtonArrow } from '../Theme/Button';
 import { motion } from 'framer-motion';
+import { ButtonArrow } from '../component/Theme/Button';
 
-const ContactUs = () => {
+const ContactUsPage = () => {
   
     const [isFixed, setIsFixed] = useState(false);
 
@@ -15,9 +15,9 @@ const ContactUs = () => {
     return (
       <motion.div
         id="contact"
-        className=" dark:bg-[#1a1a1a] px-20 py-7 pt-20 w-full"
+        className=" dark:bg-[#1a1a1a] px-20 py-7 pt-20 h-screen w-full flex items-center justify-between"
       >
-        <div className="grid sm:grid-cols-2 dark:bg-zinc-800 px-10 py-7 rounded-lg items-center gap-16 my-6 mx-auto max-w-1/2 shadow-md shadow-white/60">
+        <div className="grid sm:grid-cols-2 dark:bg-zinc-800 px-10 py-7 rounded-lg items-center gap-16 my-6 mx-auto max-w-1/2 shadow-md shadow-blue-600/50">
           <div className="flex flex-col items-start gap-4 ">
             <h1 className="md:text-4xl text-3xl font-extrabold">Let's Talk</h1>
             <p className="mt-3">
@@ -114,4 +114,4 @@ const ContactUs = () => {
     );
 }
 
-export default ContactUs;
+export default ContactUsPage;

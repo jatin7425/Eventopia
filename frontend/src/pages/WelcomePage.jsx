@@ -52,22 +52,30 @@ function WelcomePage() {
     },
   };
   return (
-    <div className="dark:bg-[#1a1a1a] dark:text-white max-w-[1920px] mx-auto  ">
-      <div className="bg-[#f8f9ff] dark:bg-[#1a1a1a] dark:text-white text-black text-[15px]">
-        <NavBar homeLink="#home" aniDelay={1.6} />
+    <div className="dark:bg-[#1a1a1a] dark:text-white max-w-[1920px] mx-auto overflow-hidden ">
+      <div className="bg-[#fdfdfd] dark:bg-[#1a1a1a] dark:text-white text-black text-[15px]">
+        <NavBar homeLink="#home" aniDelay={1.6} contactLink="#contact" />
 
-        <LandingSection />
+        <div className="h-full w-full ">
+          <LandingSection />
+        </div>
 
-        <div className="px-4 sm:px-10">
-          <section>
+        <div className="">
+          <section className="h-full w-full mt-10 pb-10 bg-[#F9FAFB] dark:bg-[#1a1a1a]">
             <FeaturesSection />
           </section>
 
-          <ClientTestimonial />
+          <div className="h-full w-full  flex justify-center items-center">
+            <ClientTestimonial />
+          </div>
 
-          <TeamSection />
+          <div className="h-full w-full flex justify-center items-center bg-[#F9FAFB] dark:bg-[#1a1a1a]">
+            <TeamSection />
+          </div>
 
-          <ContactUs />
+          <div className="h-full w-full flex justify-center items-center">
+            <ContactUs />
+          </div>
         </div>
 
         {/* Footer  */}
@@ -76,9 +84,9 @@ function WelcomePage() {
           initial="hidden"
           animate={footerInView ? "visible" : "hidden"}
           variants={cardVariants2}
-          className="border-t-2 border-zinc-400 "
+          className=""
         >
-          <OchiFooter marginTop={"20"} />
+          <OchiFooter marginTop={"20"} contactLink="#contact" />
         </motion.div>
       </div>
     </div>
@@ -128,8 +136,8 @@ export const LandingSection = () => {
       className="dark:bg-[#1a1a1a] dark:text-white relative w-full "
       ref={scrollRef}
     >
-      <div className="px-4 sm:px-10 overflow-hidden w-full">
-        <motion.div className="pt-16 max-w-4xl mx-auto text-center relative z-10 flex items-center flex-col justify-center overflow-hidden ">
+      <div className=" sm:px-10 overflow-hidden w-full">
+        <motion.div className="pt-16 px-4 max-w-4xl mx-auto text-center relative z-10 flex items-center flex-col justify-center overflow-hidden ">
           <motion.h1
             className="text-6xl font-extrabold mt-40 mb-10 "
             initial={{ opacity: 1, scale: 0.7, y: 60 }}
@@ -197,60 +205,56 @@ export const LandingSection = () => {
             </Link>
           </div>
         </motion.div>
-        <motion.hr
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="my-5 mt-16 border-gray-300"
-        />
-        <motion.div className="flex flex-col origin-left justify-center items-center overflow-hidden bg- h-60 rounded-lg ">
-          <motion.h1
-            className="md:text-2xl text-4xl font-extrabold pb-6 md:!leading-[75px]  "
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 2.5 }}
-          >
-            We Collaborated Vendors Near-By You.
-          </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2, delay: 3.2 }}
-            className="overflow-hidden w-[90%] relative"
-          >
-            {/* Gradient Overlay - Left */}
-            <div className="h-24 w-40 bg-gradient-to-r dark:from-[#1a1a1a] from-[#F8F9FF] to-transparent absolute left-0 top-0 z-10"></div>
-
-            {/* Animated Image Carousel */}
-            <motion.div
-              className="flex gap-10 whitespace-nowrap"
-              initial={{ x: 0 }}
-              animate={{ x: ["0%", "-99.545%"] }}
-              transition={{
-                duration: 15,
-                ease: "linear",
-                repeat: Infinity,
-                repeatType: "loop",
-              }}
-            >
-              {FoodImgCycle.concat(FoodImgCycle)
-                .concat(FoodImgCycle)
-                .map((img, index) => (
-                  <div
-                    key={index}
-                    className="h-20 flex-shrink-0 mx-1 flex items-center"
-                  >
-                    <img src={img.img} alt="logo" className="w-full h-full" />
-                  </div>
-                ))}
-            </motion.div>
-
-            {/* Gradient Overlay - Right */}
-            <div className="h-24 w-40 bg-gradient-to-l dark:from-[#1a1a1a] from-[#F8F9FF] to-transparent absolute right-0 top-0 z-10"></div>
-          </motion.div>
-        </motion.div>
       </div>
+
+      {/* Animated Image Carousel */}
+      <motion.div className="flex flex-col origin-left justify-center items-center overflow-hidden h-60 ">
+        <motion.h1
+          className="md:text-2xl text-4xl font-extrabold pb-6 md:!leading-[75px]  "
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 2.5 }}
+        >
+          We Collaborated Vendors Near-By You.
+        </motion.h1>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, delay: 3.2 }}
+          className="overflow-hidden w-[90%] relative"
+        >
+          {/* Gradient Overlay - Left */}
+          <div className="h-24 w-40 bg-gradient-to-r dark:from-[#1a1a1a] from-white to-transparent absolute left-0 top-0 z-10"></div>
+
+          {/* Animated Image Carousel */}
+          <motion.div
+            className="flex gap-10 whitespace-nowrap"
+            initial={{ x: 0 }}
+            animate={{ x: ["0%", "-92%"] }}
+            transition={{
+              duration: 15,
+              ease: "linear",
+              repeat: Infinity,
+              repeatType: "loop",
+            }}
+          >
+            {FoodImgCycle.concat(FoodImgCycle)
+              .concat(FoodImgCycle)
+              .map((img, index) => (
+                <div
+                  key={index}
+                  className="h-20 flex-shrink-0 mx-1 flex items-center bg-white rounded-lg"
+                >
+                  <img src={img.img} alt="logo" className="w-full h-full px-3 py-2" />
+                </div>
+              ))}
+          </motion.div>
+
+          {/* Gradient Overlay - Right */}
+          <div className="h-24 w-40 bg-gradient-to-l dark:from-[#1a1a1a] from-white to-transparent absolute right-0 top-0 z-10"></div>
+        </motion.div>
+      </motion.div>
     </motion.div>
   );
 };
@@ -264,13 +268,16 @@ const FeaturesSection = () => {
   const [releaseAnimation, setReleaseAnimation] = useState(false);
   const animate = useRef(null);
 
+  const { isLoggedin, user } = useAuth();
+
+
   const features = [
     {
       icon: (
         <div className="pr-7 flex">
           <BsCalendar4Event
             size={55}
-            className="dark:text-black bg-[#EFF6FF] p-4 rounded-lg"
+            className="dark:text-white bg-blue-600 p-4 rounded-lg"
           />
         </div>
       ),
@@ -283,7 +290,7 @@ const FeaturesSection = () => {
         <div className="pr-7 flex">
           <MdAddBusiness
             size={50}
-            className="dark:text-black bg-[#EFF6FF] p-3 rounded-lg"
+            className="dark:text-white bg-blue-600 p-3 rounded-lg"
           />
         </div>
       ),
@@ -296,7 +303,7 @@ const FeaturesSection = () => {
         <div className="pr-7 flex">
           <BiSupport
             size={55}
-            className="dark:text-black bg-[#EFF6FF] p-4 rounded-lg"
+            className="dark:text-white bg-blue-600 p-4 rounded-lg"
           />
         </div>
       ),
@@ -309,7 +316,7 @@ const FeaturesSection = () => {
         <div className="pr-7 flex">
           <MdOutlineSecurity
             size={55}
-            className="dark:text-black bg-[#EFF6FF] p-4 rounded-lg"
+            className="dark:text-white bg-blue-600 p-4 rounded-lg"
           />
         </div>
       ),
@@ -321,26 +328,13 @@ const FeaturesSection = () => {
         <div className="pr-7 flex">
           <FaRegCommentDots
             size={55}
-            className="dark:text-black bg-[#EFF6FF] p-4 rounded-lg"
+            className="dark:text-white bg-blue-600 p-4 rounded-lg"
           />
         </div>
       ),
       title: "Communication",
       discription:
         "Tailor our product to suit your needs Seamless communication to your Vendor according to your needs.",
-    },
-    {
-      icon: (
-        <div className="pr-7 flex">
-          <BsCameraReels
-            size={55}
-            className="dark:text-black bg-[#EFF6FF] p-4 rounded-lg"
-          />
-        </div>
-      ),
-      title: "Photography and Videography",
-      discription:
-        "Feature your partnerships with professional photographers and videographers to capture special moments.",
     },
   ];
 
@@ -377,22 +371,23 @@ const FeaturesSection = () => {
 
   return (
     <>
-      <hr className="border-zinc-400 border w-full mt-10 " />
       <section
         id="our-features"
         ref={part2Ref}
-        className="dark:bg-[#1a1a1a] border-zinc-300 pt-10 dark:text-white max-w-7xl flex mx-auto max-md:flex-col"
+        className="dark:bg-[#1a1a1a] border-zinc-300 mt-20 dark:text-white max-w-7xl flex mx-auto max-md:flex-col"
       >
         <div
           ref={section2Ref}
-          className={`pb-16 h-fit max-w-2xl text-start max-md:text-center mx-auto w-1/2 ${
-            isFixed ? "sticky top-24" : ""
-          } ${releaseAnimation ? "release-animation" : ""}`}
+          className={`pb-16 h-fit max-w-2xl text-start max-md:text-center mx-auto w-1/2 will-change-transform ${
+            releaseAnimation
+              ? "  md:translate-y-[40px] transition-transform duration-200 "
+              : "md:translate-y-0 transition-transform duration-500 "
+          }`}
         >
-          <h2 className="md:text-4xl text-3xl font-extrabold pb-6 max-md:pb-0  ">
-            Our Features
+          <h2 className="md:text-6xl text-3xl tracking-tight pb-6 max-md:pb-0  ">
+            Ensure You Receive High-Quality Services
           </h2>
-          <p className="pr-16 font-['Founders_Grotesk_Condensed']">
+          <p className="pr-16 text-xl font-['Founders_Grotesk_Condensed'] mb-10 ">
             "Organize, manage, and execute your events seamlessly with our
             intuitive platform. Whether it's a corporate gathering, a wedding,
             or a festival, we've got you covered from start to finish.
@@ -402,12 +397,11 @@ const FeaturesSection = () => {
 
         <motion.div
           ref={section3Ref}
-          initial={{ opacity: 0, y: 80 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 80 }}
+          initial={{ opacity: 0, x: 80 }}
+          whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: false, amount: 0.2 }} // 'once: false' allows re-triggering on scroll
-          className="flex flex-col h-fit w-1/2 mx-auto gap-5 max-md:w-full"
+          className="flex flex-col h-full w-1/2 mx-auto gap-5 max-md:w-full"
         >
           {features.map((item, index) => (
             <motion.div
@@ -418,7 +412,7 @@ const FeaturesSection = () => {
               exit="exit"
               transition={{ delay: index * 0.2 }}
               viewport={{ once: false, amount: 0.2 }} // Ensures it animates when scrolling back
-              className="dark:bg-zinc-800 dark:text-white sm:p-6 p-4 flex bg-white rounded-r-md shadow-md shadow-blue-600/50 "
+              className="dark:bg-zinc-800 dark:text-white sm:p-6 p-4 flex bg-white rounded-r-md shadow-md shadow-white/60 "
             >
               <div className="dark:text-black">{item.icon}</div>
               <div>
@@ -514,8 +508,8 @@ const ClientTestimonial = () => {
   }, []);
 
   return (
-    <div className="dark:bg-[#1a1a1a]  dark:text-white mt-32">
-      <div className="pb-16 text-center">
+    <div className="dark:bg-[#1a1a1a] dark:text-white ">
+      <div className=" text-center">
         <h2 className="md:text-4xl text-3xl font-extrabold">
           What our happy client say
         </h2>
@@ -668,7 +662,7 @@ const TeamSection = () => {
   ];
 
   return (
-    <section className="dark:bg-[#1a1a1a] mt-36 py-10 rounded-md dark:text-white my-20 bg-gray-50">
+    <section className="h-full dark:bg-[#1a1a1a] py-10 rounded-md dark:text-white my-20  flex items-center justify-center">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold">Meet our team</h2>
@@ -711,8 +705,8 @@ const TeamCard = ({ member }) => {
 
   return (
     <div
-      className={`dark:bg-zinc-800 dark:text-white bg-white rounded-lg shadow-md shadow-blue-600/60 p-6 transition-transform duration-300 ${
-        isHovered ? "hover:shadow-xl-blue" : "hover:shadow-md"
+      className={`dark:bg-zinc-800 dark:text-white bg-white rounded-lg shadow-md shadow-white/60 hover:shadow-lg hover:shadow-white/80 p-6 transition-transform duration-300 ${
+        isHovered ? "hover:shadow-xl-" : "hover:shadow-md"
       }`}
       style={{
         transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
