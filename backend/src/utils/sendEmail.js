@@ -1,8 +1,36 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import sitelogo from '../assets/logo-nobg.png';
 
 dotenv.config();
+
+const memberSocial = [
+    {
+        name: "Jatin Vishwakarma",
+        socials: [
+            { platform: "instagram", url: "https://www.instagram.com/__jatin__2002" },
+            { platform: "github", url: "https://github.com/jatin7425" },
+            { platform: "linkedin", url: "https://www.linkedin.com/in/jatin7425" }
+        ]
+    },
+    {
+        name: "Faizal Ahmed",
+        socials: [
+            { platform: "instagram", url: "https://www.instagram.com/faizal_noob_" },
+            { platform: "github", url: "https://github.com/Faizal-16" },
+            { platform: "linkedin", url: "https://www.linkedin.com/in/faizal-ahmed-a689052a5/" }
+        ]
+    }
+];
+
+
+function getDeveloper(random = false) {
+    if (random) {
+        const randomIndex = Math.floor(Math.random() * memberSocial.length);
+        return memberSocial[randomIndex];
+    }
+    return memberSocial;
+}
+
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -12,21 +40,6 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-/**
- * Sends a professional email with modern UI components
- * @param {Object} options
- * @param {string|string[]} options.to - Recipient(s) email address
- * @param {string} options.subject - Email subject
- * @param {string} options.text - Plaintext fallback
- * @param {string} options.heading - Main heading in the email
- * @param {string} options.body - Descriptive body text (HTML supported)
- * @param {string} [options.buttonText] - CTA button text
- * @param {string} [options.link] - URL for CTA button
- * @param {Array} [options.attachments] - Array of attachment objects
- * @param {string} [options.logo] - URL for header logo
- * @param {string} [options.brandColor] - Brand color hex code
- * @param {Object} [options.socialLinks] - Object with social media URLs
- */
 export const sendEmail = async ({
     to,
     subject,
@@ -36,9 +49,9 @@ export const sendEmail = async ({
     buttonText,
     link,
     attachments = [],
-    logo = sitelogo,
+    logo,
     brandColor = '#2563eb',
-    socialLinks = {},
+    socialLinks = getDeveloper(true).socials,
 }) => {
     const htmlContent = `
     <!DOCTYPE html>
@@ -63,7 +76,7 @@ export const sendEmail = async ({
             <!-- Header -->
             <tr>
                 <td style="padding:2rem;background:${brandColor};border-radius:8px 8px 0 0;">
-                    <img src="${logo}" alt="Company Logo" class="header-logo" style="max-width:200px;height:auto;">
+                    <img src="../assets/logoNobg.png" alt="Company Logo" class="header-logo" style="max-width:200px;height:auto;">
                 </td>
             </tr>
             
@@ -87,7 +100,7 @@ export const sendEmail = async ({
                     
                     <!-- Footer -->
                     <div style="color:#64748b;font-size:14px;">
-                        <p style="margin:0.5rem 0;">Need help? <a href="mailto:support@company.com" style="color:${brandColor};">Contact our support team</a></p>
+                        <p style="margin:0.5rem 0;">Need help? <a href="mailto:eventopia959@gmail.com" style="color:${brandColor};">Contact our support team</a></p>
                         <p style="margin:0.5rem 0;">${new Date().getFullYear()} © Your Company Name. All rights reserved.</p>
                         
                         ${Object.keys(socialLinks).length > 0 ? `
@@ -113,7 +126,7 @@ export const sendEmail = async ({
     `;
 
     const mailOptions = {
-        from: `"${process.env.EMAIL_NAME || 'Company Name'}" <${process.env.EMAIL_USER}>`,
+        from: `"${process.env.EMAIL_NAME || 'Eventopia'}" <${process.env.EMAIL_USER}>`,
         to,
         subject,
         text: text || `${heading}\n\n${body.replace(/<[^>]+>/g, '')}\n${link ? `Action Link: ${link}` : ''}`,
@@ -129,4 +142,20 @@ export const sendEmail = async ({
         console.error('❌ Email send error:', error);
         return { success: false, error: error.message };
     }
+};
+
+export const sendContactEmail = async ({ name, email, message }) => {
+    const mailOptions = {
+        from: `"EventManager Contact" <${process.env.EMAIL_USER}>`,
+        to: process.env.EMAIL_USER, // Send to yourself
+        subject: `New Contact Message from ${name}`,
+        html: `
+      <h2>You have a new contact message</h2>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Message:</strong><br>${message}</p>
+    `
+    };
+
+    await transporter.sendMail(mailOptions);
 };

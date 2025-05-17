@@ -10,6 +10,7 @@ import { EventProvider } from './store/eventContext.jsx'
 import { EventCartProvider } from './store/eventCartContext.jsx'
 import { NotificationProvider } from './store/notificationContext'
 import { AdminProvider } from './store/adminContext.jsx'
+import { ContactProvider } from './store/contactContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -21,7 +22,9 @@ createRoot(document.getElementById('root')).render(
               <BrowserRouter>
                 <NotificationProvider>
                   <AdminProvider>
-                    <App />
+                    <ContactProvider>
+                      <App />
+                    </ContactProvider>
                   </AdminProvider>
                 </NotificationProvider>
               </BrowserRouter>

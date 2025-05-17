@@ -3,6 +3,7 @@ import Vendor from "../models/vendor.model.js";
 import User from '../models/user.model.js';
 import mongoose from 'mongoose';
 import { isSameDay, parseISO } from 'date-fns';
+import { sendEmail } from '../utils/sendEmail.js';
 
 // Create a new event
 export const createEvent = async (req, res) => {
@@ -702,6 +703,21 @@ export const addAttendee = async (req, res) => {
                 const deletingEvent = await Event.findByIdAndUpdate(event._id, { $pull: { attendees: { _id: newAttendee._id } } });
                 await deletingEvent.save();
             }
+        } else {
+            // Send invitation email to new (non-registered) user
+            try {
+                await sendEmail({
+                    to: email,
+                    subject: `You're Invited to ${event.name}`,
+                    heading: `Hi ${name}, you're invited!`,
+                    body: `<p>${req.user.fullName} has invited you to attend the event <strong>${event.name}</strong>.</p>
+                           <p>Click below to join the event. If you don't have an account, you can create one first.</p>`,
+                    buttonText: 'Join the Event',
+                    link: `${process.env.BASE_HOST_URL}/login?next=/events/${eventId}` // Customize link
+                });
+            } catch (emailError) {
+                console.error("Email sending failed:", emailError.message);
+            }
         }
 
         res.status(201).json({
@@ -1164,3 +1180,5 @@ export const getOrdered = async (req, res) => {
         res.status(500).json({ message: 'Error fetching event orders', error: error.message });
     }
 };
+
+

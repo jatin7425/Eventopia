@@ -8,6 +8,7 @@ import eventRoutes from "./routes/event.route.js";
 import vendorRoutes from "./routes/vendor.route.js";
 import ollamaChatRoutes from "./routes/ollamaChat.route.js";
 import notificationRoutes from "./routes/notification.route.js";
+import contactRoutes from "./routes/contact.route.js";
 import { swaggerSpec } from './routes/swager.js'
 import adminRoutes from "./routes/admin.route.js";
 import { connectDB } from "./lib/db.js";
@@ -40,6 +41,7 @@ app.use("/api/vendor", vendorRoutes);
 app.use("/api/ollamaChat", ollamaChatRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/contact", contactRoutes);
 
 app.listen(port, () => {
     console.log(`http://localhost:${port}`);
