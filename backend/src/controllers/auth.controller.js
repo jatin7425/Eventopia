@@ -66,7 +66,7 @@ export const signup = async (req, res) => {
 
         let pfp = 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
         if (gender === 'female' || gender === 'others') {
-            pfp =  `https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 50) + 51}`; // Generates a random number between 51 and 100
+            pfp = `https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 50) + 51}`; // Generates a random number between 51 and 100
         } else if (gender === 'male') {
             pfp = `https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 50) + 1}`;  // Generates a random number between 1 and 50
         }
@@ -282,7 +282,7 @@ export const resetPassword = async (req, res) => {
 
 export const userById = async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const { userId } = req.params;
 
         // Check if userId is not null or undefined and is a valid ObjectId
         if (userId !== null && userId !== undefined && mongoose.Types.ObjectId.isValid(userId)) {

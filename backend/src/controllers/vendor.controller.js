@@ -9,34 +9,38 @@ import fs from 'fs';
 // Helper function to delete old image
 const deleteOldImage = (imagePath) => {
     if (imagePath) {
-        // Remove any URL prefix if present (e.g., http://localhost:3000/)
-        const cleanPath = imagePath.replace(/^https?:\/\/[^\/]+/, '');
-
-        // Remove leading slash if present
-        const relativePath = cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath;
-
-        // Construct the full path
-        const fullPath = path.join(process.cwd(), 'public', relativePath);
-
-        console.log('Attempting to delete image at:', fullPath); // Debug log
-
         try {
+            // Strip URL prefix
+            const cleanPath = imagePath.replace(/^https?:\/\/[^\/]+/, '');
+
+            // Normalize and ensure no directory traversal
+            const safePath = path.normalize(cleanPath).replace(/^(\.\.(\/|\\|$))+/, '');
+
+            // Remove leading slash
+            const relativePath = safePath.startsWith('/') ? safePath.slice(1) : safePath;
+
+            // Final path
+            const fullPath = path.join(process.cwd(), 'public', relativePath);
+
+            console.log('Attempting to delete image at:', fullPath);
+
             if (fs.existsSync(fullPath)) {
                 fs.unlinkSync(fullPath);
-                console.log('Successfully deleted image:', fullPath); // Debug log
+                console.log('Successfully deleted image:', fullPath);
             } else {
-                console.log('Image file not found:', fullPath); // Debug log
+                console.log('Image file not found:', fullPath);
             }
         } catch (error) {
-            console.error('Error deleting image:', error); // Error log
+            console.error('Error deleting image:', error);
         }
     }
 };
 
+
 // **Create a new vendor**
 export const createVendor = async (req, res) => {
     try {
-        const user = req.user; // The current authenticated user
+        const { user } = req; // The current authenticated user
         const vendorData = req.body;
 
 
@@ -143,7 +147,7 @@ export const getVendorById = async (req, res) => {
 export const updateVendor = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = req.user;
+        const { user } = req;
         const updatedVendorData = req.body;
 
         const vendor = await Vendor.findById(id);
@@ -186,7 +190,7 @@ export const updateVendor = async (req, res) => {
 export const deleteVendor = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = req.user;
+        const { user } = req;
 
         const vendor = await Vendor.findById(id);
 
@@ -223,7 +227,7 @@ export const deleteVendor = async (req, res) => {
 export const addBannerToVendor = async (req, res) => {
     try {
         const { id } = req.params; // Vendor ID
-        const user = req.user;
+        const { user } = req;
         const banner = req.file;
 
         console.log(banner)
@@ -258,7 +262,7 @@ export const addBannerToVendor = async (req, res) => {
 export const addProductToVendor = async (req, res) => {
     try {
         const { id } = req.params; // Vendor ID
-        const user = req.user;
+        const { user } = req;
         const product = req.body;
 
         const vendor = await Vendor.findById(id);
@@ -276,20 +280,47 @@ export const addProductToVendor = async (req, res) => {
 
         // Ensure the user is the owner or a collaborator
         if (vendor.owner.toString() !== user._id.toString() && vendor.collaborators.toString() !== user._id.toString()) {
-            if (req.file) {
-                deleteOldImage(req.file.path);
-            }
             return res.status(403).json({
                 success: false,
                 message: "You do not have permission to add a product to this vendor",
             });
         }
 
+        if (!product.image) {
+            return res.status(400).json({
+                success: false,
+                message: "Product image is required",
+            });
+        }
+        const { data } = product.image;
+
+        // Remove the data:image/xxx;base64, prefix
+        const base64Data = data.split(';base64,').pop();
+
+        // Generate unique filename
+        const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+        const relativePath = `/uploads/products/${uniqueFilename}`;
+        const fullPath = path.join(process.cwd(), 'public', relativePath);
+
+        // Ensure directory exists
+        const uploadDir = path.dirname(fullPath);
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        // Delete old image if exists
+        if (product.productImage) {
+            deleteOldImage(product.productImage);
+        }
+
+        // Save new image
+        fs.writeFileSync(fullPath, base64Data, { encoding: 'base64' });
+
         const newProduct = {
             productName: product.name,
             productDescription: product.description,
             productPrice: product.price,
-            productImage: req.file ? `/uploads/products/${req.file.filename}` : null,
+            productImage: relativePath,
             available: product.available,
         }
 
@@ -454,11 +485,6 @@ export const updateProduct = async (req, res) => {
         const updateData = req.body;
         const userId = req.user._id;
 
-        console.log('Received update data:', {
-            ...updateData,
-            image: updateData.image ? 'Image data exists' : 'No image'
-        });
-
         // Find vendor and validate ownership
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
@@ -480,51 +506,60 @@ export const updateProduct = async (req, res) => {
         const updateFields = {};
 
         // Update basic fields if provided
-        if (updateData.name) updateFields["Products.$.productName"] = updateData.name;
-        if (updateData.description) updateFields["Products.$.productDescription"] = updateData.description;
-        if (updateData.price) updateFields["Products.$.productPrice"] = updateData.price;
-        if (updateData.available !== undefined) updateFields["Products.$.available"] = updateData.available;
+        if (updateData.name) {
+            updateFields["Products.$.productName"] = updateData.name;
+        };
+        if (updateData.description) {
+            updateFields["Products.$.productDescription"] = updateData.description;
+        };
+        if (updateData.price) {
+            updateFields["Products.$.productPrice"] = updateData.price;
+        };
+        if (updateData.available !== undefined) {
+            updateFields["Products.$.available"] = updateData.available;
+        };
 
         // Handle image update if provided
         if (updateData.image && updateData.image.data) {
             try {
-                // Extract base64 data and metadata
                 const { data } = updateData.image;
-
-                // Remove the data:image/xxx;base64, prefix
                 const base64Data = data.split(';base64,').pop();
+                if (!base64Data || base64Data.includes('Image file not found')) {
+                    updateFields["Products.$.productImage"] = product.productImage;
+                } else {
+                    const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+                    const relativePath = `/uploads/products/${uniqueFilename}`;
+                    const fullPath = path.join(process.cwd(), 'public', relativePath);
 
-                // Generate unique filename
-                const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
-                const relativePath = `/uploads/products/${uniqueFilename}`;
-                const fullPath = path.join(process.cwd(), 'public', relativePath);
+                    const uploadDir = path.dirname(fullPath);
+                    if (!fs.existsSync(uploadDir)) {
+                        fs.mkdirSync(uploadDir, { recursive: true });
+                    }
 
-                // Ensure directory exists
-                const uploadDir = path.dirname(fullPath);
-                if (!fs.existsSync(uploadDir)) {
-                    fs.mkdirSync(uploadDir, { recursive: true });
+                    // Delete old image
+                    if (product.productImage) {
+                        const oldImagePath = path.join(process.cwd(), 'public', product.productImage);
+                        if (fs.existsSync(oldImagePath)) {
+                            deleteOldImage(product.productImage);
+                        }
+                    }
+
+                    // Save new image
+                    fs.writeFileSync(fullPath, base64Data, { encoding: 'base64' });
+
+                    // Set new image path
+                    updateFields["Products.$.productImage"] = relativePath;
                 }
-
-                // Delete old image if exists
-                if (product.productImage) {
-                    deleteOldImage(product.productImage);
-                }
-
-                // Save new image
-                fs.writeFileSync(fullPath, base64Data, { encoding: 'base64' });
-
-                // Update image path in database
-                updateFields["Products.$.productImage"] = relativePath;
-
-                // console.log('Image saved successfully:', relativePath);
             } catch (error) {
-                // console.error('Error processing image:', error);
                 return res.status(400).json({
                     success: false,
                     message: "Error processing image",
                     error: error.message
                 });
             }
+        } else {
+            // No new image: explicitly retain the old image path
+            updateFields["Products.$.productImage"] = product.productImage;
         }
 
         // Update the product
@@ -545,11 +580,6 @@ export const updateProduct = async (req, res) => {
         const updatedProduct = updatedVendor.Products.find(
             p => p._id.toString() === productId
         );
-
-        console.log('Product updated successfully:', {
-            productId,
-            updatedFields: Object.keys(updateFields)
-        });
 
         return res.status(200).json({
             success: true,
@@ -669,7 +699,6 @@ export const getProductByVendorId = async (req, res) => {
         }
 
         const totalProducts = Vendors.Products.length; // Get total product count
-        console.log(totalProducts);
 
         res.status(200).json({
             success: true,
@@ -804,8 +833,8 @@ export const respondToOrders = async (req, res) => {
         const user = User.findById(userId);
 
         // Validate each order
-        const validOrders = orders.every(order => 
-            order && 
+        const validOrders = orders.every(order =>
+            order &&
             typeof order === 'object' &&
             mongoose.Types.ObjectId.isValid(order._id) &&
             ['confirmed', 'declined', 'pending'].includes(order.status)
@@ -878,8 +907,8 @@ export const respondToOrders = async (req, res) => {
 
         // Determine notification message
         const statuses = [...new Set(orders.map(o => o.status))];
-        const statusMessage = statuses.length === 1 ? 
-            `${statuses[0]} by the vendor` : 
+        const statusMessage = statuses.length === 1 ?
+            `${statuses[0]} by the vendor` :
             'updated by the vendor';
 
         const notificationPayload = {
@@ -912,8 +941,8 @@ export const respondToOrders = async (req, res) => {
 
             const updateOptions = {
                 new: true,
-                arrayFilters: existingNotification ? 
-                    [{ 'elem.vendor': notificationPayload.vendor, 'elem.type': notificationPayload.type }] : 
+                arrayFilters: existingNotification ?
+                    [{ 'elem.vendor': notificationPayload.vendor, 'elem.type': notificationPayload.type }] :
                     undefined
             };
 

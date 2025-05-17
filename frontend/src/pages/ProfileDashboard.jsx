@@ -119,14 +119,14 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
             : "max-lg:translate-x-full -right-4 backdrop-blur-md "
           }`}
       >
-        {!isSidebarOpen ? (
-          <Menu size={24} className="text-black dark:text-white" />
-        ) : (
+        {isSidebarOpen ?
           <CgCross
             size={24}
             className="rotate-45 text-black dark:text-white "
           />
-        )}
+          :
+          <Menu size={24} className="text-black dark:text-white" />
+        }
       </div>
 
       <div className=" ">
@@ -154,8 +154,8 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
                 >
                   <span
                     className={`text-xl ${activeIcon === item.link
-                        ? "text-zinc-100"
-                        : "text-zinc-700 dark:text-zinc-400 group-hover:text-white"
+                      ? "text-zinc-100"
+                      : "text-zinc-700 dark:text-zinc-400 group-hover:text-white"
                       }`}
                   >
                     {item.icon}
@@ -163,7 +163,7 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
                   <span className="-mb-2 text-lg">{item.title}</span>
                   {item.link === "notifications" && (
                     <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 pt-1 rounded-full">
-                      { notifications?.TotalUnSeenNotification }
+                      {notifications?.TotalUnSeenNotification}
                     </span>
                   )}
                 </Link>
@@ -250,10 +250,10 @@ const ShopSummary = () => {
               {/* Icon with unique background */}
               <div
                 className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-md ${index === 0
-                    ? "bg-blue-100 text-blue-600"
-                    : index === 1
-                      ? "bg-yellow-100 text-yellow-600"
-                      : "bg-green-100 text-green-600"
+                  ? "bg-blue-100 text-blue-600"
+                  : index === 1
+                    ? "bg-yellow-100 text-yellow-600"
+                    : "bg-green-100 text-green-600"
                   }`}
               >
                 <span className="material-icons text-3xl">
