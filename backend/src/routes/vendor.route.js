@@ -10,8 +10,6 @@ import {
     deleteVendor,
     addProductToVendor,
     getVendorProducts,
-    addVendorRating,
-    addProductRating,
     deleteProduct,
     updateProduct,
     getVendorOfCurrentUser,
@@ -61,8 +59,6 @@ router.put("/updateVendor/:id", protectRoute, updateVendor); // Update vendor
 router.delete("/deleteVendor/:id", deleteVendor); // Delete vendor
 router.post("/addProductToVendor/:id/products", protectRoute, handleBase64Image, addProductToVendor); // Add product to vendor
 router.get("/getVendorProducts/:id/products", getVendorProducts); // Get all products of a vendor
-router.post("/addVendorRating/:id/rate", protectRoute, addVendorRating); // Add or update vendor rating
-router.post("/addProductRating/:vendorId/products/:productId/rate", protectRoute, addProductRating); // Add or update product rating
 router.put("/updateProduct/:vendorId/products/:productId", protectRoute, handleBase64Image, updateProduct); // Update a product
 router.delete("/deleteProduct/:vendorId/products/:productId", protectRoute, deleteProduct); // Delete a product
 router.post("/addBannerToVendor/:id", protectRoute, uploadVendorBanner.single('ShopBanner'), addBannerToVendor); // Add banner to vendor

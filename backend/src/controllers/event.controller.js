@@ -575,7 +575,18 @@ export const cartCheckout = async (req, res) => {
             processedOrders.push(...orders);
         }
 
-        // 6. Clear cart only after all vendors are processed
+        // Move cart items to event.orders before clearing the cart
+        event.orders.push(...event.cart.map(item => ({
+            user: item.user,
+            vendor: item.vendor,
+            product: item.product,
+            quantity: item.quantity
+        })));
+
+        // Clear the cart
+        event.cart = [];
+
+        // Save the updated event
         await event.save();
 
         res.status(200).json({
@@ -1106,5 +1117,50 @@ export const getCalendarEntries = async (req, res) => {
             message: 'Error fetching entries',
             error: error.message
         });
+    }
+};
+
+export const getOrdered = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+
+        const event = await Event.findById(eventId)
+            .populate('orders.vendor');
+
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        const populatedOrders = await Promise.all(
+            event.orders.map(async order => {
+                const { vendor } = order;
+
+                // Find the actual product inside the vendor's Products array
+                const vendorData = await Vendor.findById(vendor._id);
+                const productDetails = vendorData?.Products.find(p =>
+                    p._id.toString() === order.product.toString()
+                );
+
+                return {
+                    _id: order._id,
+                    user: order.user,
+                    vendor: {
+                        _id: vendor._id,
+                        ShopName: vendor.ShopName,
+                        ShopCategory: vendor.ShopCategory,
+                        ShopLogo: vendor.ShopLogo,
+                    },
+                    product: productDetails || { _id: order.product },
+                    quantity: order.quantity,
+                    status: order.status,
+                    orderedAt: order.orderedAt,
+                };
+            })
+        );
+
+        res.status(200).json(populatedOrders);
+    } catch (error) {
+        console.error('getOrdered error:', error);
+        res.status(500).json({ message: 'Error fetching event orders', error: error.message });
     }
 };

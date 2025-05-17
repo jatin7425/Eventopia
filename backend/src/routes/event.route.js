@@ -24,6 +24,7 @@ import {
     deleteCalendarFromEvent,
     getCalendarEntries,
     respondToEventInvite,
+    getOrdered,
 } from '../controllers/event.controller.js';
 
 const router = express.Router();
@@ -53,5 +54,6 @@ router.post('/:eventId/calendar', protectRoute, addCalendarToEvent);
 router.put('/:eventId/calendar/:calendarId', protectRoute, updateCalendarInEvent);
 router.delete('/:eventId/calendar/:calendarId', protectRoute, deleteCalendarFromEvent);
 router.get('/:eventId/calendar', protectRoute, getCalendarEntries);
+router.get('/getOrdered/:eventId', protectRoute, getOrdered);
 
 export default router;

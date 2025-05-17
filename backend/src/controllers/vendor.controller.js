@@ -36,7 +36,6 @@ const deleteOldImage = (imagePath) => {
     }
 };
 
-
 // **Create a new vendor**
 export const createVendor = async (req, res) => {
     try {
@@ -373,111 +372,6 @@ export const getVendorProducts = async (req, res) => {
     }
 };
 
-// Add or Update Vendor Rating
-export const addVendorRating = async (req, res) => {
-    try {
-        const { id } = req.params; // Vendor ID
-        const { rating, comment } = req.body;
-        const userId = req.user._id; // Extract userId from the authenticated user
-
-        const vendor = await Vendor.findById(id);
-        if (!vendor) {
-            return res.status(404).json({
-                success: false,
-                message: "Vendor not found",
-            });
-        }
-
-        // Check if user has already rated
-        const existingRating = vendor.VendorRatings.find((r) => r.userId.toString() === userId);
-
-        if (existingRating) {
-            // Update existing rating
-            existingRating.rating = rating;
-            existingRating.comment = comment;
-        } else {
-            // Add new rating
-            vendor.VendorRatings.push({ userId, rating, comment });
-        }
-
-        // Update the average rating
-        const totalRatings = vendor.VendorRatings.reduce((acc, r) => acc + r.rating, 0);
-        vendor.averageVendorRating = totalRatings / vendor.VendorRatings.length;
-
-        await vendor.save();
-
-        res.status(200).json({
-            success: true,
-            message: "Vendor rating added/updated successfully",
-            data: vendor,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: "Error adding/updating vendor rating",
-            error: error.message,
-        });
-    }
-};
-
-// Add or Update Product Rating
-export const addProductRating = async (req, res) => {
-    try {
-        const { vendorId, productId } = req.params;
-        const { rating, comment } = req.body;
-        const userId = req.user._id; // Extract userId from the authenticated user
-
-        // Find the vendor
-        const vendor = await Vendor.findById(vendorId);
-        if (!vendor) {
-            return res.status(404).json({
-                success: false,
-                message: "Vendor not found",
-            });
-        }
-
-        // Find the product within the vendor's products
-        const product = vendor.Products.id(productId); // Find the product by ID
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found",
-            });
-        }
-
-        // Check if user has already rated this product
-        const existingRating = product.productRatings.find((r) => r.userId.toString() === userId.toString());
-
-        if (existingRating) {
-            // Update existing rating if found
-            existingRating.rating = rating;
-            existingRating.comment = comment;
-        } else {
-            // Add new rating if not found
-            product.productRatings.push({ userId, rating, comment });
-        }
-
-        // Update the average rating for the product
-        const totalRatings = product.productRatings.reduce((acc, r) => acc + r.rating, 0);
-        product.averageRating = totalRatings / product.productRatings.length;
-
-        // Save the vendor document (this will save the product as well)
-        await vendor.save();
-
-        res.status(200).json({
-            success: true,
-            message: "Product rating added/updated successfully",
-            data: product,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: "Error adding/updating product rating",
-            error: error.message,
-        });
-    }
-};
-
 // **Update a product**
 export const updateProduct = async (req, res) => {
     try {
@@ -769,7 +663,7 @@ export const getVendorOrders = async (req, res) => {
             const orderDetails = await Promise.all(eventOrders.map(async (order) => {
                 const product = vendor.Products.id(order.product);
                 if (!product) {
-                  return null;
+                    return null;
                 }
 
                 return {
@@ -857,6 +751,8 @@ export const respondToOrders = async (req, res) => {
             ]
         });
 
+        const event = await Event.findOne({ _id: eventID }).populate('organizer');
+
         if (!vendor) {
             return res.status(404).json({ message: 'Vendor not found or unauthorized' });
         }
@@ -881,6 +777,20 @@ export const respondToOrders = async (req, res) => {
 
                 order.status = orderRequest.status;
                 order.updatedAt = new Date();
+
+                // Update Event.orders
+                const orderIdStr = orderRequest._id.toString();
+                const eventOrder = event.orders.find(o =>
+                    o._id.toString() === orderIdStr &&
+                    o.vendor.equals(vendorId)
+                );
+
+
+                if (eventOrder) {
+                    eventOrder.status = orderRequest.status;
+                    eventOrder.updatedAt = new Date(); // Optional if not in schema
+                }
+
                 results.successfulUpdates++;
                 results.updatedOrders.push({
                     _id: order._id,
@@ -895,9 +805,9 @@ export const respondToOrders = async (req, res) => {
 
         // Save vendor changes first
         await vendor.save();
-
+        await event.save();
+        
         // Notification logic
-        const event = await Event.findOne({ _id: eventID }).populate('organizer');
         if (!event || !event.organizer) {
             return res.status(404).json({ message: 'Event not found or has no organizer' });
         }
@@ -972,3 +882,4 @@ export const respondToOrders = async (req, res) => {
         });
     }
 };
+

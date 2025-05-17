@@ -19,6 +19,7 @@ export function EventProvider({ children }) {
     const [addedAttendee, setAddedAttendee] = useState()
     const [calendarEntries, setCalendarEntries] = useState([]);
     const [selectedCalendarEntry, setSelectedCalendarEntry] = useState(null);
+    const [OrderedProduct, setOrderedProduct] = useState([]);
 
     // Get all events with optional filters
     const getEvents = async (filters = {}) => {
@@ -229,7 +230,7 @@ export function EventProvider({ children }) {
         setIsEventLoading(true);
         try {
             const { data } = await axiosInstance.get(`/event/${eventId}/calendar`, {
-                body: {date, filters}
+                body: { date, filters }
             });
             setCalendarEntries(data);
             return data;
@@ -241,6 +242,15 @@ export function EventProvider({ children }) {
             setIsEventLoading(false);
         }
     };
+
+    const getOrdered = async (eventId) => {
+        try {
+            const { data } = await axiosInstance.get(`/event/getOrdered/${eventId}`);
+            setOrderedProduct(data);
+        } catch (error) {
+            console.error('Error fetching calendar entries', error);
+        }
+    }
 
     useEffect(() => {
         getEvents(); // Fetch all events when the component mounts
@@ -255,6 +265,7 @@ export function EventProvider({ children }) {
             addedAttendee,
             calendarEntries,
             selectedCalendarEntry,
+            OrderedProduct,
             createEvent,
             getEvents,
             getEventById,
@@ -270,6 +281,7 @@ export function EventProvider({ children }) {
             deleteCalendarEntry,
             getCalendarEntries,
             setSelectedCalendarEntry,
+            getOrdered
         }}>
             {children}
         </EventContext.Provider>

@@ -104,8 +104,6 @@ const VendorOrderManager = ({ vendorId }) => {
     });
   };
 
-  console.log(events);
-
   return (
     <div className="p-4">
       <motion.h2

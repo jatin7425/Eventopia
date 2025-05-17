@@ -1,26 +1,5 @@
 import mongoose from "mongoose";
 
-const ratingSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    },
-    rating: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5, // Ratings are between 1 and 5
-    },
-    comment: {
-        type: String,
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-});
-
 const productSchema = new mongoose.Schema({
     productId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -43,12 +22,7 @@ const productSchema = new mongoose.Schema({
     available: {
         type: Boolean,
         required: true,
-    },
-    productRatings: [ratingSchema], // Ratings for the product
-    averageRating: {
-        type: Number,
-        default: 0, // Average rating of the product
-    },
+    }
 
 });
 
@@ -123,11 +97,6 @@ const vendorSchema = new mongoose.Schema(
             required: function () {
                 return ["Hotel", "Banquet Hall"].includes(this.ShopCategory);
             },
-        },
-        VendorRatings: [ratingSchema], // Ratings for the vendor
-        averageVendorRating: {
-            type: Number,
-            default: 0, // Overall average rating of the vendor
         },
     },
     { timestamps: true }

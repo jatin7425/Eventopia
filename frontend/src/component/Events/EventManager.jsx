@@ -12,9 +12,9 @@ import { useEventCart } from "../../store/eventCartContext";
 import { ShoppingCart, ClipboardList, Users } from "lucide-react";
 import MyCalendar from "../Calendar/MyCalendar";
 import InvitationManager from "../Events/InvitationManager";
-import UserEventColaborator from "../Colaborator/UserEventColaborator";
+import MyOrders from "./MyOrders";
 
-const EventManager = ({}) => {
+const EventManager = ({ }) => {
   const dropdownRef = useRef(null);
   const { event, getEventById } = useEvent();
   const { user } = useAuth();
@@ -110,31 +110,31 @@ const EventManager = ({}) => {
   const [openCartOption, setOpenCartOption] = useState(true);
   const [attendeesOption, setAttendeesOption] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
-  const [colaborator, setColaborator] = useState(false);
+  const [ShowMyOrders, setShowMyOrders] = useState(false);
 
   const handleAttendeesOption = () => {
     setAttendeesOption(true);
     setOpenCartOption(false);
     setOpenCalendar(false);
-    setColaborator(false);
+    setShowMyOrders(false);
   };
 
   const handleOpenCartOption = () => {
     setOpenCartOption(true);
     setAttendeesOption(false);
     setOpenCalendar(false);
-    setColaborator(false);
+    setShowMyOrders(false);
   };
 
   const handleOpenCalendar = () => {
     setOpenCalendar(true);
     setOpenCartOption(false);
     setAttendeesOption(false);
-    setColaborator(false);
+    setShowMyOrders(false);
   };
 
-  const handleColaborator = () => {
-    setColaborator(true);
+  const handleMyOrders = () => {
+    setShowMyOrders(true);
     setOpenCartOption(false);
     setAttendeesOption(false);
     setOpenCalendar(false);
@@ -273,9 +273,8 @@ const EventManager = ({}) => {
           </motion.div>
 
           <motion.div
-            className={`sm:w-2/3 h-full w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 rounded-lg flex flex-col sm:justify-center items-center max-sm:${
-              !isDescriptionOpen2 && "hidden"
-            }`}
+            className={`sm:w-2/3 h-full w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 rounded-lg flex flex-col sm:justify-center items-center max-sm:${!isDescriptionOpen2 && "hidden"
+              }`}
             initial={{ opacity: 0, rotateY: -90 }}
             animate={{ opacity: 1, rotateY: 0 }}
             transition={{ duration: 0.6 }}
@@ -311,11 +310,10 @@ const EventManager = ({}) => {
         <div className="flex justify-start items-center gap-3 md:gap-5 font-['Gilroy'] ">
           {/* View Cart Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${
-              openCartOption
+            className={`relative px-4 py-2 rounded-md ${openCartOption
                 ? "text-white bg-blue-600 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
-            } transition-all duration-300`}
+              } transition-all duration-300`}
             onClick={handleOpenCartOption}
           >
             {openCartOption ? (
@@ -331,11 +329,10 @@ const EventManager = ({}) => {
 
           {/* Attendees Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${
-              attendeesOption
+            className={`relative px-4 py-2 rounded-md ${attendeesOption
                 ? "text-white bg-blue-600 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
-            } transition-all duration-300`}
+              } transition-all duration-300`}
             onClick={handleAttendeesOption}
           >
             {attendeesOption ? (
@@ -351,11 +348,10 @@ const EventManager = ({}) => {
 
           {/* Calendar Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${
-              openCalendar
+            className={`relative px-4 py-2 rounded-md ${openCalendar
                 ? "text-white bg-blue-600 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
-            } transition-all duration-300`}
+              } transition-all duration-300`}
             onClick={handleOpenCalendar}
           >
             {openCalendar ? (
@@ -369,16 +365,15 @@ const EventManager = ({}) => {
             <span className="relative ">Calendar</span>
           </button>
 
-          {/* Colaborator Button */}
+          {/* MyOrders Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${
-              colaborator
+            className={`relative px-4 py-2 rounded-md ${ShowMyOrders
                 ? "text-white bg-blue-600 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
-            } transition-all duration-300`}
-            onClick={handleColaborator}
+              } transition-all duration-300`}
+            onClick={handleMyOrders}
           >
-            {colaborator ? (
+            {ShowMyOrders ? (
               <motion.span
                 className="absolute inset-0 bg-blue-600 rounded-md z-0"
                 layoutId="activeTab"
@@ -386,12 +381,11 @@ const EventManager = ({}) => {
                 transition={{ stiffness: 500, damping: 30 }}
               />
             ) : null}
-            <span className="relative ">Colaborator</span>
+            <span className="relative ">My Order</span>
           </button>
         </div>
 
         {/* Main Content Section */}
-
         {attendeesOption && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -428,7 +422,7 @@ const EventManager = ({}) => {
           </motion.div>
         )}
 
-        {colaborator && (
+        {ShowMyOrders && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -436,7 +430,7 @@ const EventManager = ({}) => {
             className="w-full h-screen border-t-2 border-zinc-500"
           >
             <div className="h-full w-full">
-              <UserEventColaborator/>
+              <MyOrders eventId={selectedEvent._id} />
             </div>
           </motion.div>
         )}

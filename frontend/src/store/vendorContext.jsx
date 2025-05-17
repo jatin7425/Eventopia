@@ -60,36 +60,6 @@ export function VendorProvider({ children }) {
         }
     };
 
-    // Add a rating to a vendor
-    const rateVendor = async (vendorId, rating) => {
-        setIsVendorLoading(true);
-        try {
-            const res = await axiosInstance.post(`/vendor/addVendorRating/${vendorId}/rate`, { rating });
-            fetchVendorById(vendorId);
-            fetchVendors();
-            toast.success("Vendor rated successfully");
-        } catch (error) {
-            console.error("Error rating vendor", error);
-        } finally {
-            setIsVendorLoading(false);
-        }
-    };
-
-    // Add a rating to a product
-    const rateProduct = async (vendorId, productId, rating) => {
-        setIsVendorLoading(true);
-        try {
-            const res = await axiosInstance.post(`/vendor/addProductRating/${vendorId}/products/${productId}/rate`, { rating });
-            fetchVendorById(vendorId);
-            fetchVendors();
-            toast.success("Product rated successfully");
-        } catch (error) {
-            console.error("Error rating product", error);
-        } finally {
-            setIsVendorLoading(false);
-        }
-    };
-
     // Add a new vendor
     const addVendor = async (vendorData) => {
         setIsVendorLoading(true);
@@ -232,8 +202,6 @@ export function VendorProvider({ children }) {
                 addProduct,
                 updateProduct,
                 deleteProduct,
-                rateVendor,
-                rateProduct,
                 addBannerToVendor,
                 getVendorOrders,
             }}

@@ -66,6 +66,17 @@ const eventSchema = new mongoose.Schema({
             quantity: { type: Number, default: 1 },
         },
     ],
+    orders: [
+        {
+            _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            vendor: { type: mongoose.Schema.Types.ObjectId, ref: 'Vendor' },
+            product: { type: mongoose.Schema.Types.ObjectId },
+            quantity: { type: Number, default: 1 },
+            orderedAt : { type: Date, default: Date.now },
+            status: { type: String, enum: ["confirmed", "Confirmed", "pending", "Pending", "declined", "Declined"  ], default: "Pending"}
+        },
+    ],
     todo: [
         {
             _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
