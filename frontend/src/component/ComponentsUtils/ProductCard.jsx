@@ -143,8 +143,6 @@ export const CartCard = ({ cart }) => {
             </div>
 
             <div className="flex items-center gap-2">
-             
-
               {/* Remove Item Button */}
               <button
                 onClick={() => removeFromCart(item._id)}
@@ -249,4 +247,3 @@ export const CartCard = ({ cart }) => {
     </section>
   );
 };
- 
