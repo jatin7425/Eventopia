@@ -768,7 +768,9 @@ export const getVendorOrders = async (req, res) => {
             // Resolve product details for each order
             const orderDetails = await Promise.all(eventOrders.map(async (order) => {
                 const product = vendor.Products.id(order.product);
-                if (!product) return null;
+                if (!product) {
+                  return null;
+                }
 
                 return {
                     _id: order._id,
