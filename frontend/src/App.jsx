@@ -14,7 +14,6 @@ import VendorOrderManager from "./component/Vendor/VendorOrderManager";
 import EventInvitaion from "./component/EventAcception/EventInvitaion";
 import AdminPage from "./pages/AdminPage";
 import AdminLogin from "./component/Admin/AdminLogin";
-import ContactUs from "./component/ComponentsUtils/ContactUs";
 import ContactUsPage from "./pages/ContactUsPage";
 
 const App = () => {
@@ -23,7 +22,7 @@ const App = () => {
   // Render the routes
   return (
     <div
-      className="dark:bg-[#1a1a1a] dark:text-white bg-white font-['Founders_Grotesk'] "
+      className="dark:bg-[#191A19] dark:text-white bg-white font-['Founders_Grotesk'] "
       data-scroll-container
     >
       <Routes>

@@ -446,6 +446,7 @@ const ProfileSetting = ({ userData }) => {
                 src={userData?.profilePicture}
                 alt="User Avatar"
                 className="w-full aspect-square object-cover mx-auto rounded-full border-4 border-white shadow-lg"
+                loading="lazy"
               />
               <button className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition">
                 <FaCamera />
@@ -493,10 +494,11 @@ const ProfileSetting = ({ userData }) => {
                 <button
                   key={index}
                   onClick={() => setCurrentTab(index)} // Ensure the correct state setter
-                  className={`relative text-md -mb-1 pb-2 transition ${index === currentTab
+                  className={`relative text-md -mb-1 pb-2 transition ${
+                    index === currentTab
                       ? "text-blue-500"
                       : "text-black dark:text-white/70 hover:text-blue-400"
-                    }`}
+                  }`}
                 >
                   {tab}
                   {index === currentTab && (

@@ -5,7 +5,7 @@ export const OchiFooter = ({ marginTop, contactLink }) => {
   return (
     <motion.div
       id="footer"
-      className="w-full h-screen dark:bg-zinc-800 bg-[#F9FAFB] flex flex-col justify-between "
+      className="w-full h-screen dark:bg-zinc-800 bg-[#e5e5e5] flex flex-col justify-between "
     >
       <div className="w-full px-[3.5vw] flex items-start max-sm:flex-col max-sm:w-full ">
         <div className="w-1/2 max-sm:hidden max-sm:w-full">

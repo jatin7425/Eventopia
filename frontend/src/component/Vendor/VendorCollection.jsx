@@ -120,6 +120,7 @@ const VendorsCollection = () => {
                     src={getProductImage(vendor.ShopBanner)}
                     alt="shop banner"
                     className="w-full h-32 bg-zinc-300 text-black object-cover rounded-lg"
+                    loading="lazy"
                   />
                 ) : (
                   <BannerEditor text={vendor.ShopName} />
@@ -131,7 +132,7 @@ const VendorsCollection = () => {
                   vendor?.ShopBanner || vendor?.ShopLogo || DefaultImg
                 )}
                 alt="Product"
-                className="w-full h-32 bg-zinc-300 text-black object-cover mt-2 rounded-lg"
+                className="w-full h-32 bg-zinc-300 text-black object-cover mt-2 rounded-lg" loading="lazy"
               /> */}
 
               <p className="dark:text-zinc-400 text-zinc-600 mt-3">

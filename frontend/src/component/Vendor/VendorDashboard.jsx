@@ -187,7 +187,6 @@ export default function VendorDashboard() {
         <AddVendorForm handleOpenAddVenderForm={handleOpenAddVenderForm} />
       )}
       <div className="flex items-center gap-5 sticky top-0 w-full bg-white dark:bg-zinc-800 px-6 py-4 z-10">
-        
         <div>
           <h1 className="text-3xl font-bold capitalize max-sm:text-lg">
             {vendor?.ShopName && `${vendor?.ShopName}'s`} Dashboard
@@ -238,7 +237,7 @@ export default function VendorDashboard() {
               </div>
             )}
           </div>
-          
+
           <img
             src={
               vendor?.ShopBanner
@@ -247,6 +246,7 @@ export default function VendorDashboard() {
             }
             alt="Shop Logo"
             className="w-full max-sm:h-60 sm:aspect-3/1 object-cover"
+            loading="lazy"
           />
         </div>
         {openBannerForm && (
@@ -504,6 +504,7 @@ const AddVendorForm = ({ handleOpenAddVenderForm }) => {
                     src={URL.createObjectURL(formData?.ShopLogo)}
                     alt="Shop Logo"
                     className="w-24 h-24 rounded-full object-cover"
+                    loading="lazy"
                   />
                 </div>
               )}
@@ -592,6 +593,7 @@ const BannerForm = ({ handleOpenBannerForm, vendorId }) => {
               src={URL.createObjectURL(formData.ShopBanner)}
               alt="Shop Banner"
               className="w-full aspect-3/1 object-cover"
+              loading="lazy"
             />
           </div>
         )}

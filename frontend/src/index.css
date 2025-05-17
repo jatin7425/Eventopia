@@ -61,6 +61,20 @@ body {
   }
 }
 
+/* Add these to your global CSS or use a CSS-in-JS solution */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
 .animate-words span {
   display: block;
   animation: wordAnimation 10s ease-in-out infinite;

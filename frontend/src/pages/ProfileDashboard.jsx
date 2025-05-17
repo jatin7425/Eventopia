@@ -114,25 +114,26 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
       <div
         onClick={toggleSidebar}
         className={`flex items-center justify-between px-4 py-2 absolute text-xl top-3 cursor-pointer lg:hidden rounded-full text-white
-        ${isSidebarOpen
+        ${
+          isSidebarOpen
             ? "max-lg:-translate-x-0 right-0 "
             : "max-lg:translate-x-full -right-4 backdrop-blur-md "
-          }`}
+        }`}
       >
-        {isSidebarOpen ?
+        {isSidebarOpen ? (
           <CgCross
             size={24}
             className="rotate-45 text-black dark:text-white "
           />
-          :
+        ) : (
           <Menu size={24} className="text-black dark:text-white" />
-        }
+        )}
       </div>
 
       <div className=" ">
         <div className="px-3 py-4 border-b border-zinc-200 dark:border-zinc-400">
           <Link to="/" className="flex justify-start items-center ">
-            {/* <img src={logo} alt="Logo" className="h-10" /> */}
+            {/* <img src={logo} alt="Logo" className="h-10" loading="lazy" /> */}
             <h1 className="text-3xl font-bold font-['Founders_Grotesk_X'] tracking-widest -mb-2 text-[#DAA520] dark:text-[#DAA520]">
               EVENTOPIA
             </h1>
@@ -147,16 +148,18 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
                   onClick={() => setActiveIcon(item.link)}
                   to={`/user/${item.link}`}
                   className={`flex items-center gap-3 py-2 px-4 rounded-lg font-medium transition group 
-                    ${activeIcon === item.link
-                      ? "bg-blue-700 text-white dark:text-zinc-100"
-                      : "text-zinc-700 dark:text-zinc-400 hover:bg-blue-600 hover:text-zinc-100 dark:hover:text-zinc-100"
+                    ${
+                      activeIcon === item.link
+                        ? "bg-blue-700 text-white dark:text-zinc-100"
+                        : "text-zinc-700 dark:text-zinc-400 hover:bg-blue-600 hover:text-zinc-100 dark:hover:text-zinc-100"
                     }`}
                 >
                   <span
-                    className={`text-xl ${activeIcon === item.link
-                      ? "text-zinc-100"
-                      : "text-zinc-700 dark:text-zinc-400 group-hover:text-white"
-                      }`}
+                    className={`text-xl ${
+                      activeIcon === item.link
+                        ? "text-zinc-100"
+                        : "text-zinc-700 dark:text-zinc-400 group-hover:text-white"
+                    }`}
                   >
                     {item.icon}
                   </span>
@@ -184,6 +187,7 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
               src={userData?.profilePicture}
               alt="User"
               className="w-12 h-12 rounded-full border-2 border-blue-600 mr-3"
+              loading="lazy"
             />
             <div>
               <p className="text-zinc-700 dark:text-zinc-300 font-semibold -mb-1 ">

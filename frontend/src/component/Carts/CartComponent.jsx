@@ -144,6 +144,7 @@ const CartComponent = () => {
                     src={cartItem?.product?.productImage || "placeholder.jpg"}
                     alt={cartItem?.product?.productName || "Product"}
                     className="w-20 h-20 object-cover"
+                    loading="lazy"
                   />
                   <div>
                     <h3 className="font-bold">

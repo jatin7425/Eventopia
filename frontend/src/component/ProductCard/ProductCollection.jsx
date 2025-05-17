@@ -93,6 +93,7 @@ const ProductCollection = () => {
                   src={getProductImage(vendor.ShopBanner)}
                   alt="shop banner"
                   className="w-full h-full object-cover absolute inset-0"
+                  loading="lazy"
                 />
               ) : (
                 <BannerEditor
@@ -189,6 +190,7 @@ const ProductCollection = () => {
                   src={getProductImage(product?.productImage) || DefaultImg}
                   alt={product?.productName}
                   className="w-full h-full object-contain bg-zinc-400 text-black "
+                  loading="lazy"
                 />
                 {!product?.available && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

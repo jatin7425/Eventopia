@@ -217,6 +217,7 @@ const VendorColaborator = () => {
                   src={colaborator.imgPath}
                   alt={colaborator.name}
                   className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                  loading="lazy"
                 />
                 <div className="min-w-0">
                   <p className="text-lg font-semibold text-gray-800 dark:text-white truncate">

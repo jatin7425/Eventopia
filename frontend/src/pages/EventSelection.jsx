@@ -15,20 +15,19 @@ import { FaTimes } from "react-icons/fa";
 
 
 const cardVariants = {
-  hidden: { y: 100, opacity: 0 },
+  hidden: { y: 50, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
       duration: 0.9,
-      delay: 0.6,
       ease: "easeOut",
       bounce: 0.4,
     },
   },
 };
 
-const cardVariants2 = {
+const footerVariants = {
   hidden: { y: 50, opacity: 0 },
   visible: {
     y: 0,
@@ -42,7 +41,6 @@ const cardVariants2 = {
 };
 
 const EventSelection = () => {
-  const [ref, inView] = useInView({ threshold: 0.2 });
   const [footerRef, footerInView] = useInView({ threshold: 0.2 });
   const [showCreateEventForm, setShowCreateEventForm] = useState(false);
   const [category, setCategory] = useState("Family Function");
@@ -85,7 +83,6 @@ const EventSelection = () => {
 
   return (
     <div className=" overflow-hidden min-h-screen font-['Founders_Grotesk']">
-      
       {/* Navbar */}
       <div className="h-20 w-full">
         <NavBar homeLink="/" aniDelay={0.7} contactLink="/contactus" />
@@ -116,10 +113,7 @@ const EventSelection = () => {
       </motion.section>
 
       {/* Blog Grid */}
-      <section
-        ref={ref}
-        className="h-full container mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6"
-      >
+      <section className="h-full container mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {cards.map((post, index) => (
           <div
             onClick={() => {
@@ -131,7 +125,9 @@ const EventSelection = () => {
           >
             <motion.div
               initial="hidden"
-              animate={inView && "visible"}
+              whileInView={"visible"}
+              transition={{ duration: 0.5, delay: index * 0.2 }}
+              viewport={{ once: false, amount: 0.2 }} // 'once: false' allows re-triggering on scroll
               variants={cardVariants}
               custom={index}
               className="h-full bg-white dark:bg-zinc-800 shadow-lg dark:shadow-white/10 rounded overflow-hidden group z-[3] my-4"
@@ -141,6 +137,7 @@ const EventSelection = () => {
                   src={post.img}
                   alt={post.alt}
                   className="h-full w-full object-cover"
+                  loading="lazy"
                 />
               </div>
               <div className="p-4 flex flex-col justify-between h-fit">
@@ -179,7 +176,7 @@ const EventSelection = () => {
         ref={footerRef}
         initial="hidden"
         animate={footerInView ? "visible" : "hidden"}
-        variants={cardVariants2}
+        variants={footerVariants}
         className="w-full h-max border-t-2"
       >
         <OchiFooter marginTop={20} contactLink="/contactus" />
