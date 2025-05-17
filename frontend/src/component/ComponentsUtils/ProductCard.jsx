@@ -39,6 +39,7 @@ export const VendorProductCard = ({
           className="md:w-full md:h-52 w-full h-52 object-cover xs:w-80 xs:max-h-full"
           src={imageUrl ? `${BASE_URL}${imageUrl}` : `..${DefaultImg}`}
           alt={title}
+          loading="lazy"
         />
       </div>
       <div className="px-4 py-4 xs:py-0 md:py-4 xs:h-52 md:h-full">
@@ -123,6 +124,7 @@ export const CartCard = ({ cart }) => {
                 }
                 alt={item?.product?.productName}
                 className="w-20 h-20 object-cover rounded-lg"
+                loading="lazy"
               />
               <div>
                 <h2 className="text-lg text-zinc-800 dark:text-zinc-200 font-semibold">

@@ -24,6 +24,7 @@ const Banner = ({ text, fontSize }) => {
         src={DefaultBanner}
         alt=""
         className="w-full h-full object-cover z-8"
+        loading="lazy"
       />
       <h1
         className={`absolute z-[11] top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${fontSize} uppercase whitespace-nowrap text-black font-['Alice']`}
@@ -36,19 +37,20 @@ const Banner = ({ text, fontSize }) => {
 
 const Banner2 = ({ text, fontSize }) => {
   return (
-    <div className='relative w-full h-full flex items-center justify-center'>
-        <img
-            src={DefaultBanner2}
-            alt=""
-            className="w-full h-full object-cover z-8"
-        />
-        <h1
-            className={`absolute z-[11] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${fontSize} uppercase whitespace-nowrap text-black font-['Alice']`}
-        >
-            {text}
-        </h1>
+    <div className="relative w-full h-full flex items-center justify-center">
+      <img
+        src={DefaultBanner2}
+        alt=""
+        className="w-full h-full object-cover z-8"
+        loading="lazy"
+      />
+      <h1
+        className={`absolute z-[11] top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${fontSize} uppercase whitespace-nowrap text-black tracking-wider font-light font-['Founders_Grotesk_X_Condensed']`}
+      >
+        {text}
+      </h1>
     </div>
-  )
+  );
 }
 const Banner3 = ({ text, fontSize }) => {
   return (
@@ -57,9 +59,10 @@ const Banner3 = ({ text, fontSize }) => {
         src={DefaultBanner4}
         alt=""
         className="w-full h-full object-cover z-8"
+        loading="lazy"
       />
       <h1
-        className={`absolute z-[11] top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${fontSize} uppercase whitespace-nowrap text-black font-['Alice']`}
+        className={`absolute z-[11] top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${fontSize} uppercase whitespace-nowrap text-black font-['Gilroy']`}
       >
         {text}
       </h1>
@@ -74,9 +77,10 @@ const Banner4 = ({ text, fontSize }) => {
         src={DefaultBanner3}
         alt=""
         className="w-full h-full object-cover z-8"
+        loading="lazy"
       />
       <h1
-        className={`absolute z-[11] top-[70%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${fontSize} uppercase whitespace-nowrap text-black font-['Alice']`}
+        className={`absolute z-[11] top-[75%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${fontSize} uppercase whitespace-nowrap text-black font-['Founders_Grotesk_Condensed']`}
       >
         {text}
       </h1>

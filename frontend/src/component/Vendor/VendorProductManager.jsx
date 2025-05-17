@@ -232,6 +232,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
               src={imagePreview}
               alt="Product preview"
               className="w-32 h-32 object-cover rounded mt-2"
+              loading="lazy"
             />
           )}
         </div>

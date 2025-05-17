@@ -91,7 +91,7 @@ export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
       >
         <div className="container mx-auto flex justify-between items-center px-6">
           <Link to={"/"} className="max-md:hidden">
-            <img src={logo} alt="logo" className="w-20 mr-6  " />
+            <img src={logo} alt="logo" className="w-20 mr-6  " loading="lazy" />
           </Link>
           <nav className="w-full max-md:hidden">
             <ul className="flex space-x-6 w-max m-auto text-black dark:text-white font-semibold uppercase ">
@@ -129,6 +129,7 @@ export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
                     src={user?.profilePicture}
                     alt=""
                     className="object-contain h-full w-full "
+                    loading="lazy"
                   />
                 ) : (
                   <CgProfile />
@@ -174,7 +175,12 @@ export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
               <ul className="flex flex-col w-full m-auto text-black dark:text-white  ">
                 <div className="flex gap-3 ml-auto p-5 justify-start w-full">
                   <Link to={"/"} className="">
-                    <img src={logo} alt="logo" className="w-20 md:mr-6" />
+                    <img
+                      src={logo}
+                      alt="logo"
+                      className="w-20 md:mr-6"
+                      loading="lazy"
+                    />
                   </Link>
                 </div>
                 <hr className="mb-4" />
@@ -207,6 +213,7 @@ export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
                       src={user?.profilePicture}
                       alt=""
                       className="object-contain h-full w-full "
+                      loading="lazy"
                     />
                   ) : (
                     <CgProfile />

@@ -153,6 +153,7 @@ const MyOrders = ({ eventId }) => {
                           src={vendor.image}
                           alt={vendor.name}
                           className="w-10 h-10 rounded-full object-cover"
+                          loading="lazy"
                         />
                         <div>
                           <h4 className="font-medium text-zinc-800 dark:text-white">
@@ -206,6 +207,7 @@ const MyOrders = ({ eventId }) => {
                                   src={order.product.productImage}
                                   alt={order.product.productName}
                                   className="w-24 h-24 object-cover rounded-lg"
+                                  loading="lazy"
                                 />
                               </div>
                               <div className="flex-1">

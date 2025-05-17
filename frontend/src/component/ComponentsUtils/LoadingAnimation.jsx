@@ -43,6 +43,7 @@ export const OchiLoadingScreen = () => {
           src="https://readymadeui.com/bg-effect.svg"
           alt=""
           className=" absolute inset-0 w-full h-full"
+          loading="lazy"
         /> */}
 
         <motion.h1
@@ -50,6 +51,8 @@ export const OchiLoadingScreen = () => {
           className="text-5xl font-bold font-['Founders_Grotesk']"
         >
           Plan Your <span className="text-blue-500">Events</span>
+          <br />
+          <span className="text-4xl">on your Fingertips!</span>
         </motion.h1>
 
         <motion.div className="">

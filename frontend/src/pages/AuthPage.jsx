@@ -72,6 +72,7 @@ function AuthPage() {
         {/* <img
           src="https://readymadeui.com/bg-effect.svg"
           className="fixed inset-0 w-full h-full z-0"
+          loading="lazy"
         /> */}
 
         <section className="h-full w-full flex justify-center items-center z-10">
@@ -93,13 +94,15 @@ function AuthPage() {
                   }
                   className={isSignPage ? " h-full object-cover" : "w-full"}
                   alt="Phone image"
+                  loading="lazy"
                 />
               </div>
 
               {/* <!-- Right column container with form --> */}
               <div
                 className={`h-full w-full xl:bg-zinc-800 ${
-                  !isSignPage && " max-xl:pt-32 2xl:pt-40 max-md:px-10 max-sm:px-5 "
+                  !isSignPage &&
+                  " max-xl:pt-32 2xl:pt-40 max-md:px-10 max-sm:px-5 "
                 } xl:pt-10 max-xl:pt-10 max-md:px-10 max-sm:px-5 max-lg:10/12 max-lg:mb-10 lg:max-w-max sm:px-10`}
               >
                 <form
