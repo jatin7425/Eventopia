@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Image Text</title>
+  <style>
+    canvas {
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <input type="text" id="textInput" placeholder="Enter new text" />
+  <button onclick="editImageText()">Apply</button>
+  <br />
+  <canvas id="canvas" width="1024" height="768"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const image = new Image();
+    image.src = '../../assets/Default-Banner-Template.png'; // Use the same path
+
+    image.onload = () => {
+      drawImageWithText("Your Brand Name");
+    };
+
+    function drawImageWithText(text) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      // Approximate text styling from original
+      ctx.font = "bold 64px 'Cinzel', serif";
+      ctx.fillStyle = "#0c184a";
+      ctx.textAlign = "center";
+
+      // Match vertical position manually
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 0); // 10px up
+
+    }
+
+    function editImageText() {
+      const newText = document.getElementById('textInput').value.trim();
+      if (newText) {
+        drawImageWithText(newText.toUpperCase());
+      }
+    }
+  </script>
+
+  <!-- Load Cinzel font -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+
+</body>
+</html>

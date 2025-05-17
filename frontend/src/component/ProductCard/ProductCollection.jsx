@@ -15,6 +15,8 @@ import {
   TagIcon as CategoryIcon,
 } from "@heroicons/react/24/outline";
 
+import BannerEditor from "../Canva/BannerEditor/BannerEditor";
+
 const ProductCollection = () => {
   const { id } = useParams();
   const { addToCart, setVendorId } = useEventCart()
@@ -50,7 +52,7 @@ const ProductCollection = () => {
   };
 
   const getProductImage = (image) => {
-    if (!image) return DefaultImg;
+    if (!image) return null;
     return image.startsWith("data:image") ? image : `${BASE_URL}${image}`;
   };
 
@@ -86,16 +88,23 @@ const ProductCollection = () => {
           <div className="mb-6 rounded-xl overflow-hidden shadow-lg relative">
             {/* Banner with overlay */}
             <div className="relative h-60 w-full">
-              <img
-                src={getProductImage(vendor.ShopBanner)}
-                alt="shop banner"
-                className="w-full h-full object-cover absolute inset-0"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/30" />
+              {getProductImage(vendor.ShopBanner) ? (
+                <img
+                  src={getProductImage(vendor.ShopBanner)}
+                  alt="shop banner"
+                  className="w-full h-full object-cover absolute inset-0"
+                />
+              ) : (
+                <BannerEditor
+                  text={vendor.ShopName}
+                  fontSize="text-6xl"
+                  randomizer={2}
+                />
+              )}
             </div>
 
             {/* Content */}
-            <div className="relative px-6 pb-6 -mt-16">
+            <div className="relative px-6 pb-6 -mt-16 z-[20]">
               <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-md">
                 <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2">
                   {vendor.ShopName}

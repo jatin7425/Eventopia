@@ -187,11 +187,7 @@ export default function VendorDashboard() {
         <AddVendorForm handleOpenAddVenderForm={handleOpenAddVenderForm} />
       )}
       <div className="flex items-center gap-5 sticky top-0 w-full bg-white dark:bg-zinc-800 px-6 py-4 z-10">
-        <img
-          src={vendor?.ShopLogo || vendorDefaultLogo}
-          alt="Shop Logo"
-          className="min-w-20 min-h-20 h-[2vmin] w-[2vmin] max-md:hidden rounded-full object-cover"
-        />
+        
         <div>
           <h1 className="text-3xl font-bold capitalize max-sm:text-lg">
             {vendor?.ShopName && `${vendor?.ShopName}'s`} Dashboard
@@ -242,6 +238,7 @@ export default function VendorDashboard() {
               </div>
             )}
           </div>
+          
           <img
             src={
               vendor?.ShopBanner

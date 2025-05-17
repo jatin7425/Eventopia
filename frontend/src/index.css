@@ -3,6 +3,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Alice';
+  src: url('../public/fonts/Alice-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   font-family: Poppins, sans-serif;
 }
