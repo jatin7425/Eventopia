@@ -650,8 +650,8 @@ const FlipTeamCard = ({ member }) => {
 
         {/* Back of Card */}
         <div className="absolute w-full h-full backface-hidden bg-blue-500 rounded-xl shadow-lg px-3 py-5 flex flex-col justify-center rotate-y-180">
-          <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
-          <p className="text-blue-100 mb-4">{member.role}</p>
+          <h3 className="text-xl font-bold text-white mb-2 text-center">{member.name}</h3>
+          <p className="text-blue-100 mb-4 text-center">{member.role}</p>
 
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4">
             <p className="text-white text-sm">
