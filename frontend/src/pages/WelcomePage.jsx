@@ -556,12 +556,12 @@ const TeamSection = () => {
   const teamMembers = [
     {
       imgSrc:
-        "https://media.licdn.com/dms/image/v2/D4D03AQEAHTyQE5JEpA/profile-displayphoto-shrink_100_100/B4DZZTzs0gHwAU-/0/1745162786624?e=1751500800&v=beta&t=wX_ssBUk6QqR95TMgzm_EQr3hI7aoDmYsXfe0F91Gl4",
+        "https://avatars.githubusercontent.com/u/130290923",
       name: "Jatin Vishwakarma",
       role: "FrontEnd & Backend Developer",
       socials: [
         {
-          link: "https://www.instagram.com/__jatin__2002/?utm_source=ig_web_button_share_sheet",
+          link: "https://www.instagram.com/__jatin__2002",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -591,7 +591,7 @@ const TeamSection = () => {
           ),
         },
         {
-          link: "https://www.linkedin.com/in/jatin7425/",
+          link: "https://www.linkedin.com/in/jatin7425",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -613,7 +613,7 @@ const TeamSection = () => {
       role: "FrontEnd & Backend Developer",
       socials: [
         {
-          link: "https://www.instagram.com/faizal_noob_?igsh=Nmx2M3Z1bW5pMXJs",
+          link: "https://www.instagram.com/faizal_noob_",
           svg: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
