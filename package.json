@@ -2,7 +2,7 @@
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
-  "name": "chat-app",
+  "name": "Eventopia",
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {

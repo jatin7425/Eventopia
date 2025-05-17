@@ -43,7 +43,7 @@ export const OchiFooter = ({ marginTop, contactLink }) => {
               </a>
               <br />{" "}
               <a href="/eventSelection" className="hover:text-blue-500">
-                Services
+                Events
               </a>
               <br />{" "}
               <a href="#our-features" className="hover:text-blue-500">

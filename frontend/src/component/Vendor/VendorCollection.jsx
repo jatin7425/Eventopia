@@ -97,31 +97,33 @@ const VendorsCollection = () => {
           <Link
             to={`/productCollection/${vendor._id}`}
             key={vendor._id}
-            className="p-4 shadow-md dark:shadow-white/20 dark:bg-zinc-800 rounded-lg"
+            className="px-4 pt-3 pb-2 shadow-md dark:shadow-white/20 dark:bg-zinc-800 rounded-lg"
           >
             <div>
-              <h2 className="text-xl font-semibold">{vendor?.ShopName}</h2>
-              <p className="dark:text-zinc-400 text-zinc-600">
-                Category: {vendor?.ShopCategory}
-              </p>
-              <p className="dark:text-zinc-400 text-zinc-600">
-                Rating: {calculateVendorRating(vendor)} ⭐
-              </p>
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-xl font-semibold">{vendor?.ShopName}</h2>
+                <p className="dark:text-zinc-400 text-zinc-600">
+                  Category: {vendor?.ShopCategory}
+                </p>
+              </div>
               <p className="dark:text-zinc-400 text-zinc-600">
                 Phone: {vendor?.ShopPhone}
               </p>
               <p className="dark:text-zinc-400 text-zinc-600">
                 Email: {vendor?.ShopEmail}
               </p>
-              <p className="dark:text-zinc-400 text-zinc-600">
-                Location: {vendor?.ShopLocation}
-              </p>
 
               <img
-                src={getProductImage(vendor?.ShopBanner || vendor?.ShopLogo || DefaultImg)}
+                src={getProductImage(
+                  vendor?.ShopBanner || vendor?.ShopLogo || DefaultImg
+                )}
                 alt="Product"
-                className="w-full h-32 object-cover mt-2 rounded-lg"
+                className="w-full h-32 bg-zinc-300 text-black object-cover mt-2 rounded-lg"
               />
+
+              <p className="dark:text-zinc-400 text-zinc-600 mt-3">
+                Location: {vendor?.ShopLocation}
+              </p>
             </div>
           </Link>
         ))}

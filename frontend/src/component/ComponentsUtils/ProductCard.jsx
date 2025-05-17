@@ -7,8 +7,6 @@ import { useEventCart } from "../../store/eventCartContext";
 import { motion } from "framer-motion";
 import {
   Trash,
-  Plus,
-  Minus,
 } from "lucide-react";
 import { ButtonBtmUp } from "../Theme/Button";
 

@@ -145,30 +145,12 @@ export const LandingSection = () => {
             transition={{ duration: 1 }}
           >
             Plan your <span className="text-blue-500">Events</span> <br />
-            <motion.span className="">
-              <TypeAnimation
-                sequence={[
-                  2000,
-                  " on your Fingertips!",
-                  1000,
-                  " with Zero Effort!",
-                  1000,
-                  " From Vision to Reality!",
-                  1000,
-                  " Effortless Elegance, Every Event!",
-                  1000,
-                  "Meetings & Milestones, Stress-Free!",
-                  1000,
-                ]}
-                wrapper="span"
-                speed={30}
-                style={{
-                  fontSize: "40px",
-                  display: "inline-block",
-                  animationDelay: "3000ms",
-                }}
-                repeat={Infinity}
-              />
+            <motion.span className="animate-words h-[50px] py-2 w-screen overflow-hidden inline-block relative align-bottom ">
+              <span className="text-5xl">on your Fingertips!</span>
+              <span className="text-5xl">with Zero Effort!</span>
+              <span className="text-5xl">From Vision to Reality!</span>
+              <span className="text-5xl">Effortless Elegance, Every Event!</span>
+              <span className="text-5xl">Meetings & Milestones,Stress-Free!</span>
             </motion.span>
           </motion.h1>
           <motion.p
@@ -246,7 +228,11 @@ export const LandingSection = () => {
                   key={index}
                   className="h-20 flex-shrink-0 mx-1 flex items-center bg-white rounded-lg"
                 >
-                  <img src={img.img} alt="logo" className="w-full h-full px-3 py-2" />
+                  <img
+                    src={img.img}
+                    alt="logo"
+                    className="w-full h-full px-3 py-2"
+                  />
                 </div>
               ))}
           </motion.div>

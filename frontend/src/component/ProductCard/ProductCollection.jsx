@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import DefaultImg from "../../assets/default-product-image.png";
-import { BsCart3 } from "react-icons/bs";
-import { AiOutlineStop } from "react-icons/ai";
 import { OchiFooter } from "../ComponentsUtils/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { NavBar } from "../ComponentsUtils/NavBar";
 import { useEventCart } from "../../store/eventCartContext";
+
+import {
+  EnvelopeIcon as MailIcon,
+  PhoneIcon,
+  MapPinIcon as LocationIcon,
+  TagIcon as CategoryIcon,
+} from "@heroicons/react/24/outline";
 
 const ProductCollection = () => {
   const { id } = useParams();
@@ -21,6 +26,7 @@ const ProductCollection = () => {
   const [quantity, setQuantity] = useState(1);
   const [limit, setlimit] = useState(5);
   const BASE_URL = "http://127.0.0.1:3000";
+  
 
   const [footerRef, footerInView] = useInView({ threshold: 0.2 });
 
@@ -77,146 +83,270 @@ const ProductCollection = () => {
 
       <div className="px-20">
         {vendor && (
-          <div className="mb-6 shadow-lg">
-            <h1 className="text-2xl font-bold">{vendor.ShopName}</h1>
-            <p className="text-zinc-700 dark:text-zinc-400">Category: {vendor.ShopCategory}</p>
-            <p className="text-zinc-700 dark:text-zinc-400">Phone: {vendor.ShopPhone}</p>
-            <p className="text-zinc-700 dark:text-zinc-400">Email: {vendor.ShopEmail}</p>
-            <p className="text-zinc-700 dark:text-zinc-400">Location: {vendor.ShopLocation}</p>
-            <p className="text-zinc-700 dark:text-zinc-400">
-              Description: {vendor.ShopDescription}
-            </p>
+          <div className="mb-6 rounded-xl overflow-hidden shadow-lg relative">
+            {/* Banner with overlay */}
+            <div className="relative h-60 w-full">
+              <img
+                src={getProductImage(vendor.ShopBanner)}
+                alt="shop banner"
+                className="w-full h-full object-cover absolute inset-0"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/30" />
+            </div>
+
+            {/* Content */}
+            <div className="relative px-6 pb-6 -mt-16">
+              <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-md">
+                <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2">
+                  {vendor.ShopName}
+                </h1>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="flex items-start space-x-3">
+                    <CategoryIcon className="w-5 h-5 mt-1 text-blue-500" />
+                    <div>
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Category
+                      </p>
+                      <p className="text-zinc-700 dark:text-zinc-300">
+                        {vendor.ShopCategory}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <PhoneIcon className="w-5 h-5 mt-1 text-blue-500" />
+                    <div>
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Phone
+                      </p>
+                      <p className="text-zinc-700 dark:text-zinc-300">
+                        {vendor.ShopPhone}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <MailIcon className="w-5 h-5 mt-1 text-blue-500" />
+                    <div>
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Email
+                      </p>
+                      <p className="text-zinc-700 dark:text-zinc-300">
+                        {vendor.ShopEmail}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <LocationIcon className="w-5 h-5 mt-1 text-blue-500" />
+                    <div>
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Location
+                      </p>
+                      <p className="text-zinc-700 dark:text-zinc-300">
+                        {vendor.ShopLocation}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700">
+                  <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">
+                    About
+                  </p>
+                  <p className="text-zinc-700 dark:text-zinc-300">
+                    {vendor.ShopDescription}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         <h2 className="text-xl font-bold mb-4 ">Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.map((product) => (
-            <div
+            <motion.div
               key={product?._id}
-              className="bg-zinc-200 dark:bg-[#333] rounded-lg p-4 flex flex-col"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col"
             >
-              <div className="h-fit bg-zinc-700 dark:bg-zinc-400 rounded-md flex items-center justify-center mb-4">
+              {/* Product Image */}
+              <div className="relative h-60 overflow-hidden border-b border-zinc-400 ">
                 <img
-                  src={getProductImage(product?.productImage)}
+                  src={getProductImage(product?.productImage) || DefaultImg}
                   alt={product?.productName}
-                  className="w-full aspect-square object-cover rounded-md"
+                  className="w-full h-full object-contain bg-zinc-400 text-black "
                 />
-              </div>
-              <h4 className="text-zinc-800 dark:text-white font-semibold">
-                {product?.productName}
-              </h4>
-              <p className="text-zinc-700 dark:text-zinc-400">
-                Price: {product?.productPrice}
-              </p>
-              <p className="text-zinc-700 dark:text-zinc-400">
-                Description: {product.productDescription}
-              </p>
-              <p
-                className={`mt-2 ${product?.available ? "text-green-400" : "text-red-400"
-                  }`}
-              >
-                {product?.available ? (
-                  <button
-                    onClick={() => toggleQuantityInput(product._id)}
-                    className="w-full bg-red-600 text-white px-3 py-1 mb-2 rounded-lg flex items-center justify-center"
-                    disabled={!product?.available}
-                    title={
-                      product?.available
-                        ? "Add to Cart"
-                        : "Product is not available"
-                    }
-                  >
-                    <div className="flex items-center gap-1">
-                      <BsCart3 size={20} /> <span>Add to Cart</span>
-                    </div>
-                  </button>
-                ) : (
-                  <button
-                    className="w-full bg-red-600/70 cursor-not-allowed text-white px-3 py-1 rounded-lg flex items-center justify-center"
-                    disabled={!product?.available}
-                    title={
-                      product?.available
-                        ? "Add to Cart"
-                        : "Product is not available"
-                    }
-                  >
-                    <div className="flex items-center gap-1 text-white/70">
-                      <AiOutlineStop size={20} /> <span>Out of Stock</span>
-                    </div>
-                  </button>
+                {!product?.available && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      Out of Stock
+                    </span>
+                  </div>
                 )}
-              </p>
-              {showQuantityInput[product._id] && (
-                <div className="flex flex-col w-full mt-2">
-                  <input
-                    type="number"
-                    min="1"
-                    value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
-                    className="p-2 rounded bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-white outline-none mb-2"
-                  />
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded-lg w-full"
-                    disabled={!product.available}
-                    onClick={() => addToCart(product._id, quantity)}
-                    title={
-                      product.available
-                        ? "Confirm Add to Cart"
-                        : "Product is not available"
-                    }
-                  >
-                    Confirm
-                  </button>
+              </div>
+
+              {/* Product Info */}
+              <div className="p-4 flex-1 flex flex-col">
+                <div className="flex-1">
+                  <h4 className="text-lg font-bold text-zinc-900 dark:text-white mb-1 line-clamp-2">
+                    {product?.productName}
+                  </h4>
+                  <p className="text-zinc-600 dark:text-zinc-300 text-sm mb-3 line-clamp-3">
+                    {product.productDescription}
+                  </p>
                 </div>
-              )}
-            </div>
+
+                <div className="mt-auto">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xl font-bold text-zinc-900 dark:text-white">
+                      ${product?.productPrice}
+                    </span>
+                    {product?.available && (
+                      <span className="text-sm text-green-500 flex items-center">
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        In Stock
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  {product?.available ? (
+                    showQuantityInput[product._id] ? (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="flex space-x-2">
+                          <input
+                            type="number"
+                            min="1"
+                            value={quantity}
+                            onChange={(e) => setQuantity(e.target.value)}
+                            className="flex-1 p-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <button
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                            onClick={() => addToCart(product._id, quantity)}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <button
+                        onClick={() => toggleQuantityInput(product._id)}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors duration-200"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                        <span>Add to Cart</span>
+                      </button>
+                    )
+                  ) : (
+                    <button
+                      className="w-full bg-zinc-400 dark:bg-zinc-600 text-white py-2 px-4 rounded-lg flex items-center justify-center space-x-2 cursor-not-allowed"
+                      disabled
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728"
+                        />
+                      </svg>
+                      <span>Out of Stock</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* Pagination Controls */}
-        <div className="flex items-center justify-center my-10 gap-2">
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
-          >
-            Previous
-          </button>
-          <span className="px-4 py-2">
-            Page {page} of {totalPages}
-          </span>
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
-            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={page === totalPages}
-          >
-            Next
-          </button>
-        </div>
-        <form className="w-full flex justify-center items-center flex-col">
-          <label htmlFor="limit" className="text-white text-sm ml-2">
-            Products per page
-          </label>
-          <div>
-            <input
-              type="number"
-              name="limit"
-              id="limit"
-              placeholder="Custom Page Limit"
-              max={totalPages > 15 ? 15 : totalPages}
-              value={limit}
-              onChange={(e) => { setlimit(Number(e.currentTarget.value)) }}
-              className="m-auto inline-block bg-gray-500/10 p-2 rounded-md"
-            />
+        <div className="flex items-center justify-between ">
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-center my-10 gap-2">
             <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded ml-2">
-              set
+              className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
+            >
+              Next
             </button>
           </div>
-        </form>
-        <br /><br />
+
+          {/* Custom Page Limit */}
+          <div>
+            <form className="w-full flex justify-center items-center flex-col">
+              <div>
+                <input
+                  type="number"
+                  name="limit"
+                  id="limit"
+                  placeholder="Custom Page Limit"
+                  max={totalPages > 15 ? 15 : totalPages}
+                  value={limit}
+                  onChange={(e) => {
+                    setlimit(Number(e.currentTarget.value));
+                  }}
+                  className="m-auto inline-block bg-zinc-500/10 p-2 rounded-md"
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded ml-2"
+                >
+                  Set
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <br />
+        <br />
       </div>
 
       <motion.div
