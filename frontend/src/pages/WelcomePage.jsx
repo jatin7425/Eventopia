@@ -608,7 +608,7 @@ const TeamSection = () => {
       ],
     },
     {
-      imgSrc: "https://avatars.githubusercontent.com/u/200369650?v=4",
+      imgSrc: "https://avatars.githubusercontent.com/u/200369650",
       name: "Faizal Ahmed",
       role: "FrontEnd & Backend Developer",
       socials: [
