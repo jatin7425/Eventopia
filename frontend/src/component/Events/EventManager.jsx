@@ -391,7 +391,7 @@ const EventManager = ({ }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full h-screen border-t-2 border-zinc-500"
+            className="w-full h-full border-t-2 border-zinc-500"
           >
             <InvitationManager event={event} />
           </motion.div>
@@ -414,7 +414,7 @@ const EventManager = ({ }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full h-screen border-t-2 border-zinc-500"
+            className="w-full h-full border-t-2 border-zinc-500"
           >
             <div className="h-full w-full">
               <MyCalendar />
@@ -427,7 +427,7 @@ const EventManager = ({ }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full h-screen border-t-2 border-zinc-500"
+            className="w-full h-full border-t-2 border-zinc-500 flex flex-col  " 
           >
             <div className="h-full w-full">
               <MyOrders eventId={selectedEvent?._id} />

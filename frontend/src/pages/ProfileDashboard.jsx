@@ -130,9 +130,9 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
         )}
       </div>
 
-      <div className=" ">
+      <div className="h-full w-full ">
         <div className="px-3 py-4 border-b border-zinc-200 dark:border-zinc-400">
-          <Link to="/" className="flex justify-start items-center ">
+          <Link to="/" className="flex justify-center items-center ">
             {/* <img src={logo} alt="Logo" className="h-10" loading="lazy" /> */}
             <h1 className="text-3xl font-bold font-['Founders_Grotesk_X'] tracking-widest -mb-2 text-[#DAA520] dark:text-[#DAA520]">
               EVENTOPIA
@@ -174,10 +174,6 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
             ))}
           </ul>
         </nav>
-      </div>
-
-      <div>
-        <SubscriptionAds />
       </div>
 
       <div className="px-3 py-5 border-t border-zinc-200 dark:border-zinc-400">

@@ -376,7 +376,8 @@ const FeaturesSection = () => {
           }`}
         >
           <h2 className="md:text-6xl text-4xl tracking-tight mb-6 max-md:mb-5 w-full ">
-            Ensure You Receive High-Quality Services
+            Ensure You Receive{" "}
+            <span className="text-blue-500">High-Quality</span> Services
           </h2>
           <p className="max-md:hidden text-xl font-['Founders_Grotesk_Condensed'] max-md:mb-10 ">
             "Organize, manage, and execute your events seamlessly with our
@@ -501,8 +502,8 @@ const ClientTestimonial = () => {
   return (
     <div className="dark:bg-[#1a1a1a] dark:text-white ">
       <div className=" text-center">
-        <h2 className="md:text-4xl text-3xl font-extrabold">
-          What our happy client say
+        <h2 className="md:text-4xl text-3xl font-extrabold mb-10 ">
+          What our <span className="text-blue-600">Happy Client</span> say
         </h2>
       </div>
       <div className="md:py-16 gap-8 max-w-7xl max-md:max-w-lg mx-auto relative">

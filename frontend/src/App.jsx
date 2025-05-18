@@ -27,10 +27,10 @@ const App = () => {
     >
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/" element={<WelcomePage />} />
         <Route path="/user/:page" element={<ProfileDashboard />} />
-        <Route path="/contactus" element={<ContactUsPage />} />
+        <Route path="/" element={<WelcomePage />} />
         <Route path="/eventSelection" element={<EventSelection />} />
+        <Route path="/contactus" element={<ContactUsPage />} />
         <Route path="/user/:page/:vendorId" element={<ProfileDashboard />} />
         <Route path="/vendorCollection" element={<VendorCollection />} />
         <Route path="/productCollection/:id" element={<ProductCollection />} />
