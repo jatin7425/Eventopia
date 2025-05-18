@@ -177,7 +177,7 @@ const EventSelection = () => {
         initial="hidden"
         animate={footerInView ? "visible" : "hidden"}
         variants={footerVariants}
-        className="w-full h-max border-t-2"
+        className="w-full h-max border-t-2 mt-10"
       >
         <OchiFooter marginTop={20} contactLink="/contactus" />
       </motion.div>

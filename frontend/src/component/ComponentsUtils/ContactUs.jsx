@@ -21,6 +21,8 @@ const ContactUs = () => {
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
     createContact(data);
+    event.target.reset();
+    toast.success('Message sent successfully!');
   };
   return (
     <motion.div

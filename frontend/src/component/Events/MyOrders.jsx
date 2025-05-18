@@ -69,7 +69,7 @@ const MyOrders = ({ eventId }) => {
   };
 
   return (
-    <div className="pt-5 h-full ">
+    <div className="pt-5 h-screen ">
       <div className="max-w-7xl mx-auto h-full flex flex-col">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div>
@@ -116,10 +116,10 @@ const MyOrders = ({ eventId }) => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 overflow-y-scroll ">
+          <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 max-h-full ">
             {/* Vendor List */}
-            <div className="w-full lg:w-1/4 bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col">
-              <div className="flex justify-between items-center mb-4">
+            <div className="w-full lg:w-1/4 h-full overflow-y-auto bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col ">
+              <div className="flex justify-between items-center mb-4 sticky top-0 dark:bg-zinc-800 bg-white rounded-xl p-4">
                 <h3 className="text-lg font-semibold text-zinc-800 dark:text-white">
                   Vendors
                 </h3>
@@ -135,7 +135,7 @@ const MyOrders = ({ eventId }) => {
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto pr-2">
+              <div className="flex-1 overflow-y-auto pr-6 px-4 pb-4 ">
                 {uniqueVendors.length > 0 ? (
                   <div className="space-y-2">
                     {uniqueVendors.map((vendor) => (
@@ -177,11 +177,11 @@ const MyOrders = ({ eventId }) => {
             </div>
 
             {/* Orders List */}
-            <div className="flex-1 flex flex-col min-h-0">
-              <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col min-h-0 max-h-[100%] w-full overflow-y-auto ">
+              <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex-1 flex flex-col">
                 {vendorOrders.length > 0 ? (
-                  <div className="flex-1 flex flex-col">
-                    <div className="flex justify-between items-center mb-4">
+                  <div className="flex-1 flex flex-col ">
+                    <div className="flex justify-between items-center  p-4 sticky top-0 bg-zinc-800 rounded-xl ">
                       <h3 className="text-lg font-semibold text-zinc-800 dark:text-white">
                         {selectedVendor
                           ? `Orders (${vendorOrders.length})`
@@ -189,12 +189,13 @@ const MyOrders = ({ eventId }) => {
                       </h3>
                       {vendorOrders.length > 0 && (
                         <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
-                          Total: ₹{calculateTotal(vendorOrders).toFixed(2)}
+                          <span className="text-blue-500">Total &nbsp;</span>: ₹
+                          {calculateTotal(vendorOrders).toFixed(2)}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex-1 overflow-y-auto">
+                    <div className="flex-1 overflow-y-auto px-4 pb-4">
                       <div className="space-y-4 pb-2">
                         {vendorOrders.map((order) => (
                           <div
