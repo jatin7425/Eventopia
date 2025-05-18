@@ -23,7 +23,6 @@ const InvitationManager = ({ event }) => {
     }
   };
 
-  console.log(event._id);
   useEffect(() => {
     if (event._id) {
       fetchAttendees(event._id); // call the async function
@@ -46,8 +45,6 @@ const InvitationManager = ({ event }) => {
   const filteredAttendees = (status) => {
     return attendees.filter((attendee) => attendee.status.toLowerCase() === status);
   };
-
-  console.log(filteredAttendees("pending"))
 
   return (
     <div className="max-w-4xl mx-auto p-4">

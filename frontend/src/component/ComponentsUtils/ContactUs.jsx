@@ -16,6 +16,12 @@ const ContactUs = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+    createContact(data);
+  };
   return (
     <motion.div
       id="contact"

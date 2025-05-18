@@ -25,6 +25,31 @@ export function AuthProvider({ children }) {
         }
     }, [user])
 
+    const handleForwarding = async () => {
+        const params = new URLSearchParams(window.location.search);
+        const next = params.get("next");
+
+        if (!next || !next.startsWith("http")) {
+            window.location.href = "/";
+            return;
+        }
+
+        try {
+            const fullUrl = new URL(next);
+            const requestUrl = `${fullUrl.origin}${fullUrl.pathname}?response=true`;
+            console.log(requestUrl);
+            await axios.patch(requestUrl);
+
+            // Redirect to home after successful PATCH
+            window.location.href = "/";
+        } catch (e) {
+            console.error("Failed to send PATCH or invalid URL:", next, e);
+            window.location.href = "/";
+        }
+    };
+
+
+
     useEffect(() => {
         const currentPath = window.location.pathname
             .replace("/", "") // Remove the leading "/"
@@ -53,7 +78,7 @@ export function AuthProvider({ children }) {
             setIsAuthLoading(true);
             setUser(res.data);
             toast.success("Logged in successfully");
-            window.location.href = "/";
+            await handleForwarding();
         } catch (error) {
             toast.error(error.response.data.message);
             console.error("Error in login", error);
@@ -69,7 +94,7 @@ export function AuthProvider({ children }) {
             setIsAuthLoading(true);
             setUser(res.data);
             toast.success("Account created successfully");
-            window.location.href = "/";
+            await handleForwarding();
         } catch (error) {
             toast.error(error.response.data.message);
             console.error("Error in signup", error);
@@ -102,10 +127,10 @@ export function AuthProvider({ children }) {
             } catch (error) {
                 setUser(null);
                 console.error("Error in checkAuth", error);
-                if (error.response.data.message === "Unauthorized - no token provided") {
-                    if (window.location.pathname !== "/") {
-                        window.location.href = "/"
-                    }
+                if (error.response.data.message === "Unauthorized - no token provided" &&
+                    window.location.pathname !== "/" &&
+                    !window.location.pathname !== "/auth") {
+                    window.location.href = "/"
                 }
             } finally {
                 setIsAuthLoading(false);

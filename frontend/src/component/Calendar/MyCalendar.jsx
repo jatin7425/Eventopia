@@ -40,8 +40,6 @@ const MyCalendar = () => {
     priority: "medium",
   });
 
-  console.log(calendarEntries);
-
   useEffect(() => {
     getCalendarEntries(event._id);
   }, []);

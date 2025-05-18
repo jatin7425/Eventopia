@@ -4,6 +4,7 @@ import Event from "../models/event.model.js";
 import mongoose from "mongoose";
 import path from 'path';
 import fs from 'fs';
+import orderModel from "../models/order.model.js";
 
 
 // Helper function to delete old image
@@ -643,61 +644,53 @@ export const getVendorOrders = async (req, res) => {
             });
         }
 
-        // Get all orders for this vendor
-        const orders = vendor.Orders;
+        // Get all orders for this vendor with event and user populated
+        const orders = await orderModel.find({ vendor: vendorId })
+            .populate('event', 'name location date startTime endTime')
+            .populate('user', 'fullName userName email phone');
 
-        // Get unique event IDs from orders
-        const eventIds = [...new Set(orders.map(o => o.event.toString()))];
+        // Group orders by event
+        const eventMap = orders.reduce((acc, order) => {
+            const eventId = order.event._id.toString();
+            if (!acc[eventId]) {
+                acc[eventId] = {
+                    eventID: order.event._id,
+                    eventName: order.event.name,
+                    location: order.event.location,
+                    date: order.event.date.toISOString().split('T')[0],
+                    starttime: order.event.startTime,
+                    endtime: order.event.endTime,
+                    organiser: order.user.fullName,
+                    username: order.user.userName,
+                    phone: order.user.phone,
+                    email: order.user.email,
+                    orders: [],
+                    totalOrderAmount: 0,
+                    Link: `/vendor/${vendorId}/orders/respond`
+                };
+            }
 
-        // Get event details
-        const events = await Event.find({ _id: { $in: eventIds } })
-            .populate('organizer');
-
-        // Create event-order mapping
-        const eventOrderMap = await Promise.all(events.map(async (event) => {
-            const eventOrders = orders.filter(o =>
-                o.event.toString() === event._id.toString()
-            );
-
-            // Resolve product details for each order
-            const orderDetails = await Promise.all(eventOrders.map(async (order) => {
-                const product = vendor.Products.id(order.product);
-                if (!product) {
-                    return null;
-                }
-
-                return {
+            const product = vendor.Products.id(order.product);
+            if (product) {
+                const orderDetails = {
                     _id: order._id,
                     name: product.productName,
                     img: product.productImage,
-                    price: product.productPrice,
+                    price: order.price,
                     totalitems: order.quantity,
-                    totalPrice: product.productPrice * order.quantity,
+                    totalPrice: order.total,
                     availability: product.available,
-                    status: order.status || 'pending'
+                    status: order.status
                 };
-            }));
 
-            return {
-                eventID: event._id,
-                eventName: event.name,
-                organiser: event.organizer.fullName || 'N/A',
-                username: event.organizer.userName || 'N/A',
-                location: event.location,
-                date: event.date.toISOString().split('T')[0],
-                starttime: event.startTime,
-                endtime: event.endTime,
-                phone: event.organizer.phone || 'N/A',
-                email: event.organizer.email || 'N/A',
-                orders: orderDetails.filter(Boolean),
-                totalOrderAmount: orderDetails.reduce((sum, o) => sum + (o?.totalPrice || 0), 0),
-                Link: `/vendor/${vendorId}/orders/respond`
-            };
-        }));
+                acc[eventId].orders.push(orderDetails);
+                acc[eventId].totalOrderAmount += order.total;
+            }
+            return acc;
+        }, {});
 
-        res.status(200).json(eventOrderMap);
+        res.status(200).json(Object.values(eventMap));
     } catch (error) {
-        console.log(error)
         res.status(500).json({
             message: 'Error fetching orders',
             error: error.message
@@ -716,17 +709,23 @@ export const respondToOrders = async (req, res) => {
             return res.status(400).json({ message: 'Invalid vendor ID format' });
         }
 
-        // Validate event ID format
-        if (!mongoose.Types.ObjectId.isValid(eventID)) {
-            return res.status(400).json({ message: 'Invalid event ID format' });
+        // Verify vendor access
+        const vendor = await Vendor.findOne({
+            _id: vendorId,
+            $or: [
+                { owner: userId },
+                { collaborators: userId }
+            ]
+        });
+
+        if (!vendor) {
+            return res.status(404).json({ message: 'Vendor not found or unauthorized' });
         }
 
         // Validate orders array
         if (!Array.isArray(orders) || orders.length === 0) {
             return res.status(400).json({ message: 'Invalid orders format - expected non-empty array' });
         }
-
-        const user = User.findById(userId);
 
         // Validate each order
         const validOrders = orders.every(order =>
@@ -742,21 +741,6 @@ export const respondToOrders = async (req, res) => {
             });
         }
 
-        // Find vendor and validate access
-        const vendor = await Vendor.findOne({
-            _id: vendorId,
-            $or: [
-                { owner: userId },
-                { collaborators: userId }
-            ]
-        });
-
-        const event = await Event.findOne({ _id: eventID }).populate('organizer');
-
-        if (!vendor) {
-            return res.status(404).json({ message: 'Vendor not found or unauthorized' });
-        }
-
         const results = {
             totalOrders: orders.length,
             successfulUpdates: 0,
@@ -768,27 +752,23 @@ export const respondToOrders = async (req, res) => {
         // Process order updates
         await Promise.all(orders.map(async (orderRequest) => {
             try {
-                const order = vendor.Orders.id(orderRequest._id);
+                const order = await orderModel.findOneAndUpdate(
+                    {
+                        _id: orderRequest._id,
+                        vendor: vendorId,
+                        event: eventID
+                    },
+                    {
+                        status: orderRequest.status,
+                        updatedAt: Date.now()
+                    },
+                    { new: true }
+                );
+
                 if (!order) {
                     results.notFoundIds.push(orderRequest._id);
                     results.failedUpdates++;
                     return;
-                }
-
-                order.status = orderRequest.status;
-                order.updatedAt = new Date();
-
-                // Update Event.orders
-                const orderIdStr = orderRequest._id.toString();
-                const eventOrder = event.orders.find(o =>
-                    o._id.toString() === orderIdStr &&
-                    o.vendor.equals(vendorId)
-                );
-
-
-                if (eventOrder) {
-                    eventOrder.status = orderRequest.status;
-                    eventOrder.updatedAt = new Date(); // Optional if not in schema
                 }
 
                 results.successfulUpdates++;
@@ -803,11 +783,8 @@ export const respondToOrders = async (req, res) => {
             }
         }));
 
-        // Save vendor changes first
-        await vendor.save();
-        await event.save();
-        
         // Notification logic
+        const event = await Event.findOne({ _id: eventID }).populate('organizer');
         if (!event || !event.organizer) {
             return res.status(404).json({ message: 'Event not found or has no organizer' });
         }
@@ -817,7 +794,6 @@ export const respondToOrders = async (req, res) => {
             return res.status(404).json({ message: 'Organizer user not found' });
         }
 
-        // Determine notification message
         const statuses = [...new Set(orders.map(o => o.status))];
         const statusMessage = statuses.length === 1 ?
             `${statuses[0]} by the vendor` :
@@ -833,7 +809,6 @@ export const respondToOrders = async (req, res) => {
         };
 
         try {
-            // Check for existing notification
             const existingNotification = existingUser.notification.find(n =>
                 n.type === notificationPayload.type &&
                 n.sender.equals(notificationPayload.sender) &&
@@ -863,10 +838,8 @@ export const respondToOrders = async (req, res) => {
                 updateOperation,
                 updateOptions
             );
-
         } catch (error) {
             console.error('Notification error:', error);
-            // Don't fail the request, just log the error
         }
 
         res.status(200).json({
@@ -874,7 +847,6 @@ export const respondToOrders = async (req, res) => {
             ...results,
             successRate: `${(results.successfulUpdates / orders.length * 100).toFixed(1)}%`
         });
-
     } catch (error) {
         res.status(500).json({
             message: 'Error processing orders',
@@ -882,4 +854,3 @@ export const respondToOrders = async (req, res) => {
         });
     }
 };
-

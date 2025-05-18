@@ -4,6 +4,7 @@ import User from '../models/user.model.js';
 import mongoose from 'mongoose';
 import { isSameDay, parseISO } from 'date-fns';
 import { sendEmail } from '../utils/sendEmail.js';
+import orderModel from '../models/order.model.js';
 
 // Create a new event
 export const createEvent = async (req, res) => {
@@ -500,108 +501,46 @@ export const cartCheckout = async (req, res) => {
         const { eventId } = req.params;
         const userId = req.user._id;
 
-
-        // Validate event ID first
-        if (!mongoose.Types.ObjectId.isValid(eventId)) {
-            return res.status(400).json({ message: "Invalid event ID" });
-        }
-
-        // 1. Get event with cart populated
+        // Validate event
         const event = await Event.findById(eventId);
-        if (!event) {
-            return res.status(404).json({ message: "Event not found" });
-        }
-
-        // 3. Validate cart contents
+        if (!event) return res.status(404).json({ message: "Event not found" });
         if (event.cart.length === 0) {
             return res.status(400).json({ message: "Cart is empty" });
         }
 
-        // 4. Get unique vendors and validate their existence
-        const vendorIds = [...new Set(event.cart.map(item => item.vendor.toString()))];
-        const vendors = await Vendor.find({ _id: { $in: vendorIds } });
+        // Create orders
+        const orders = await Promise.all(event.cart.map(async (item) => {
+            const vendor = await Vendor.findById(item.vendor);
+            const product = vendor.Products.id(item.product);
 
-        // Check for missing vendors
-        if (vendors.length !== vendorIds.length) {
-            const missingVendors = vendorIds.filter(id =>
-                !vendors.some(v => v._id.toString() === id)
-            );
-            return res.status(400).json({
-                message: "Some vendors no longer exist",
-                missingVendors
-            });
-        }
-
-        // 5. Process orders for each vendor
-        const processedOrders = [];
-
-        for (const vendor of vendors) {
-            const vendorCartItems = event.cart.filter(
-                item => item.vendor.toString() === vendor._id.toString()
-            );
-
-            // Validate products and quantities
-            for (const item of vendorCartItems) {
-                const product = vendor.Products.id(item.product);
-                if (!product) {
-                    return res.status(400).json({
-                        message: `Product ${item.product} not found in ${vendor.ShopName}`,
-                        vendorId: vendor._id,
-                        productId: item.product
-                    });
-                }
-
-                // Optional: Check product availability
-                if (product.availableQuantity < item.quantity) {
-                    return res.status(400).json({
-                        message: `Insufficient stock for ${product.productName}`,
-                        available: product.availableQuantity,
-                        requested: item.quantity
-                    });
-                }
+            if (!product) {
+                throw new Error(`Product ${item.product} not found`);
             }
 
-
-            // Create clean order objects
-            const orders = vendorCartItems.map(item => ({
+            return new orderModel({
+                user: userId,
+                vendor: item.vendor,
+                event: eventId,
                 product: item.product,
                 quantity: item.quantity,
-                orderedBy: userId,
-                event: eventId,
-            }));
+                price: product.productPrice,
+                total: product.productPrice * item.quantity
+            }).save();
+        }));
 
-            // Add orders to vendor and save
-            vendor.Orders.push(...orders);
-            await vendor.save();
-            processedOrders.push(...orders);
-        }
-
-        // Move cart items to event.orders before clearing the cart
-        event.orders.push(...event.cart.map(item => ({
-            user: item.user,
-            vendor: item.vendor,
-            product: item.product,
-            quantity: item.quantity
-        })));
-
-        // Clear the cart
+        // Clear cart
         event.cart = [];
-
-        // Save the updated event
         await event.save();
 
         res.status(200).json({
             success: true,
-            message: "Checkout completed successfully",
-            processedOrdersCount: processedOrders.length,
-            clearedCartItems: event.cart.length
+            message: "Checkout completed",
+            orderCount: orders.length
         });
-
     } catch (error) {
-        // Handle partial failure scenario
         res.status(500).json({
             success: false,
-            message: "Checkout failed - some orders may have been processed",
+            message: "Checkout failed",
             error: error.message
         });
     }
@@ -657,7 +596,7 @@ export const addAttendee = async (req, res) => {
                     sender: userId,
                     event: event._id,
                     message: `You've been invited to ${event.name} by ${req.user.fullName}`,
-                    respondLink: `${process.env.BASE_HOST_URL}/api/event/${eventId}/attendees/respond`,
+                    respondLink: `${process.env.BASE_FRONTEND_HOST_URL}/api/event/${eventId}/attendees/respond`,
                     seen: false,
                     createdAt: new Date()
                 };
@@ -713,7 +652,7 @@ export const addAttendee = async (req, res) => {
                     body: `<p>${req.user.fullName} has invited you to attend the event <strong>${event.name}</strong>.</p>
                            <p>Click below to join the event. If you don't have an account, you can create one first.</p>`,
                     buttonText: 'Join the Event',
-                    link: `${process.env.BASE_HOST_URL}/login?next=/events/${eventId}` // Customize link
+                    link: `${process.env.BASE_HOST_URL}/login?next="${process.env.BASE_HOST_URL}/api/event/${eventId}/attendees/respond"` // Customize link
                 });
             } catch (emailError) {
                 console.error("Email sending failed:", emailError.message);
@@ -1140,44 +1079,55 @@ export const getOrdered = async (req, res) => {
     try {
         const { eventId } = req.params;
 
-        const event = await Event.findById(eventId)
-            .populate('orders.vendor');
+        // 1. Get orders with populated vendor and user data
+        const orders = await orderModel.find({ event: eventId })
+            .populate('vendor', 'ShopName ShopCategory ShopLogo')
+            .populate('user', 'fullName email');
 
-        if (!event) {
-            return res.status(404).json({ message: 'Event not found' });
-        }
+        // 2. Optimize vendor/product lookup
+        const vendorIds = [...new Set(orders.map(o => o.vendor._id))];
+        const productIds = [...new Set(orders.map(o => o.product))];
 
-        const populatedOrders = await Promise.all(
-            event.orders.map(async order => {
-                const { vendor } = order;
+        // Get vendors with their relevant products
+        const vendors = await Vendor.find({
+            _id: { $in: vendorIds },
+            'Products._id': { $in: productIds }
+        }).select('Products');
 
-                // Find the actual product inside the vendor's Products array
-                const vendorData = await Vendor.findById(vendor._id);
-                const productDetails = vendorData?.Products.find(p =>
-                    p._id.toString() === order.product.toString()
-                );
+        // Create a product map: { vendorId: { productId: product } }
+        const productMap = vendors.reduce((acc, vendor) => {
+            acc[vendor._id] = vendor.Products.reduce((prodAcc, product) => {
+                prodAcc[product._id] = product;
+                return prodAcc;
+            }, {});
+            return acc;
+        }, {});
 
-                return {
-                    _id: order._id,
-                    user: order.user,
-                    vendor: {
-                        _id: vendor._id,
-                        ShopName: vendor.ShopName,
-                        ShopCategory: vendor.ShopCategory,
-                        ShopLogo: vendor.ShopLogo,
-                    },
-                    product: productDetails || { _id: order.product },
-                    quantity: order.quantity,
-                    status: order.status,
-                    orderedAt: order.orderedAt,
-                };
-            })
-        );
+        // 3. Build response with proper error handling
+        const populatedOrders = orders.map(order => {
+            const vendorProducts = productMap[order.vendor._id] || {};
+            const product = vendorProducts[order.product] || null;
+
+            return {
+                _id: order._id,
+                user: order.user,
+                vendor: order.vendor,
+                product: product ? product : { _id: order.product },
+                quantity: order.quantity,
+                status: order.status,
+                orderedAt: order.createdAt,
+                price: order.price,
+                total: order.total
+            };
+        });
 
         res.status(200).json(populatedOrders);
     } catch (error) {
-        console.error('getOrdered error:', error);
-        res.status(500).json({ message: 'Error fetching event orders', error: error.message });
+        console.error('Error in getOrdered:', error);
+        res.status(500).json({
+            message: 'Error fetching event orders',
+            error: error.message
+        });
     }
 };
 
