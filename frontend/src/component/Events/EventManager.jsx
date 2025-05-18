@@ -430,7 +430,7 @@ const EventManager = ({ }) => {
             className="w-full h-screen border-t-2 border-zinc-500"
           >
             <div className="h-full w-full">
-              <MyOrders eventId={selectedEvent._id} />
+              <MyOrders eventId={selectedEvent?._id} />
             </div>
           </motion.div>
         )}

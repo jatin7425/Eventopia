@@ -45,9 +45,9 @@ export const signup = async (req, res) => {
             return res.status(400).json({ message: "Password must be at least 8 characters long and include a letter and a number." });
         }
 
-        if (email && emailPattern.test(email)) {
-            return res.status(400).json({ message: "Invalid email format." });
-        }
+        // if (email && emailPattern.test(email)) {
+        //     return res.status(400).json({ message: "Invalid email format." });
+        // }
 
         // Password length check
         if (password.length < 6) {
@@ -94,6 +94,9 @@ export const signup = async (req, res) => {
         });
     } catch (error) {
         console.error("Error in signup Controller:", error.message);
+        if (error.message.includes('duplicate key error collection: EventManager.users index: userName_1 dup key')) { // Duplicate key error
+            return res.status(400).json({ message: "unsername already exists." })    
+        };
         res.status(500).json({ message: "Internal Server Error." });
     }
 };
@@ -170,9 +173,9 @@ export const updateProfile = async (req, res) => {
         };
 
         // Validate email format if provided
-        if (email && emailPattern.test(email)) {
-            return res.status(400).json({ message: "Invalid email format." });
-        }
+        // if (email && emailPattern.test(email)) {
+        //     return res.status(400).json({ message: "Invalid email format." });
+        // }
 
         // Build the update query object.
         // Start with the updatedFields.

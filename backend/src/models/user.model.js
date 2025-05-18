@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema(
     {
         userName: { type: String, required: true, unique: true },
-        fullName: { type: String,},
+        fullName: { type: String, },
         email: { type: String, required: true, unique: true },
         contact: { type: String },
         otp: { type: String },
         otpExpiry: { type: String },
-        gender: { type: String},
+        gender: { type: String },
         password: { type: String, required: true },
         friend: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", default: [] }],
         notification: {
@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
                     message: { type: String },
                     seen: { type: Boolean, default: false },
                     createdAt: { type: Date, default: Date.now },
+                    updatedAt: { type: Date, default: Date.now },
                     respondLink: { type: String }
                 }
             ],
@@ -32,6 +33,7 @@ const userSchema = new mongoose.Schema(
                 seen: false
             }]
         },
+        notificationCount: { type: Number, default: 0 },
         role: {
             type: String,
             enum: ["Admin", "SuperAdmin", "user"],
@@ -53,6 +55,22 @@ const userSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+userSchema.index({ 'notification.seen': 1 });
+
+userSchema.pre('save', function (next) {
+    if (this.isModified('notification')) {
+        // Count only unseen notifications
+        this.notificationCount = this.notification.filter(n => !n.seen).length;
+    }
+    next();
+});
+
+userSchema.pre(/^find/, function (next) {
+    // Always keep notificationCount updated when querying
+    this.select('+notification');
+    next();
+});
 
 const User = mongoose.model("User", userSchema);
 

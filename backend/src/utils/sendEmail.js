@@ -48,6 +48,8 @@ export const sendEmail = async ({
     body,
     buttonText,
     link,
+    button2Text,
+    link2,
     attachments = [],
     logo,
     brandColor = '#2563eb',
@@ -88,13 +90,23 @@ export const sendEmail = async ({
                         ${body}
                     </div>
                     
-                    ${link ? `
-                    <div style="margin:2rem 0;">
-                        <a href="${link}" 
-                            style="display:inline-block;padding:12px 24px;background:${brandColor};color:white;text-decoration:none;border-radius:6px;font-weight:500;transition:transform 0.2s ease;">
-                            ${buttonText || 'Take Action'}
-                        </a>
-                    </div>` : ''}
+                    <div style="margin:2rem 0;display:flex;gap:1rem;">
+                        ${link ? `
+                        <div style="margin:2rem 0;">
+                            <a href="${link}" 
+                                style="display:inline-block;padding:12px 24px;background:${brandColor};color:white;text-decoration:none;border-radius:6px;font-weight:500;transition:transform 0.2s ease;">
+                                ${buttonText || 'Take Action'}
+                            </a>
+                        </div>` : ''}
+                        
+                        ${link2 ? `
+                        <div style="margin:2rem 0;">
+                            <a href="${link2}" 
+                                style="display:inline-block;padding:12px 24px;background:${brandColor};color:white;text-decoration:none;border-radius:6px;font-weight:500;transition:transform 0.2s ease;">
+                                ${button2Text || 'Take Action'}
+                            </a>
+                        </div>` : ''}
+                    </div>
                     
                     <hr style="border:1px solid #e2e8f0;margin:2rem 0;">
                     
@@ -136,10 +148,10 @@ export const sendEmail = async ({
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log('✅ Email sent:', info.messageId);
+        console.log('Email sent:', info.messageId);
         return { success: true, messageId: info.messageId };
     } catch (error) {
-        console.error('❌ Email send error:', error);
+        console.error('Email send error:', error);
         return { success: false, error: error.message };
     }
 };

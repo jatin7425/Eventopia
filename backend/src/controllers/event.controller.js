@@ -652,7 +652,9 @@ export const addAttendee = async (req, res) => {
                     body: `<p>${req.user.fullName} has invited you to attend the event <strong>${event.name}</strong>.</p>
                            <p>Click below to join the event. If you don't have an account, you can create one first.</p>`,
                     buttonText: 'Join the Event',
-                    link: `${process.env.BASE_HOST_URL}/login?next="${process.env.BASE_HOST_URL}/api/event/${eventId}/attendees/respond"` // Customize link
+                    link: `${process.env.BASE_FRONTEND_HOST_URL}/auth?next=/event/${eventId}/attendees/respond`, // Customize link
+                    button2Text: 'Decline',
+                    link2: `${process.env.BASE_FRONTEND_HOST_URL}/event/${eventId}/attendees/respond?response=false`
                 });
             } catch (emailError) {
                 console.error("Email sending failed:", emailError.message);
@@ -677,89 +679,143 @@ export const addAttendee = async (req, res) => {
 export const respondToEventInvite = async (req, res) => {
     try {
         const { eventId } = req.params;
-        const { response } = req.query; // Get from query params
+        const { response } = req.query;
         const userId = req.user._id;
 
-        // Validate response parameter
-        if (!response || !['true', 'false'].includes(response.trim().toLowerCase())) {
+        // Validate input parameters
+        if (!mongoose.Types.ObjectId.isValid(eventId)) {
+            return res.status(400).json({ message: 'Invalid event ID format' });
+        }
+
+        if (!response || !['true', 'false'].includes(response.toLowerCase().trim())) {
             return res.status(400).json({
-                message: 'Missing or invalid response parameter (must be true/false)'
+                message: 'Missing or invalid response parameter (must be "true" or "false")'
             });
         }
 
-        const responseStatus = response.trim().toLowerCase() === 'true' ? 'Accepted' : 'Declined';
+        const responseStatus = response.toLowerCase().trim() === 'true'
+            ? 'Accepted'
+            : 'Declined';
 
-        const event = await Event.findById(eventId).populate('organizer', 'email');
+        // Find event with organizer details
+        const event = await Event.findById(eventId)
+            .populate('organizer', 'email notification')
+            .lean();
+
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
         }
 
-        // Find attendee by user ID
-        const attendee = event.attendees.find(a => a.user && a.user.equals(userId));
-        if (!attendee) {
-            return res.status(403).json({ message: 'You are not invited to this event' });
+        // Get current user with email verification
+        const currentUser = await User.findById(userId)
+            .select('email notification')
+            .lean();
+
+        if (!currentUser) {
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        if (attendee.status === responseStatus) {
-            return res.status(400).json({
-                message: `Invite is already ${responseStatus.toLowerCase()}`
+        // Find attendee in event
+        let attendee = event.attendees.find(a =>
+            a.user && a.user.equals(userId)
+        );
+
+        // Fallback to email matching if user reference not found
+        if (!attendee) {
+            attendee = event.attendees.find(a =>
+                a.email === currentUser.email
+            );
+        }
+
+        if (!attendee) {
+            return res.status(403).json({
+                message: 'You are not invited to this event'
             });
         }
 
-        attendee.status = responseStatus;
-        await event.save();
+        // Check existing status
+        if (attendee.status === responseStatus) {
+            return res.status(409).json({
+                message: `Invitation is already ${responseStatus.toLowerCase()}`
+            });
+        }
 
-        // Notify organizer
-        await User.findByIdAndUpdate(event.organizer._id, {
-            $push: {
-                notification: {
-                    type: 'Message',
-                    sender: userId,
-                    event: eventId,
-                    message: `${attendee.name} (${attendee.email}) has ${responseStatus.toLowerCase()} the invitation`,
-                    seen: false,
-                    createdAt: new Date()
-                }
+        // Update attendee status
+        const updatedEvent = await Event.findOneAndUpdate(
+            {
+                _id: eventId,
+                'attendees._id': attendee._id
+            },
+            {
+                $set: { 'attendees.$.status': responseStatus },
+                $currentDate: { 'attendees.$.updatedAt': true }
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedEvent) {
+            throw new Error('Failed to update attendee status');
+        }
+
+        // Prepare notification updates
+        const notificationMessage = `${attendee.name || 'Guest'} (${attendee.email}) has ${responseStatus.toLowerCase()} the event invitation`;
+
+        // Update organizer's notifications
+        await User.findByIdAndUpdate(
+            event.organizer._id,
+            {
+                $push: {
+                    notification: {
+                        type: 'InviteResponse',
+                        sender: userId,
+                        event: eventId,
+                        message: notificationMessage,
+                        seen: false,
+                        createdAt: new Date()
+                    }
+                },
             }
-        });
+        );
 
-        const result = await User.findOneAndUpdate(
+        // Update user's notification status
+        const notificationUpdate = await User.findOneAndUpdate(
             {
                 _id: userId,
                 'notification.event': eventId,
-                'notification.type': 'eventInvite'
+                'notification.type': 'EventInvite'
             },
             {
-                $set: { 'notification.$[elem].seen': true }
+                $set: {
+                    'notification.$[elem].seen': true,
+                    'notification.$[elem].updatedAt': new Date()
+                }
             },
             {
                 new: true,
                 arrayFilters: [
                     {
                         'elem.event': new mongoose.Types.ObjectId(eventId),
-                        'elem.type': 'eventInvite'
+                        'elem.type': 'EventInvite'
                     }
                 ]
             }
         );
 
-        if (!result) {
-            throw new Error('Notification not found or user does not exist');
-        }
-
-        res.json({
-            message: `Invite ${responseStatus.toLowerCase()} successfully`,
-            attendee: {
-                _id: attendee._id,
-                name: attendee.name,
-                email: attendee.email,
-                status: attendee.status
+        res.status(200).json({
+            success: true,
+            message: `Event invitation ${responseStatus.toLowerCase()} successfully`,
+            data: {
+                eventId,
+                status: responseStatus,
+                updatedAt: new Date()
             }
         });
 
     } catch (error) {
+        console.error('Invite response error:', error);
         res.status(500).json({
-            message: 'Error processing invitation response',
+            success: false,
+            message: 'Failed to process invitation response',
             error: error.message
         });
     }

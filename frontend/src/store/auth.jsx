@@ -28,22 +28,21 @@ export function AuthProvider({ children }) {
     const handleForwarding = async () => {
         const params = new URLSearchParams(window.location.search);
         const next = params.get("next");
-
-        if (!next || !next.startsWith("http")) {
+        console.log(next)
+        if (!next) {
             window.location.href = "/";
             return;
         }
 
         try {
-            const fullUrl = new URL(next);
-            const requestUrl = `${fullUrl.origin}${fullUrl.pathname}?response=true`;
-            console.log(requestUrl);
-            await axios.patch(requestUrl);
-
+            const res = await axiosInstance.patch(`${next}?response=true`);
+            console.log(res);
+            toast.success(res.data.message);
             // Redirect to home after successful PATCH
             window.location.href = "/";
         } catch (e) {
             console.error("Failed to send PATCH or invalid URL:", next, e);
+            toast.error("Failed to send PATCH or invalid URL");
             window.location.href = "/";
         }
     };
@@ -110,7 +109,7 @@ export function AuthProvider({ children }) {
             setIsAuthLoading(true);
             toast.success("Logged out successfully");
             setUser(null);
-            window.location.href = "/";
+            window.location.href = "/auth";
         } catch (error) {
             toast.error(error.response.data.message);
             console.error("Error in logout", error);
@@ -129,7 +128,7 @@ export function AuthProvider({ children }) {
                 console.error("Error in checkAuth", error);
                 if (error.response.data.message === "Unauthorized - no token provided" &&
                     window.location.pathname !== "/" &&
-                    !window.location.pathname !== "/auth") {
+                    window.location.pathname !== "/auth") {
                     window.location.href = "/"
                 }
             } finally {
