@@ -3,7 +3,7 @@ import Vendor from "../models/vendor.model.js";
 import User from '../models/user.model.js';
 import mongoose from 'mongoose';
 import { isSameDay, parseISO } from 'date-fns';
-import { sendEmail } from '../utils/sendEmail.js';
+import { sendEmail, sendInvitationEmail } from '../utils/sendEmail.js';
 import orderModel from '../models/order.model.js';
 
 // Create a new event
@@ -546,6 +546,21 @@ export const cartCheckout = async (req, res) => {
     }
 };
 
+// Helper function for category-based colors
+function getCategoryColors(category) {
+    const colorSchemes = {
+        "Conference": { primary: '#2563eb', secondary: '#1d4ed8', accent: '#60a5fa' },
+        "Concert": { primary: '#dc2626', secondary: '#b91c1c', accent: '#f87171' },
+        "Family Function": { primary: '#059669', secondary: '#047857', accent: '#34d399' },
+        "Business Meeting": { primary: '#4f46e5', secondary: '#4338ca', accent: '#818cf8' }
+    };
+    return colorSchemes[category] || {
+        primary: '#2563eb',
+        secondary: '#1e40af',
+        accent: '#60a5fa'
+    };
+}
+
 // Add new attendee with validation
 export const addAttendee = async (req, res) => {
     try {
@@ -559,8 +574,14 @@ export const addAttendee = async (req, res) => {
             });
         }
 
+        const currentUser = await User.findById(userId);
+        if (!currentUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         const existingUser = await User.findOne({ email }).select('+notification');
-        const event = await Event.findById(eventId);
+        const event = await Event.findById(eventId)
+            .populate('organizer', 'fullName email');
 
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
@@ -639,25 +660,87 @@ export const addAttendee = async (req, res) => {
 
                 notificationSent = true;
             } catch (error) {
-                const deletingEvent = await Event.findByIdAndUpdate(event._id, { $pull: { attendees: { _id: newAttendee._id } } });
-                await deletingEvent.save();
+                // When rolling back attendee addition, use atomic update
+                await Event.findByIdAndUpdate(
+                    event._id,
+                    {
+                        $pull: {
+                            attendees: {
+                                email: email
+                            }
+                        },
+                    },
+                    { new: true }
+                );
             }
         } else {
             // Send invitation email to new (non-registered) user
             try {
-                await sendEmail({
+                // Format dates and times
+                const eventDate = event.date.toLocaleDateString('en-IN', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+
+                const eventTime = `${event.startTime}${event.endTime ? ` - ${event.endTime}` : ''}`;
+
+                // Default dress code based on category
+                const dressCodes = {
+                    "Conference": "Business Formal",
+                    "Concert": "Casual",
+                    "Family Function": "Traditional Wear",
+                    "Business Meeting": "Business Casual"
+                };
+
+                const responseDeadlineDate = new Date(event.date);
+                responseDeadlineDate.setDate(responseDeadlineDate.getDate() - 3);
+                const responseDeadline = responseDeadlineDate.toLocaleDateString('en-IN', {
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const nextUrl = encodeURIComponent(
+                    `/event/${eventId}/attendees/decline?response=false&email=${encodeURIComponent(email)}&directReject=true`
+                );
+
+                await sendInvitationEmail({
                     to: email,
                     subject: `You're Invited to ${event.name}`,
-                    heading: `Hi ${name}, you're invited!`,
-                    body: `<p>${req.user.fullName} has invited you to attend the event <strong>${event.name}</strong>.</p>
-                           <p>Click below to join the event. If you don't have an account, you can create one first.</p>`,
-                    buttonText: 'Join the Event',
-                    link: `${process.env.BASE_FRONTEND_HOST_URL}/auth?next=/event/${eventId}/attendees/respond`, // Customize link
-                    button2Text: 'Decline',
-                    link2: `${process.env.BASE_FRONTEND_HOST_URL}/event/${eventId}/attendees/respond?response=false`
+                    eventTitle: `Hi ${name}, You're Invited!`,
+                    eventSubtitle: `${currentUser?.fullName} has invited you to attend`,
+                    eventName: event.name,
+                    eventDescription: `
+                        <p style="margin: 10px 0; color: #4a5568;">${event.description}</p>
+                        <p style="margin: 10px 0; color: #4a5568;">
+                            <strong>Event Type:</strong> ${event.category}
+                        </p>
+                    `,
+                    eventDate: eventDate,
+                    eventTime: eventTime,
+                    eventLocation: event.location,
+                    dressCode: dressCodes[event.category] || 'Smart Casual',
+                    acceptButtonUrl: `${process.env.BASE_FRONTEND_HOST_URL}/auth?next=/event/${eventId}/attendees/respond`,
+                    declineButtonUrl: `${process.env.BASE_FRONTEND_HOST_URL}/processpage?next=${nextUrl}`,
+                    responseDeadline: responseDeadline,
+                    footerEmail: event.organizer.email,
+                    brandColors: getCategoryColors(event.category)
                 });
             } catch (emailError) {
                 console.error("Email sending failed:", emailError.message);
+                // When rolling back attendee addition, use atomic update
+                await Event.findByIdAndUpdate(
+                    event._id,
+                    {
+                        $pull: {
+                            attendees: {
+                                email: email
+                            }
+                        },
+                    },
+                    { new: true }
+                );
             }
         }
 
@@ -678,9 +761,12 @@ export const addAttendee = async (req, res) => {
 // Update attendee status with better error handling
 export const respondToEventInvite = async (req, res) => {
     try {
-        const { eventId } = req.params;
+        const { eventId, email, directReject } = req.params;
         const { response } = req.query;
-        const userId = req.user._id;
+        const userId = null;
+        if (req.user) {
+            userId = req.user._id
+        }
 
         // Validate input parameters
         if (!mongoose.Types.ObjectId.isValid(eventId)) {
@@ -712,7 +798,9 @@ export const respondToEventInvite = async (req, res) => {
             .lean();
 
         if (!currentUser) {
-            return res.status(404).json({ message: 'User not found' });
+            if (!directReject) {
+                return res.status(404).json({ message: 'User not found' });
+            }
         }
 
         // Find attendee in event
@@ -722,9 +810,15 @@ export const respondToEventInvite = async (req, res) => {
 
         // Fallback to email matching if user reference not found
         if (!attendee) {
-            attendee = event.attendees.find(a =>
-                a.email === currentUser.email
-            );
+            if (directReject) {
+                attendee = event.attendees.find(a =>
+                    a.email === currentUser.email
+                );
+            } else {
+                attendee = event.attendees.find(a =>
+                    a.email === email
+                );
+            }
         }
 
         if (!attendee) {

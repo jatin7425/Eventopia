@@ -135,7 +135,7 @@ export function EventProvider({ children }) {
             setAddedAttendee(data.attendee);
             getEventById(eventId);  // Fetch updated event with new feedback
         } catch (error) {
-            console.error('Error adding feedback to event', error);
+            console.error('Error inviting attende to event', error);
             toast.error(error.response?.data?.message || 'Error adding feedback');
         } finally {
             setIsEventLoading(false);

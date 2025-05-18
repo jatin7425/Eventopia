@@ -17,6 +17,7 @@ import AdminLogin from "./component/Admin/AdminLogin";
 import ContactUsPage from "./pages/ContactUsPage";
 import EventDetailsPage from "./component/Events/EventDetails/EventDetailsPage";
 import SelectEventPage from "./component/Events/EventDetails/SelectEventPage";
+import ProcessUrl from "./pages/ProcessUrl";
 
 const App = () => {
   const locomotiveScroll = new LocomotiveScroll();
@@ -40,11 +41,11 @@ const App = () => {
         <Route path="/aichatbot" element={<AIChatSupport />} />
         <Route path="/vendorordermanager" element={<VendorOrderManager />} />
         <Route path="/eventinvitaion" element={<EventInvitaion />} />
+        <Route path="/processpage" element={<ProcessUrl />} />
         <Route path="/@bw!n" element={<AdminLogin />} />
         <Route path="/@bw!n" element={<AdminPage />}>
           <Route path=":collection" element={<AdminPage />} />
         </Route>
-
         <Route path="/selectevent" element={<SelectEventPage />} />
         <Route path="/event" element={<EventDetailsPage />}>
           <Route path=":id" element={<EventDetailsPage />} />

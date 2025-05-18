@@ -49,6 +49,7 @@ router.patch("/:eventId/cartCheckout", protectRoute, cartCheckout);
 router.delete("/:eventId/cart/clear", protectRoute, clearCart);
 router.post('/:eventId/attendees', protectRoute, addAttendee);
 router.patch('/:eventId/attendees/respond', protectRoute, respondToEventInvite);
+router.patch('/:eventId/attendees/decline', respondToEventInvite);
 router.get('/:eventId/stats', protectRoute, getEventStats);
 router.post('/:eventId/calendar', protectRoute, addCalendarToEvent);
 router.put('/:eventId/calendar/:calendarId', protectRoute, updateCalendarInEvent);
