@@ -34,10 +34,16 @@ function getDeveloper(random = false) {
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
     auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS
     },
+    tls: {
+        rejectUnauthorized: false
+    }
 });
 
 export const sendEmail = async ({
@@ -51,34 +57,69 @@ export const sendEmail = async ({
     button2Text,
     link2,
     attachments = [],
-    logo,
+    logo = null, // Use absolute URL or base64
     brandColor = '#2563eb',
     socialLinks = getDeveloper(true).socials,
 }) => {
+    // Validate email parameters
+    if (!to || !subject || !heading || !body) {
+        throw new Error('Missing required email parameters');
+    }
+
+    // Convert single email to array
+    const recipients = Array.isArray(to) ? to : [to];
+
+    // Generate social links HTML
+    const socialLinksHTML = socialLinks.length > 0 ? `
+        <div style="margin-top:1.5rem;">
+            ${socialLinks.map(social => `
+                <a href="${social.url}" target="_blank" style="text-decoration:none;margin-right:12px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" 
+                         alt="${social.platform}" 
+                         width="24" 
+                         style="vertical-align:middle;">
+                </a>
+            `).join(" ")}
+        </div>` : '';
+
     const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Email Template</title>
+        <title>${subject}</title>
         <style>
-            @media only screen and (max-width: 600px) {
-                .container {
-                    width: 100% !important;
-                }
-                .header-logo { 
-                    max-width: 180px !important; 
-                }
-            }
+            /* Your existing styles here */
         </style>
     </head>
     <body style="margin:0;padding:0;background:#f8fafc;">
-        <table class="container" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:600px;margin:2rem auto;background:white;border-radius:8px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+        <table class="container" width="100%" border="0" cellpadding="0" cellspacing="0" 
+               style="max-width:600px;margin:2rem auto;background:white;border-radius:8px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
             <!-- Header -->
             <tr>
                 <td style="padding:2rem;background:${brandColor};border-radius:8px 8px 0 0;">
-                    <img src="../assets/logoNobg.png" alt="Company Logo" class="header-logo" style="max-width:200px;height:auto;">
+                    ${logo ? `<img src="${logo}" alt="Company Logo" 
+                         class="header-logo" 
+                         style="max-width:200px;height:auto;">`: `
+                        <div style="
+                            font-size: 48px;
+                            font-weight: bold;
+                            font-family: 'Segoe UI', Arial, sans-serif;
+                            color: #FFD700;
+                            text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3), 
+                                        -1px -1px 0 #FFC400;
+                            background: linear-gradient(to bottom, #FFD700 0%, #FFC400 100%);
+                            -webkit-background-clip: text;
+                            background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            display: inline-block;
+                            padding: 8px 16px;
+                            border: 1px solid #FFD700;
+                            border-radius: 5px;
+                            letter-spacing: 1.5px;
+                        ">Eventopia</div>
+                         `}
                 </td>
             </tr>
             
@@ -90,42 +131,27 @@ export const sendEmail = async ({
                         ${body}
                     </div>
                     
-                    <div style="margin:2rem 0;display:flex;gap:1rem;">
-                        ${link ? `
-                        <div style="margin:2rem 0;">
-                            <a href="${link}" 
-                                style="display:inline-block;padding:12px 24px;background:${brandColor};color:white;text-decoration:none;border-radius:6px;font-weight:500;transition:transform 0.2s ease;">
-                                ${buttonText || 'Take Action'}
-                            </a>
-                        </div>` : ''}
-                        
-                        ${link2 ? `
-                        <div style="margin:2rem 0;">
-                            <a href="${link2}" 
-                                style="display:inline-block;padding:12px 24px;background:${brandColor};color:white;text-decoration:none;border-radius:6px;font-weight:500;transition:transform 0.2s ease;">
-                                ${button2Text || 'Take Action'}
-                            </a>
-                        </div>` : ''}
+                    <!-- Action Buttons -->
+                    <div style="
+                        margin: 2rem 0;
+                        display: flex;
+                        gap: 1rem;
+                        justify-content: space-around;
+                        max-width: 420px;
+                        width: 100%;
+                        flex-wrap: wrap;
+                    ">
+                        ${link ? generateButton(link, buttonText, brandColor) : ''}
+                        ${link2 ? generateButton(link2, button2Text, brandColor) : ''}
                     </div>
                     
                     <hr style="border:1px solid #e2e8f0;margin:2rem 0;">
                     
                     <!-- Footer -->
                     <div style="color:#64748b;font-size:14px;">
-                        <p style="margin:0.5rem 0;">Need help? <a href="mailto:eventopia959@gmail.com" style="color:${brandColor};">Contact our support team</a></p>
-                        <p style="margin:0.5rem 0;">${new Date().getFullYear()} © Your Company Name. All rights reserved.</p>
-                        
-                        ${Object.keys(socialLinks).length > 0 ? `
-                        <div style="margin-top:1.5rem;">
-                            ${Object.entries(socialLinks).map(([platform, url]) => `
-                                <a href="${url}" target="_blank" style="text-decoration:none;margin-right:12px;">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="${platform}" width="24" style="vertical-align:middle;">
-                                </a>
-                            `).join('')}
-                        </div>` : ''}
-                        
+                        ${socialLinksHTML}
                         <p style="margin:1rem 0 0 0;font-size:12px;color:#94a3b8;">
-                            This email was sent to ${Array.isArray(to) ? to.join(', ') : to}. 
+                            This email was sent to ${recipients.join(', ')}. 
                             <a href="#" style="color:${brandColor};">Unsubscribe</a> 
                             | <a href="#" style="color:${brandColor};">View in browser</a>
                         </p>
@@ -139,22 +165,59 @@ export const sendEmail = async ({
 
     const mailOptions = {
         from: `"${process.env.EMAIL_NAME || 'Eventopia'}" <${process.env.EMAIL_USER}>`,
-        to,
+        to: recipients,
         subject,
-        text: text || `${heading}\n\n${body.replace(/<[^>]+>/g, '')}\n${link ? `Action Link: ${link}` : ''}`,
+        text: text || `${heading}\n\n${stripHtml(body).replace(/\n+/g, '\n')}\n${link ? `Action Link: ${link}` : ''}`,
         html: htmlContent,
         attachments,
     };
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.messageId);
-        return { success: true, messageId: info.messageId };
+        console.log('Email sent to:', recipients.join(', '), 'ID:', info.messageId);
+        return {
+            success: true,
+            messageId: info.messageId,
+            accepted: info.accepted,
+            rejected: info.rejected
+        };
     } catch (error) {
-        console.error('Email send error:', error);
-        return { success: false, error: error.message };
+        console.error('Email send error:', {
+            error: error.message,
+            recipients,
+            subject
+        });
+        return {
+            success: false,
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        };
     }
 };
+
+// Helper function to generate buttons
+function generateButton(link, text, color) {
+    return `
+    <div style="margin:2rem 0;">
+        <a href="${link}" 
+           style="display:inline-block;
+                  padding:12px 24px;
+                  background:${color};
+                  color:white;
+                  text-decoration:none;
+                  border-radius:6px;
+                  font-weight:500;
+                  width: 100%;
+                  transition:transform 0.2s ease;">
+            ${text || 'Take Action'}
+        </a>
+    </div>`;
+}
+
+// Helper to strip HTML tags
+function stripHtml(html) {
+    return html.replace(/<[^>]+>/g, '');
+}
 
 export const sendContactEmail = async ({ name, email, message }) => {
     const mailOptions = {
