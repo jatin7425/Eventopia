@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ButtonArrow } from "../Theme/Button";
+import { ButtonArrow } from "../../Theme/Button";
 import { motion } from "framer-motion";
 
 const EventInvitation = () => {

@@ -11,10 +11,12 @@ import ProductCollection from "./component/ProductCard/ProductCollection";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import AIChatSupport from "./component/AIChat/AIChatSupport";
 import VendorOrderManager from "./component/Vendor/VendorOrderManager";
-import EventInvitaion from "./component/EventAcception/EventInvitaion";
+import EventInvitaion from "./component/Events/EventAcception/EventInvitaion";
 import AdminPage from "./pages/AdminPage";
 import AdminLogin from "./component/Admin/AdminLogin";
 import ContactUsPage from "./pages/ContactUsPage";
+import EventDetailsPage from "./component/Events/EventDetails/EventDetailsPage";
+import SelectEventPage from "./component/Events/EventDetails/SelectEventPage";
 
 const App = () => {
   const locomotiveScroll = new LocomotiveScroll();
@@ -41,6 +43,11 @@ const App = () => {
         <Route path="/@bw!n" element={<AdminLogin />} />
         <Route path="/@bw!n" element={<AdminPage />}>
           <Route path=":collection" element={<AdminPage />} />
+        </Route>
+
+        <Route path="/selectevent" element={<SelectEventPage />} />
+        <Route path="/event" element={<EventDetailsPage />}>
+          <Route path=":id" element={<EventDetailsPage />} />
         </Route>
       </Routes>
       <Toaster />

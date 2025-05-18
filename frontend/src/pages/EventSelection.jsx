@@ -68,9 +68,9 @@ const EventSelection = () => {
       alt: "Business Event",
     },
     {
-      category: "Travels",
+      category: "Concert",
       title:
-        "Comprehensive travel event management services, offering seamless planning.",
+        "Elevated Live Concert – Comprehensive Concert Planning & Operations",
       img: travel,
       alt: "Travel Event",
     },
@@ -104,7 +104,7 @@ const EventSelection = () => {
       >
         <motion.div className="container mx-auto px-6 py-5 flex flex-col justify-center items-center h-full overflow-hidden">
           <h1 className="text-4xl font-bold mb-6 pt-5 ">
-            We Help You To Create Unforgettable Events
+            We Help You To <span className="text-blue-500">Create Unforgettable</span> Events
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400 font-['Founders_Grotesk_Condensed']">
             Stay ahead with the latest trends and insights in event management.
