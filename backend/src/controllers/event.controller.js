@@ -766,7 +766,7 @@ export const respondToEventInvite = async (req, res) => {
             {
                 $push: {
                     notification: {
-                        type: 'InviteResponse',
+                        type: 'Message',
                         sender: userId,
                         event: eventId,
                         message: notificationMessage,
