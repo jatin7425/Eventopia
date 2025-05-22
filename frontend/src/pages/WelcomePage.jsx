@@ -4,7 +4,7 @@ import ContactUs from "../component/ComponentsUtils/ContactUs.jsx";
 import { OchiFooter } from "../component/ComponentsUtils/Footer.jsx";
 import { useAuth } from "../store/auth.jsx";
 import { ButtonArrow } from "../component/Theme/Button.jsx";
-import { NavBar } from "../component/ComponentsUtils/NavBar.jsx";
+import { NavBar } from "../component/Navbar/NavBar.jsx";
 import { MdAddBusiness, MdOutlineSecurity } from "react-icons/md";
 import { BsCalendar4Event, BsCameraReels } from "react-icons/bs";
 import "locomotive-scroll/dist/locomotive-scroll.css";
@@ -21,6 +21,7 @@ import FoodImg5 from "../assets/FoodImg16.png";
 import HallImg from "../assets/hall.png";
 import HallImg2 from "../assets/hall2.png";
 import { TypeAnimation } from "react-type-animation";
+import SideBar from "../component/Navbar/SideBar.jsx";
 
 function WelcomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -52,9 +53,10 @@ function WelcomePage() {
     },
   };
   return (
-    <div className="dark:bg-[#1a1a1a] dark:text-white max-w-[1920px] mx-auto overflow-hidden ">
-      <div className="bg-[#fdfdfd] dark:bg-[#1a1a1a] dark:text-white text-black text-[15px]">
+    <div className="h-full w-full dark:bg-[#1a1a1a] dark:text-white max-w-[1920px] mx-auto overflow-hidden relative ">
+      <div className="h-full w-full bg-[#fdfdfd] dark:bg-[#1a1a1a] dark:text-white text-black text-[15px]">
         <NavBar homeLink="#home" aniDelay={1.6} contactLink="#contact" />
+        <SideBar homeLink="#home" contactLink="#contact" />
 
         <div className="min-h-screen w-full ">
           <LandingSection />
@@ -137,7 +139,7 @@ export const LandingSection = () => {
       ref={scrollRef}
     >
       <div className=" sm:px-10 overflow-hidden w-full">
-        <motion.div className="pt-16 px-4 max-w-4xl mx-auto text-center relative z-10 flex items-center flex-col justify-center overflow-hidden ">
+        <motion.div className=" max-w-4xl mx-auto text-center relative z-10 flex items-center flex-col justify-center overflow-hidden ">
           <motion.h1
             className="text-6xl font-extrabold mt-40 mb-10 "
             initial={{ opacity: 1, scale: 0.76, y: 80 }}
@@ -211,12 +213,11 @@ export const LandingSection = () => {
           className="overflow-hidden w-[90%] relative"
         >
           {/* Gradient Overlay - Left */}
-          <div className="h-24 w-40 bg-gradient-to-r dark:from-[#1a1a1a] from-white to-transparent absolute left-0 top-0 z-10"></div>
+          <div className="h-24 w-40 bg-gradient-to-r dark:from-[#1a1a1a] from-white to-transparent absolute left-0 top-0 z-10"/>
 
           {/* Animated Image Carousel */}
           <motion.div
-            className="flex gap-10 whitespace-nowrap"
-            initial={{ x: 0 }}
+            className="flex gap-10 whitespace-nowrap "
             animate={{ x: ["0%", "-92%"] }}
             transition={{
               duration: 15,
@@ -243,7 +244,7 @@ export const LandingSection = () => {
           </motion.div>
 
           {/* Gradient Overlay - Right */}
-          <div className="h-24 w-40 bg-gradient-to-l dark:from-[#1a1a1a] from-white to-transparent absolute right-0 top-0 z-10"></div>
+          <div className="h-24 w-40 bg-gradient-to-l dark:from-[#1a1a1a] from-white to-transparent absolute right-0 top-0 z-10"/>
         </motion.div>
       </motion.div>
     </motion.div>
@@ -260,7 +261,6 @@ const FeaturesSection = () => {
   const animate = useRef(null);
 
   const { isLoggedin, user } = useAuth();
-
 
   const features = [
     {
@@ -355,9 +355,9 @@ const FeaturesSection = () => {
   }, []);
 
   const featureVariants = {
-    hidden: { opacity: 0, x: -100 },
+    hidden: { opacity: 0, x: 100 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
-    exit: { opacity: 0, x: -100, transition: { duration: 0.5 } },
+    exit: { opacity: 0, x: 100, transition: { duration: 0.5 } },
   };
 
   return (
@@ -369,11 +369,7 @@ const FeaturesSection = () => {
       >
         <div
           ref={section2Ref}
-          className={` h-fit max-w-2xl text-start max-md:text-center mx-auto max-xl:w-1/2 will-change-transform ${
-            releaseAnimation
-              ? "  md:translate-y-[40px] transition-transform duration-200 "
-              : "md:translate-y-0 transition-transform duration-500 "
-          }`}
+          className={` h-fit max-w-2xl text-start max-md:text-center mx-auto max-xl:w-1/2 `}
         >
           <h2 className="md:text-6xl text-4xl tracking-tight mb-6 max-md:mb-5 w-full ">
             Ensure You Receive{" "}
@@ -595,10 +591,11 @@ const TeamSection = () => {
             Our Creative Team
           </h2>
           <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto">
-            The talented individuals who bring ideas to life with passion and innovation.
+            The talented individuals who bring ideas to life with passion and
+            innovation.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 justify-center">
           {teamMembers.map((member, index) => (
             <FlipTeamCard member={member} key={index} />
@@ -651,7 +648,9 @@ const FlipTeamCard = ({ member }) => {
 
         {/* Back of Card */}
         <div className="absolute w-full h-full backface-hidden bg-blue-500 rounded-xl shadow-lg px-3 py-5 flex flex-col justify-center rotate-y-180">
-          <h3 className="text-xl font-bold text-white mb-2 text-center">{member.name}</h3>
+          <h3 className="text-xl font-bold text-white mb-2 text-center">
+            {member.name}
+          </h3>
           <p className="text-blue-100 mb-4 text-center">{member.role}</p>
 
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4">
@@ -701,7 +700,9 @@ const SocialIcon = ({ type, whiteMode = false, link = "#" }) => {
         height="16"
         fill="currentColor"
         viewBox="0 0 24 24"
-        className={whiteMode ? "text-white" : "text-zinc-800 dark:text-zinc-200"}
+        className={
+          whiteMode ? "text-white" : "text-zinc-800 dark:text-zinc-200"
+        }
       >
         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
       </svg>
@@ -748,6 +749,5 @@ const CodeIcon = ({ className }) => (
     />
   </svg>
 );
-
 
 export default WelcomePage;

@@ -4,15 +4,15 @@ import business from "../assets/bussiness.jpg";
 import conference from "../assets/Conference.jpg";
 import family from "../assets/Family.jpg";
 import travel from "../assets/travel.jpg";
-import { FaArrowRight} from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa6";
 import { OchiFooter } from "../component/ComponentsUtils/Footer";
 import { BorderAnimaButton, ButtonBtmUp } from "../component/Theme/Button";
-import { NavBar } from "../component/ComponentsUtils/NavBar";
+import { NavBar } from "../component/Navbar/NavBar";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useEvent } from "../store/eventContext";
 import { FaTimes } from "react-icons/fa";
-
+import SideBar from "../component/Navbar/SideBar";
 
 const cardVariants = {
   hidden: { y: 50, opacity: 0 },
@@ -80,12 +80,12 @@ const EventSelection = () => {
     setShowCreateEventForm(!showCreateEventForm);
   };
 
-
   return (
     <div className=" overflow-hidden min-h-screen font-['Founders_Grotesk']">
       {/* Navbar */}
       <div className="h-20 w-full">
         <NavBar homeLink="/" aniDelay={0.7} contactLink="/contactus" />
+        <SideBar homeLink="/" contactLink="/contactus" />
       </div>
 
       {showCreateEventForm && (
@@ -104,7 +104,8 @@ const EventSelection = () => {
       >
         <motion.div className="container mx-auto px-6 py-5 flex flex-col justify-center items-center h-full overflow-hidden">
           <h1 className="text-4xl font-bold mb-6 pt-5 ">
-            We Help You To <span className="text-blue-500">Create Unforgettable</span> Events
+            We Help You To{" "}
+            <span className="text-blue-500">Create Unforgettable</span> Events
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400 font-['Founders_Grotesk_Condensed']">
             Stay ahead with the latest trends and insights in event management.
@@ -185,7 +186,6 @@ const EventSelection = () => {
   );
 };
 
-
 const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
   const { createEvent } = useEvent();
   const [step, setStep] = useState(1); // Step tracker
@@ -254,7 +254,7 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
                   step === index + 1
                     ? "bg-blue-600 text-white"
                     : "bg-zinc-300 text-zinc-700"
-                  }`}
+                }`}
               >
                 {index + 1}
               </div>
@@ -451,8 +451,5 @@ const CreateEventForm = ({ category, handleShowCreateEventForm }) => {
     </div>
   );
 };
-
-
-
 
 export default EventSelection;

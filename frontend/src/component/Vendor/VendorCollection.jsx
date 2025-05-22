@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DefaultImg from "../../assets/default-product-image.png";
-import { NavBar } from "../ComponentsUtils/NavBar";
+import { NavBar } from "../Navbar/NavBar";
 import { OchiFooter } from "../ComponentsUtils/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -9,7 +9,7 @@ import { Link, useParams } from "react-router-dom";
 import BannerEditor from "../Canva/BannerEditor/BannerEditor";
 
 const VendorsCollection = () => {
-  const id = useParams()
+  const id = useParams();
   const [vendors, setVendors] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -26,7 +26,8 @@ const VendorsCollection = () => {
   const fetchVendors = async (pageNumber, category) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/vendor/getAllVendors?page=${pageNumber}&limit=${limit}${category ? `&category=${category}` : ""
+        `${BASE_URL}/api/vendor/getAllVendors?page=${pageNumber}&limit=${limit}${
+          category ? `&category=${category}` : ""
         }`
       );
       setVendors(response.data.data);

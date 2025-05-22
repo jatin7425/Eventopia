@@ -5,17 +5,15 @@ import { useAuth } from "../../store/auth.jsx";
 import { CgProfile } from "react-icons/cg";
 import "locomotive-scroll/dist/locomotive-scroll.css";
 import { motion, useAnimation } from "framer-motion";
-import { ThemeToggle } from "../Theme/ToggleTheme";
+import { ThemeToggle } from "../Theme/ToggleTheme.jsx";
 import { ButtonArrow } from "../Theme/Button.jsx";
-import { Contact } from "lucide-react";
-import ContactUs from "./ContactUs.jsx";
-import ContactUsPage from "../../pages/ContactUsPage.jsx";
 
 export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
   const { isLoggedin, user } = useAuth();
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
   const [IsSideBarBgOpen, setIsSideBarBgOpen] = useState(false);
   const toggleSideBar = () => setIsSideBarOpen(!IsSideBarOpen);
+  
   useEffect(() => {
     if (IsSideBarOpen) {
       setIsSideBarBgOpen(IsSideBarOpen);
@@ -81,7 +79,7 @@ export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
       initial={{ y: 0 }}
       animate={controls}
       transition={{ duration: 0.5 }}
-      className="w-full fixed z-[999] px-5 py-4 -mt-5 font-['Neue Montreal'] flex items-center justify-between bg-glass md:backdrop-blur-lg"
+      className="w-full fixed z-[999] px-5 py-4 -mt-5 font-['Neue Montreal'] flex items-center justify-between bg-glass md:backdrop-blur-lg max-md:hidden "
     >
       <motion.header
         initial={{ y: -150 }}
@@ -250,29 +248,7 @@ export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
               )}
             </div>
           </div>
-          <button
-            onClick={toggleSidebar}
-            className="text-2xl fixed z-[999] top-8 right-2 flex flex-col gap-1 md:hidden"
-          >
-            <motion.div
-              animate={{
-                rotate: isSidebarOpen ? 45 : 0,
-                y: isSidebarOpen ? 6 : 0,
-              }}
-              className="w-7 h-1 bg-black dark:bg-white rounded"
-            ></motion.div>
-            <motion.div
-              animate={{ opacity: isSidebarOpen ? 0 : 1 }}
-              className="w-7 h-1 bg-black dark:bg-white rounded"
-            ></motion.div>
-            <motion.div
-              animate={{
-                rotate: isSidebarOpen ? -45 : 0,
-                y: isSidebarOpen ? -6 : 0,
-              }}
-              className="w-7 h-1 bg-black dark:bg-white rounded"
-            ></motion.div>
-          </button>
+          
         </div>
       </motion.header>
     </motion.div>

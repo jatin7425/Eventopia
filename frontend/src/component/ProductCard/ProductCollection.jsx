@@ -5,7 +5,7 @@ import DefaultImg from "../../assets/default-product-image.png";
 import { OchiFooter } from "../ComponentsUtils/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { NavBar } from "../ComponentsUtils/NavBar";
+import { NavBar } from "../Navbar/NavBar";
 import { useEventCart } from "../../store/eventCartContext";
 
 import {
@@ -19,7 +19,7 @@ import BannerEditor from "../Canva/BannerEditor/BannerEditor";
 
 const ProductCollection = () => {
   const { id } = useParams();
-  const { addToCart, setVendorId } = useEventCart()
+  const { addToCart, setVendorId } = useEventCart();
   const [vendor, setVendor] = useState(null);
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
@@ -28,10 +28,8 @@ const ProductCollection = () => {
   const [quantity, setQuantity] = useState(1);
   const [limit, setlimit] = useState(5);
   const BASE_URL = "http://127.0.0.1:3000";
-  
 
   const [footerRef, footerInView] = useInView({ threshold: 0.2 });
-
 
   useEffect(() => {
     fetchVendorProducts(id, page);
@@ -45,7 +43,7 @@ const ProductCollection = () => {
       setVendor(response.data.vendorDetails);
       setProducts(response.data.data);
       setTotalPages(response.data.pagination.totalPages);
-      setVendorId(response.data.vendorDetails._id)
+      setVendorId(response.data.vendorDetails._id);
     } catch (error) {
       console.error("Error fetching vendor products", error);
     }
@@ -68,14 +66,13 @@ const ProductCollection = () => {
       },
     },
   };
-  
+
   const toggleQuantityInput = (productId) => {
     setShowQuantityInput((prev) => ({
       ...prev,
       [productId]: !prev[productId], // Toggle only the clicked product
     }));
   };
-
 
   return (
     <div className="">
