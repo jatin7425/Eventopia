@@ -36,7 +36,7 @@ const ContactUs = () => {
 
   return (
     <motion.div
-      id="contact"
+      id="contact "
       className="dark:bg-[#1a1a1a] px-4 sm:px-8 lg:px-20 py-12 pt-20 w-full h-screen flex items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
