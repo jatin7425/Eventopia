@@ -42,7 +42,7 @@ const ProfileDashboard = () => {
 
       case "myEvents":
         return (
-          <div className="w-full h-screen flex flex-col dark:bg-zinc-800">
+          <div className="w-full h-full flex flex-col dark:bg-zinc-800">
             <EventManager />
           </div>
         );
@@ -233,65 +233,5 @@ const useOnlineStatus = () => {
   return isOnline;
 };
 
-const ShopSummary = () => {
-  // Sample achievement data
-
-  const [ShopSummary, setShopSummary] = useState([]);
-
-  return (
-    <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-zinc-700 dark:text-zinc-300 mb-6">
-        Shop - Summary
-      </h2>
-      <div className="grid grid-cols-3 gap-6">
-        {ShopSummary.length > 0 ? (
-          ShopSummary.map((achievement, index) => (
-            <div className="text-center" key={index}>
-              {/* Icon with unique background */}
-              <div
-                className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-md ${index === 0
-                  ? "bg-blue-100 text-blue-600"
-                  : index === 1
-                    ? "bg-yellow-100 text-yellow-600"
-                    : "bg-green-100 text-green-600"
-                  }`}
-              >
-                <span className="material-icons text-3xl">
-                  {achievement.icon}
-                </span>
-              </div>
-              {/* Achievement name */}
-              <p className="mt-4 text-lg font-semibold text-zinc-700">
-                {achievement.name}
-              </p>
-              {/* Achievement description */}
-              <p className="mt-2 text-sm text-zinc-500">
-                {achievement.description}
-              </p>
-            </div>
-          ))
-        ) : (
-          <div className="flex flex-col items-center justify-center w-full h-full col-start-1 col-end-4 p-4">
-            <h3 className="my-5 font-['Founders_Grotesk_Condensed'] ">
-              You don't have any shop
-            </h3>
-            <br />
-            <ButtonBtmUp
-              title={"Register Your Shop"}
-              bgColor={"bg-blue-600"}
-              textColor={"text-white"}
-              hoverBgColor={"bg-blue-700"}
-              hoverTextColor={"text-white"}
-              rounded={"rounded-lg"}
-              p={"px-5"}
-              h={"h-10"}
-              m={"mt-2"}
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 export default ProfileDashboard;

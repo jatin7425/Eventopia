@@ -40,6 +40,8 @@ const EventManager = ({ }) => {
     setEventId(selectedEvent?._id);
   };
 
+  console.log(events)
+
   // Initialize events & selected event
   useEffect(() => {
     if (user?.event?.length > 0) {
@@ -142,7 +144,7 @@ const EventManager = ({ }) => {
 
   return (
     <div
-      className="min-w-screen h-fit bg-white dark:bg-[#1a1a1a] dark:text-white"
+      className="min-w-screen h-full flex flex-col bg-white dark:bg-[#1a1a1a] dark:text-white"
       onMouseMove={handleMouseMove}
     >
       <header className="w-full h-16 border-b py-4 px-3 mb-4">
@@ -166,23 +168,20 @@ const EventManager = ({ }) => {
               w="w-fit"
               h="h-10"
               p="px-4"
-              display="max-md:hidden"
-              displayTitle2="md:hidden"
-              title2="+"
             />
           </Link>
         </div>
       </header>
 
       {/* --------------------------Event Description------------------------- */}
-      <div className="w-full flex max-md:flex-col gap-5 items-center justify-between md:px-10 px-5 pt-10 z-10">
+      <div className="w-full flex max-sm:flex-col gap-5 items-center justify-between md:px-10 px-5 pt-10">
         <div className="h-full">
           <h1 className="text-3xl font-bold">Event Description</h1>
         </div>
 
         {/* ------------------------Category Dropdown------------------------- */}
         <div
-          className="h-full text-end md:w-64 w-full dark:text-black z-[40]"
+          className="h-full text-end sm:w-64 w-full dark:text-black z-40"
           ref={dropdownRef}
         >
           <div className="relative md:w-64 w-full mx-auto">
@@ -229,9 +228,9 @@ const EventManager = ({ }) => {
       </div>
 
       {/* -----------------------Event Details--------------------- */}
-      <div className="min-h-56 h-[20vw] flex pb-4 md:mx-10 mx-5 text-5xl font-bold z-30 overflow-hidden">
+      <div className="min-h-56 h-[20vw] flex pb-4 md:mx-10 mx-5 text-5xl font-bold overflow-hidden">
         <motion.div
-          className="relative text-sm min-h-24 w-full p-2 overflow-x-auto border-2 mt-5 border-gray-300 dark:border-zinc-600 rounded-lg z-30 flex items-center justify-center overflow-hidden"
+          className="relative text-sm min-h-24 w-full p-2 overflow-x-auto border-2 mt-5 border-gray-300 dark:border-zinc-600 rounded-lg  flex items-center justify-center overflow-hidden"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
@@ -249,7 +248,7 @@ const EventManager = ({ }) => {
               <motion.div
                 key={item._id}
                 className={
-                  `relative flex items-center justify-between px-5 pl-10 py-2 rounded-lg cursor-pointer z-20 whitespace-nowrap ` +
+                  `relative flex items-center justify-between px-5 pl-10 py-2 rounded-lg cursor-pointer whitespace-nowrap ` +
                   (selectedEvent?._id === item._id
                     ? "bg-zinc-200 dark:bg-zinc-800"
                     : "")
@@ -265,7 +264,7 @@ const EventManager = ({ }) => {
                 <span className="flex-1" onClick={() => setSelectedEvent(item)}>
                   {item?.name || "Unnamed Event"}
                 </span>
-                <button className="sm:hidden z-50 cursor-pointer">
+                <button className="sm:hidden cursor-pointer">
                   {isDescriptionOpen2 ? "<" : ">"}
                 </button>
               </motion.div>
@@ -273,8 +272,9 @@ const EventManager = ({ }) => {
           </motion.div>
 
           <motion.div
-            className={`sm:w-2/3 h-full w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 rounded-lg flex flex-col sm:justify-center items-center max-sm:${!isDescriptionOpen2 && "hidden"
-              }`}
+            className={`sm:w-2/3 h-full w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 rounded-lg flex flex-col sm:justify-center items-center max-sm:${
+              !isDescriptionOpen2 && "hidden"
+            }`}
             initial={{ opacity: 0, rotateY: -90 }}
             animate={{ opacity: 1, rotateY: 0 }}
             transition={{ duration: 0.6 }}
@@ -310,10 +310,11 @@ const EventManager = ({ }) => {
         <div className="flex justify-start items-center gap-3 md:gap-5 font-['Gilroy'] ">
           {/* View Cart Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${openCartOption
+            className={`relative px-4 py-2 rounded-md ${
+              openCartOption
                 ? "text-white bg-blue-600 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
-              } transition-all duration-300`}
+            } transition-all duration-300`}
             onClick={handleOpenCartOption}
           >
             {openCartOption ? (
@@ -329,10 +330,11 @@ const EventManager = ({ }) => {
 
           {/* Attendees Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${attendeesOption
+            className={`relative px-4 py-2 rounded-md ${
+              attendeesOption
                 ? "text-white bg-blue-600 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
-              } transition-all duration-300`}
+            } transition-all duration-300`}
             onClick={handleAttendeesOption}
           >
             {attendeesOption ? (
@@ -348,10 +350,11 @@ const EventManager = ({ }) => {
 
           {/* Calendar Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${openCalendar
+            className={`relative px-4 py-2 rounded-md ${
+              openCalendar
                 ? "text-white bg-blue-600 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
-              } transition-all duration-300`}
+            } transition-all duration-300`}
             onClick={handleOpenCalendar}
           >
             {openCalendar ? (
@@ -367,10 +370,11 @@ const EventManager = ({ }) => {
 
           {/* MyOrders Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${ShowMyOrders
+            className={`relative px-4 py-2 rounded-md ${
+              ShowMyOrders
                 ? "text-white bg-blue-600 shadow-md"
                 : "text-gray-500 dark:text-gray-400 bg-transparent"
-              } transition-all duration-300`}
+            } transition-all duration-300`}
             onClick={handleMyOrders}
           >
             {ShowMyOrders ? (
@@ -391,7 +395,7 @@ const EventManager = ({ }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full h-full border-t-2 border-zinc-500"
+            className="w-full h-full border-t-2 border-zinc-500 bg-white dark:bg-[#1a1a1a]"
           >
             <InvitationManager event={event} />
           </motion.div>
@@ -404,7 +408,7 @@ const EventManager = ({ }) => {
             exit={{ opacity: 0, y: -20 }}
             className="w-full h-fit border-t-2 border-zinc-500"
           >
-            <hr className="border-gray-300 dark:border-zinc-500" />
+            <hr className="border-gray-300 dark:border-zinc-500 bg-white dark:bg-[#1a1a1a]" />
             <VendorProductsComponent event={event} cart={cart} />
           </motion.div>
         )}
@@ -414,7 +418,7 @@ const EventManager = ({ }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full h-full border-t-2 border-zinc-500"
+            className="w-full h-full border-t-2 border-zinc-500 bg-white dark:bg-[#1a1a1a]"
           >
             <div className="h-full w-full">
               <MyCalendar />
@@ -427,7 +431,7 @@ const EventManager = ({ }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full h-full border-t-2 border-zinc-500 flex flex-col  " 
+            className="w-full h-full border-t-2 border-zinc-500 flex flex-col bg-white dark:bg-[#1a1a1a]  "
           >
             <div className="h-full w-full">
               <MyOrders eventId={selectedEvent?._id} />

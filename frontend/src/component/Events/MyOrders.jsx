@@ -69,7 +69,7 @@ const MyOrders = ({ eventId }) => {
   };
 
   return (
-    <div className="pt-5 h-screen ">
+    <div className="pt-5 h-screen bg-white dark:bg-[#1a1a1a] ">
       <div className="max-w-7xl mx-auto h-full flex flex-col">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div>
