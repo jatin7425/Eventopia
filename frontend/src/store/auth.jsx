@@ -128,7 +128,9 @@ export function AuthProvider({ children }) {
                 console.error("Error in checkAuth", error);
                 if (error.response.data.message === "Unauthorized - no token provided" &&
                     window.location.pathname !== "/" &&
-                    window.location.pathname !== "/auth") {
+                    window.location.pathname !== "/auth" &&
+                    window.location.pathname !== "/forgetpasswordemail" &&
+                    window.location.pathname !== "/reset-password") {
                     window.location.href = "/"
                 }
             } finally {
@@ -193,8 +195,60 @@ export function AuthProvider({ children }) {
         }
     }
 
+    // 1. Request a password-reset link via email
+    const requestPasswordReset = async (email) => {
+        try {
+            const response = await axiosInstance.post(
+                '/auth/requestPasswordReset',
+                { email },
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                }
+            );
+            return {
+                success: true,
+                message: response.data.message || 'If the email exists, an OTP will be sent',
+            };
+        } catch (err) {
+            console.error('requestPasswordReset error:', err);
+            return {
+                success: false,
+                message:
+                    err.response?.data?.message ||
+                    'Failed to request password reset. Please try again later.',
+            };
+        }
+    }
+
+    // 2. Actually reset the password with the token and new password
+    const forgetPassword = async (token, newPassword) => {
+        try {
+            const response = await axiosInstance.post(
+                '/auth/forgetPassword',
+                { token, newPassword },
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                }
+            );
+            return {
+                success: true,
+                message:
+                    response.data.message || 'Password updated successfully',
+            };
+        } catch (err) {
+            console.error('resetPassword error:', err);
+            return {
+                success: false,
+                message:
+                    err.response?.data?.error ||
+                    'Failed to reset password. The link may have expired.',
+            };
+        }
+    }
+
+
     return (
-        <AuthContext.Provider value={{ isAuthLoading, user, AllUsers, login, logout, signup, updateprofile, resetPassword, role, isLoggedin }}>
+        <AuthContext.Provider value={{ isAuthLoading, user, AllUsers, login, logout, signup, updateprofile, resetPassword, requestPasswordReset, forgetPassword, role, isLoggedin }}>
             {children}
         </AuthContext.Provider>
     );

@@ -4,7 +4,7 @@ import toast, { LoaderIcon } from "react-hot-toast";
 import { GoEye, GoEyeClosed } from "react-icons/go";
 
 function AuthPage() {
-  const {  login, signup, isAuthLoading } = useAuth();
+  const { login, signup, isAuthLoading } = useAuth();
   const [isSignPage, setIsSignPage] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
@@ -65,9 +65,8 @@ function AuthPage() {
   return (
     <>
       <div
-        className={`${
-          !isSignPage && "h-screen"
-        }  dark:bg-[#1a1a1a]  flex flex-col dark:text-white relative`}
+        className={`${!isSignPage && "h-screen"
+          }  dark:bg-[#1a1a1a]  flex flex-col dark:text-white relative`}
       >
         {/* <img
           src="https://readymadeui.com/bg-effect.svg"
@@ -80,11 +79,10 @@ function AuthPage() {
             <div className="h-full w-full max-lg:flex-wrap items-center justify-center md:justify-around">
               {/* <!-- Left column container with background--> */}
               <div
-                className={` ${
-                  isSignPage
-                    ? "fixed right-10 top-20 -z-10 max-lg:block max-lg:aspect-square max-lg: max-xl:opacity-30 max-sm:hidden "
-                    : "fixed right-40 top-20 -z-10 mb-12 md:mb-0 md:w-8/12 lg:w-6/12 lg:h-full max-lg:block max-lg:aspect-square max-lg: max-lg:opacity-30 max-sm:hidden"
-                }`}
+                className={` ${isSignPage
+                  ? "fixed right-10 top-20 -z-10 max-lg:block max-lg:aspect-square max-lg: max-xl:opacity-30 max-sm:hidden "
+                  : "fixed right-40 top-20 -z-10 mb-12 md:mb-0 md:w-8/12 lg:w-6/12 lg:h-full max-lg:block max-lg:aspect-square max-lg: max-lg:opacity-30 max-sm:hidden"
+                  }`}
               >
                 <img
                   src={
@@ -100,10 +98,9 @@ function AuthPage() {
 
               {/* <!-- Right column container with form --> */}
               <div
-                className={`h-full w-full xl:bg-zinc-800 ${
-                  !isSignPage &&
+                className={`h-full w-full xl:bg-zinc-800 ${!isSignPage &&
                   " max-xl:pt-32 2xl:pt-40 max-md:px-10 max-sm:px-5 "
-                } xl:pt-10 max-xl:pt-10 max-md:px-10 max-sm:px-5 max-lg:10/12 max-lg:mb-10 lg:max-w-max sm:px-10`}
+                  } xl:pt-10 max-xl:pt-10 max-md:px-10 max-sm:px-5 max-lg:10/12 max-lg:mb-10 lg:max-w-max sm:px-10`}
               >
                 <form
                   onSubmit={handleSubmit}
@@ -259,16 +256,15 @@ function AuthPage() {
                     </div>
 
                     {/* <!-- Forgot password link --> */}
-                    {!isSignPage ? (
+                    {isSignPage ?
+                      <></>
+                      :
                       <a
                         href="/forgetpasswordemail"
                         className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
                       >
                         Forgot password
-                      </a>
-                    ) : (
-                      <></>
-                    )}
+                      </a>}
                   </div>
 
                   {/* <!-- Submit button --> */}

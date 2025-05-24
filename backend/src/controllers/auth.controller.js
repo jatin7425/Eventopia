@@ -6,6 +6,8 @@ import nodemailer from "nodemailer";
 import twilio from "twilio";
 import crypto from "crypto";
 import Event from "../models/event.model.js";
+import ResetToken from "../models/resetToken.model.js";
+import { sendOTPEmail } from "../utils/sendEmail.js";
 
 const passwordPattern = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 const emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -95,7 +97,7 @@ export const signup = async (req, res) => {
     } catch (error) {
         console.error("Error in signup Controller:", error.message);
         if (error.message.includes('duplicate key error collection: EventManager.users index: userName_1 dup key')) { // Duplicate key error
-            return res.status(400).json({ message: "unsername already exists." })    
+            return res.status(400).json({ message: "unsername already exists." })
         };
         res.status(500).json({ message: "Internal Server Error." });
     }
@@ -323,49 +325,62 @@ export const getAllUsers = async (req, res) => {
 
 // Request password reset
 export const requestPasswordReset = async (req, res) => {
-    const { email, contact } = req.body;
-
     try {
-        // Find user by email or contact
-        const user = await User.findOne({
-            $or: [{ email }, { contact }],
+        const { email } = req.body;
+        // Always respond the same to avoid enumeration
+        const genericMsg = 'If the email exists, an OTP will be sent';
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(200).json({ message: genericMsg });
+        }
+
+        const expiry = Date.now() + 15 * 60 * 1000; // 15 minutes
+        const token = crypto.randomBytes(32).toString('hex');
+        const hash = crypto.createHash('sha256').update(token).digest('hex');
+        await new ResetToken({ userId: user._id, hash, expiresAt: expiry }).save();
+        const link = `${process.env.BASE_FRONTEND_HOST_URL}/reset-password?token=${token}`;
+
+        // Send the OTP via email
+        await sendOTPEmail({
+            to: user.email,
+            userName: user.userName,
+            brandColor: '#3b82f6',
+            verificationLink: link
         });
 
-        if (!user) {
-            return res.status(404).json({
-                message: `No user exists with this ${email ? 'email' : 'contact'}`,
-            });
-        }
+        return res.status(200).json({ message: genericMsg });
+    } catch (err) {
+        // console.error('sendOTP error:', err);
+        return res.status(500).json({
+            message: 'Failed to send OTP',
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+        });
+    }
+};
 
-        // Generate and save OTP
-        const { otp, otpExpiry } = generateOTP();
-        user.otp = otp;
-        user.otpExpiry = otpExpiry;
+export const forgetPassword = async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+        const hash = crypto.createHash('sha256').update(token).digest('hex');
+        const record = await ResetToken.findOneAndDelete({ hash });
+        if (!record) {
+            return res.status(400).json({ error: 'Invalid or expired token', message: 'Invalid or expired token' });
+        }
+        const user = await User.findById(record.userId);
+        const salt = await bcrypt.genSalt(12);
+        user.password = await bcrypt.hash(newPassword, salt);
         await user.save();
-
-        // Send OTP via email
-        if (email) {
-            await transporter.sendMail({
-                from: `"YourApp" <${process.env.EMAIL_USER}>`,
-                to: email,
-                subject: 'Password Reset OTP',
-                text: `Your OTP code is ${otp}`,
-                html: `<p>Your OTP code is <strong>${otp}</strong></p>`,
-            });
-        }
-
-        // Send OTP via SMS
-        if (contact) {
-            await twilioClient.messages.create({
-                body: `Your OTP code is ${otp}`,
-                from: process.env.TWILIO_PHONE_NUMBER,
-                to: contact,
-            });
-        }
-
-        res.status(200).json({ message: 'OTP sent successfully!' });
-    } catch (error) {
-        console.error('Error in requestPasswordReset:', error.message);
-        res.status(500).json({ message: 'Internal Server Error.' });
+        return res.status(200).json({
+            success: true,
+            message: 'Password updated successfully',
+        });
+    } catch (err) {
+        console.error('resetPassword error:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to update password',
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+        });
     }
 };

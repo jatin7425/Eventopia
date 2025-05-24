@@ -195,7 +195,7 @@ export const sendEmail = async ({
         return {
             success: false,
             error: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            stack: process.env.NODE_ENV = k == 'development' ? error.stack : undefined
         };
     }
 };
@@ -375,3 +375,111 @@ export const sendInvitationEmail = async ({
         return { success: false, error: error.message };
     }
 };
+
+export const sendOTPEmail = async ({
+    to,
+    subject = "Your Verification Code",
+    expirationMinutes = 15,
+    brandColor = '#2563eb',
+    logo = null,
+    userName = 'User',
+    supportEmail = 'support@eventopia.com',
+    verificationLink = '#'
+}) => {
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${subject}</title>
+    </head>
+    <body style="margin:0;padding:0;background:#f8fafc;">
+        <table class="container" width="100%" border="0" cellpadding="0" cellspacing="0" 
+            style="max-width:600px;margin:2rem auto;background:white;border-radius:8px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+            
+            <!-- Gradient Header -->
+            <tr>
+                <td style="padding:2rem;background:linear-gradient(135deg, ${brandColor} 0%, #1e3a8a 100%);border-radius:8px 8px 0 0;">
+                    ${logo ? `
+                        <img src="${logo}" alt="Company Logo" 
+                            style="max-width:200px;height:auto;display:block;margin:0 auto;">
+                    ` : `
+                        <div style="text-align:center;color:white;font-size:32px;font-weight:bold;">
+                            Eventopia
+                        </div>
+                    `}
+                </td>
+            </tr>
+            
+            <!-- OTP Content -->
+            <tr>
+                <td style="padding:2rem;">
+                    <h1 style="color:#1e293b;font-size:24px;margin:0 0 1rem 0;text-align:center;">
+                        Hi ${userName}, your verification code
+                    </h1>
+                        
+                        <p style="margin:0;">
+                            If you didn't request this code, please 
+                            <a href="mailto:${supportEmail}" 
+                                style="color:${brandColor};text-decoration:none;font-weight:500;">
+                                contact our support team
+                            </a> 
+                            immediately.
+                        </p>
+                    </div>
+                    
+                    <!-- Verification Button -->
+                    <div style="margin:2rem 0;text-align:center;">
+                        <a href="${verificationLink}" 
+                            style="display:inline-block;
+                                padding:12px 24px;
+                                background:${brandColor};
+                                color:white;
+                                text-decoration:none;
+                                border-radius:6px;
+                                font-weight:500;
+                                transition:transform 0.2s ease;">
+                            Verify Account Now
+                        </a>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <hr style="border:1px solid #e2e8f0;margin:2rem 0;">
+                    <div style="color:#64748b;font-size:14px;text-align:center;">
+                        <p style="margin:0 0 0.5rem 0;">
+                            Need help? Contact our support team at
+                            <a href="mailto:${supportEmail}" 
+                                style="color:${brandColor};text-decoration:none;">
+                                ${supportEmail}
+                            </a>
+                        </p>
+                        <p style="margin:0;font-size:12px;color:#94a3b8;">
+                            This is an automated message - please do not reply directly
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    `;
+
+    const mailOptions = {
+        from: `"${process.env.EMAIL_NAME || 'Eventopia Security'}" <${process.env.EMAIL_USER}>`,
+        to,
+        subject,
+        html: htmlContent,
+        text: `Reset Your Password.`
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('OTP email sent to:', to);
+        return { success: true, messageId: info.messageId };
+    } catch (error) {
+        console.error('Error sending OTP email:', error);
+        return { success: false, error: error.message };
+    }
+};
+
