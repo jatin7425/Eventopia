@@ -54,8 +54,12 @@ const NotificationItem = ({
   });
 
   const handleSwipe = (dir) => {
-    if (dir === "Right") onMarkRead(notification._id);
-    if (dir === "Left") onDismiss(notification._id);
+    if (dir === "Right") {
+      onMarkRead(notification._id);
+    }
+    if (dir === "Left") {
+      onDismiss(notification._id);
+    }
     setSwiped(true);
     setTimeout(() => setSwiped(false), 500);
   };
@@ -304,13 +308,12 @@ const NotificationPage = () => {
     return (
       <div className="flex flex-wrap gap-2 p-2">
         {Object.entries(filters).map(([filterType, value]) => {
-          if (
-            !value ||
-            filterType === "search" ||
-            filterType === "page" ||
-            filterType === "limit"
-          )
+          if (!value ||
+                      filterType === "search" ||
+                      filterType === "page" ||
+                      filterType === "limit") {
             return null;
+          }
 
           return (
             <div
