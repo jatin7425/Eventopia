@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useEvent } from "../../store/eventContext";
+import { BASE_URL } from "../../config/urls";
 
 const MyOrders = ({ eventId }) => {
   const { getOrdered, OrderedProduct } = useEvent();
@@ -149,12 +150,6 @@ const MyOrders = ({ eventId }) => {
                               : "hover:bg-zinc-50 dark:hover:bg-zinc-700 border border-transparent"
                           }`}
                       >
-                        <img
-                          src={vendor.image}
-                          alt={vendor.name}
-                          className="w-10 h-10 rounded-full object-cover"
-                          loading="lazy"
-                        />
                         <div>
                           <h4 className="font-medium text-zinc-800 dark:text-white">
                             {vendor.name}
@@ -205,7 +200,7 @@ const MyOrders = ({ eventId }) => {
                             <div className="flex flex-col sm:flex-row gap-4">
                               <div className="flex-shrink-0">
                                 <img
-                                  src={order.product.productImage}
+                                  src={`${BASE_URL}${order.product.productImage}`}
                                   alt={order.product.productName}
                                   className="w-24 h-24 object-cover rounded-lg"
                                   loading="lazy"
