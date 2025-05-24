@@ -37,12 +37,12 @@ const ContactUs = () => {
   return (
     <motion.div
       id="contact"
-      className="dark:bg-[#1a1a1a] px-4 sm:px-8 lg:px-20 py-12 pt-20 w-full"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      className="dark:bg-[#1a1a1a] px-4 sm:px-8 h-full w-full"
+      initial={{ y: 50, opacity: 0 }}
+      whileInView={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 dark:bg-zinc-800/90 bg-white/90 backdrop-blur-sm p-6 sm:p-10 rounded-xl shadow-lg gap-8 lg:gap-12">
           <div className="flex flex-col items-start gap-6">
             <h1 className="text-3xl md:text-4xl font-extrabold bg-blue-600  bg-clip-text text-transparent">

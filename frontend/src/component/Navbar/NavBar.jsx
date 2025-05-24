@@ -87,7 +87,7 @@ export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
         transition={{ duration: 1, delay: aniDelay }}
         className="w-full bg-transparent text-white py-2"
       >
-        <div className="container mx-auto flex justify-between items-center px-6">
+        <div className=" container mx-auto flex justify-between items-center px-6">
           <Link to={"/"} className="max-md:hidden">
             <img src={logo} alt="logo" className="w-20 mr-6  " loading="lazy" />
           </Link>
@@ -248,7 +248,6 @@ export const NavBar = ({ homeLink, aniDelay, contactLink }) => {
               )}
             </div>
           </div>
-          
         </div>
       </motion.header>
     </motion.div>

@@ -120,7 +120,7 @@ const VendorOrderManager = ({ vendorId }) => {
         <div className="hidden md:flex gap-4 h-[60vh]">
           {/* Events List - Always visible on desktop */}
           <motion.div
-            className="bg-zinc-800 w-1/2 rounded-lg overflow-y-auto shadow-lg"
+            className="dark:bg-zinc-800 w-1/2 rounded-lg overflow-y-auto shadow-lg"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, type: "spring" }}
@@ -133,31 +133,32 @@ const VendorOrderManager = ({ vendorId }) => {
                     onClick={() => handleSelectedEvent(event)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`${selectedEvent?.eventID === event.eventID
-                      ? "bg-zinc-700 ring-2 ring-blue-500"
-                      : "bg-zinc-800 hover:bg-zinc-750"
-                      } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
+                    className={`${
+                      selectedEvent?.eventID === event.eventID
+                        ? "bg-white dark:bg-zinc-700 ring-2 ring-blue-500"
+                        : "bg-white dark:bg-zinc-800 hover:bg-zinc-750"
+                    } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     layout
                   >
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-lg font-semibold text-zinc-700 dark:text-white">
                       {event.eventName}
                     </h3>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       <div>
                         <p className="text-sm text-zinc-400">Organiser</p>
-                        <p className="text-zinc-300">{event.organiser}</p>
+                        <p className="text-zinc-700 dark:text-zinc-300">{event.organiser}</p>
                       </div>
                       <div>
                         <p className="text-sm text-zinc-400">Location</p>
-                        <p className="text-zinc-300">{event.location}</p>
+                        <p className="text-zinc-700 dark:text-zinc-300">{event.location}</p>
                       </div>
                       <div>
                         <p className="text-sm text-zinc-400">Date</p>
-                        <p className="text-zinc-300">{event.date}</p>
+                        <p className="text-zinc-700 dark:text-zinc-300">{event.date}</p>
                       </div>
                       <div>
                         <p className="text-sm text-zinc-400">Time</p>
-                        <p className="text-zinc-300">
+                        <p className="text-zinc-700 dark:text-zinc-300">
                           {event.starttime} - {event.endtime}
                         </p>
                       </div>
@@ -174,7 +175,7 @@ const VendorOrderManager = ({ vendorId }) => {
 
           {/* Orders Panel - Always visible on desktop */}
           <motion.div
-            className="bg-zinc-800 w-1/2 rounded-lg overflow-y-auto shadow-lg"
+            className="dark:bg-zinc-800 w-1/2 rounded-lg overflow-y-auto shadow-lg"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, type: "spring", delay: 0.1 }}
@@ -191,11 +192,11 @@ const VendorOrderManager = ({ vendorId }) => {
                   className="h-full flex flex-col"
                 >
                   <div className="p-4 border-b border-zinc-700">
-                    <h3 className="text-xl font-semibold text-white mb-1">
+                    <h3 className="text-xl font-semibold dark:text-white mb-1">
                       {selectedEvent.eventName}
                     </h3>
-                    <p className="text-zinc-400">Order Details</p>
-                    <p className="text-zinc-400">
+                    <p className="text-zinc-700 dark:text-zinc-400">Order Details</p>
+                    <p className="text-zinc-700 dark:text-zinc-400">
                       Contacts: {selectedEvent.phone} | {selectedEvent.email}
                     </p>
                   </div>
@@ -208,15 +209,15 @@ const VendorOrderManager = ({ vendorId }) => {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3 }}
-                          className="bg-zinc-700 p-4 rounded-lg shadow border border-zinc-600"
+                          className="dark:bg-zinc-700 p-4 rounded-lg shadow border border-zinc-600"
                           whileHover={{ scale: 1.01 }}
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <h4 className="text-lg font-medium text-white">
+                              <h4 className="text-lg font-medium text-zinc-800 dark:text-white">
                                 {order.name}
                               </h4>
-                              <p className="text-zinc-300">
+                              <p className="text-zinc-700 dark:text-zinc-300">
                                 ₹{order.price} × {order.totalitems}
                               </p>
                             </div>
@@ -228,10 +229,11 @@ const VendorOrderManager = ({ vendorId }) => {
                           </div>
                           <div className="mt-3 flex justify-between items-center">
                             <span
-                              className={`px-2 py-1 rounded text-xs ${order.availability
-                                ? "bg-green-800 text-green-200"
-                                : "bg-red-800 text-red-200"
-                                }`}
+                              className={`px-2 py-1 rounded text-xs ${
+                                order.availability
+                                  ? "bg-green-800 text-green-200"
+                                  : "bg-red-800 text-red-200"
+                              }`}
                             >
                               {order.availability ? "In Stock" : "Out of Stock"}
                             </span>
@@ -241,24 +243,42 @@ const VendorOrderManager = ({ vendorId }) => {
                             >
                               {/* Confirm Button */}
                               <button
-                                className={`px-3 py-2 text-white transition-all duration-200 active:scale-90 ${order.status === 'confirmed' ? 'bg-green-500' : ''}`}
-                                onClick={() => handleStatusToggle(order._id, "confirmed")}
+                                className={`px-3 py-2 text-white transition-all duration-200 active:scale-90 ${
+                                  order.status === "confirmed"
+                                    ? "bg-green-500"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleStatusToggle(order._id, "confirmed")
+                                }
                               >
                                 ✔️
                               </button>
 
                               {/* Middle Button (Pending) */}
                               <div
-                                className={`px-6 py-2 border-x border-white flex items-center justify-center transition-all duration-200 active:scale-90 ${order.status === 'pending' ? 'bg-yellow-500' : ''}`}
-                                onClick={() => handleStatusToggle(order._id, "pending")}
+                                className={`px-6 py-2 border-x border-white flex items-center justify-center transition-all duration-200 active:scale-90 ${
+                                  order.status === "pending"
+                                    ? "bg-yellow-500"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleStatusToggle(order._id, "pending")
+                                }
                               >
                                 🕒
                               </div>
 
                               {/* Decline Button */}
                               <button
-                                className={`px-3 py-2 text-white transition-all duration-200 active:scale-90 ${order.status === 'declined' ? 'bg-red-500' : ''}`}
-                                onClick={() => handleStatusToggle(order._id, "declined")}
+                                className={`px-3 py-2 text-white transition-all duration-200 active:scale-90 ${
+                                  order.status === "declined"
+                                    ? "bg-red-500"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleStatusToggle(order._id, "declined")
+                                }
                               >
                                 ❌
                               </button>
@@ -313,7 +333,7 @@ const VendorOrderManager = ({ vendorId }) => {
           <AnimatePresence>
             {showEventList && (
               <motion.div
-                className="bg-zinc-800 rounded-lg overflow-y-auto shadow-lg mb-4"
+                className="dark:bg-zinc-800 rounded-lg overflow-y-auto shadow-lg mb-4"
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
@@ -326,10 +346,11 @@ const VendorOrderManager = ({ vendorId }) => {
                       onClick={() => handleSelectedEvent(event)}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`${selectedEvent?.eventID === event.eventID
-                        ? "bg-zinc-700 ring-2 ring-blue-500"
-                        : "bg-zinc-800 hover:bg-zinc-750"
-                        } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
+                      className={`${
+                        selectedEvent?.eventID === event.eventID
+                          ? "dark:bg-zinc-700 ring-2 ring-blue-500"
+                          : "dark:bg-zinc-800 hover:bg-zinc-750"
+                      } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     >
                       <h3 className="text-lg font-semibold text-white">
                         {event.eventName}
@@ -373,7 +394,7 @@ const VendorOrderManager = ({ vendorId }) => {
           <AnimatePresence>
             {showOrderPanel && selectedEvent && (
               <motion.div
-                className="bg-zinc-800 rounded-lg overflow-y-auto shadow-lg max-h-[75vh]"
+                className="dark:bg-zinc-800 rounded-lg overflow-y-auto shadow-lg max-h-[75vh]"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
@@ -429,10 +450,11 @@ const VendorOrderManager = ({ vendorId }) => {
                       </div>
                       <div className="mt-3 flex justify-between items-center">
                         <span
-                          className={`px-2 py-1 rounded text-xs ${order.availability
-                            ? "bg-green-800 text-green-200"
-                            : "bg-red-800 text-red-200"
-                            }`}
+                          className={`px-2 py-1 rounded text-xs ${
+                            order.availability
+                              ? "bg-green-800 text-green-200"
+                              : "bg-red-800 text-red-200"
+                          }`}
                         >
                           {order.availability ? "In Stock" : "Out of Stock"}
                         </span>
@@ -443,7 +465,9 @@ const VendorOrderManager = ({ vendorId }) => {
                           {/* Confirm Button */}
                           <button
                             className="px-3 py-2 text-white transition-all duration-200 active:scale-90"
-                            onClick={() => handleStatusToggle(order._id, "confirmed")}
+                            onClick={() =>
+                              handleStatusToggle(order._id, "confirmed")
+                            }
                           >
                             ✔️
                           </button>
@@ -456,7 +480,9 @@ const VendorOrderManager = ({ vendorId }) => {
                           {/* Decline Button */}
                           <button
                             className="px-3 py-2 text-white transition-all duration-200 active:scale-90"
-                            onClick={() => handleStatusToggle(order._id, "declined")}
+                            onClick={() =>
+                              handleStatusToggle(order._id, "declined")
+                            }
                           >
                             ❌
                           </button>
@@ -474,7 +500,7 @@ const VendorOrderManager = ({ vendorId }) => {
         <AnimatePresence>
           {selectedEvent && (
             <motion.div
-              className="bg-zinc-800 rounded-lg p-6 shadow-lg border border-zinc-700"
+              className="dark:bg-zinc-800 rounded-lg p-6 shadow-lg border border-zinc-700"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
@@ -482,11 +508,11 @@ const VendorOrderManager = ({ vendorId }) => {
             >
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">
+                  <h3 className="text-xl font-semibold text-black dark:text-white mb-2">
                     Order Summary
                   </h3>
                   <motion.p
-                    className="text-2xl font-bold text-white"
+                    className="text-2xl font-bold dark:text-white"
                     key={selectedEvent?.totalOrderAmount}
                     initial={{ scale: 1.2 }}
                     animate={{ scale: 1 }}
@@ -556,12 +582,12 @@ const VendorOrderManager = ({ vendorId }) => {
                           prev.map((event) =>
                             event.eventID === selectedEvent.eventID
                               ? {
-                                ...event,
-                                orders: event.orders.map((order) => ({
-                                  ...order,
-                                  status: "declined",
-                                })),
-                              }
+                                  ...event,
+                                  orders: event.orders.map((order) => ({
+                                    ...order,
+                                    status: "declined",
+                                  })),
+                                }
                               : event
                           )
                         );

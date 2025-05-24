@@ -471,26 +471,6 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             ) : null}
             <span className="relative ">Manage Orders</span>
           </button>
-
-          {/* Colaborators Button */}
-          <button
-            className={`relative px-4 py-2 rounded-md ${
-              colaborators
-                ? "text-white bg-blue-500 shadow-md"
-                : "text-gray-500 dark:text-gray-400 bg-transparent"
-            } transition-all duration-300`}
-            onClick={handleColaborators}
-          >
-            {colaborators ? (
-              <motion.span
-                className="absolute inset-0 bg-blue-500 rounded-md z-0"
-                layoutId="activeTab"
-                initial={false}
-                transition={{ stiffness: 500, damping: 30 }}
-              />
-            ) : null}
-            <span className="relative "> Colaborator</span>
-          </button>
         </div>
 
         {notification && (

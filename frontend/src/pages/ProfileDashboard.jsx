@@ -166,7 +166,7 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
                   >
                     {item.icon}
                   </span>
-                  <span className="text-lg">{item.title}</span>
+                  <span className="text-lg -mb-2 ">{item.title}</span>
                   {(item.link === "notifications" && notifications?.TotalUnSeenNotification > 0) && (
                     <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 pt-1 rounded-full">
                       {notifications?.TotalUnSeenNotification}

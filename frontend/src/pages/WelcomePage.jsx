@@ -63,11 +63,11 @@ function WelcomePage() {
         </div>
 
         <div className="">
-          <section className="h-full w-full mt-10 pb-10 bg-[#e5e5e5] dark:bg-[#1a1a1a]">
+          <section className="h-full w-full bg-[#e5e5e5] dark:bg-[#1a1a1a]">
             <FeaturesSection />
           </section>
 
-          <div className="min-h-screen w-full  flex justify-center items-center">
+          <div className="min-h-screen w-full flex justify-center items-center">
             <ClientTestimonial />
           </div>
 
@@ -135,13 +135,13 @@ export const LandingSection = () => {
   return (
     <motion.div
       id="home"
-      className="dark:bg-[#1a1a1a] dark:text-white relative w-full "
+      className="dark:bg-[#1a1a1a] dark:text-white relative w-full h-full "
       ref={scrollRef}
     >
-      <div className=" sm:px-10 overflow-hidden w-full">
+      <div className="overflow-hidden w-full h-full flex items-center justify-center">
         <motion.div className=" max-w-4xl mx-auto text-center relative z-10 flex items-center flex-col justify-center overflow-hidden ">
           <motion.h1
-            className="text-6xl font-extrabold mt-40 mb-10 "
+            className="text-6xl font-extrabold  mt-40 mb-10 "
             initial={{ opacity: 1, scale: 0.76, y: 80 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1 }}
@@ -196,7 +196,7 @@ export const LandingSection = () => {
       </div>
 
       {/* Animated Image Carousel */}
-      <motion.div className="flex flex-col origin-left justify-center items-center overflow-hidden h-60 ">
+      <motion.div className="flex flex-col origin-left justify-center items-center overflow-hidden ">
         <motion.h1
           className="md:text-2xl text-4xl font-extrabold pb-6 md:!leading-[75px]  "
           initial={{ opacity: 0, y: -50 }}
@@ -213,7 +213,7 @@ export const LandingSection = () => {
           className="overflow-hidden w-[90%] relative"
         >
           {/* Gradient Overlay - Left */}
-          <div className="h-24 w-40 bg-gradient-to-r dark:from-[#1a1a1a] from-white to-transparent absolute left-0 top-0 z-10"/>
+          <div className="h-24 w-40 bg-gradient-to-r dark:from-[#1a1a1a] from-white to-transparent absolute left-0 top-0 z-10" />
 
           {/* Animated Image Carousel */}
           <motion.div
@@ -244,7 +244,7 @@ export const LandingSection = () => {
           </motion.div>
 
           {/* Gradient Overlay - Right */}
-          <div className="h-24 w-40 bg-gradient-to-l dark:from-[#1a1a1a] from-white to-transparent absolute right-0 top-0 z-10"/>
+          <div className="h-24 w-40 bg-gradient-to-l dark:from-[#1a1a1a] from-white to-transparent absolute right-0 top-0 z-10" />
         </motion.div>
       </motion.div>
     </motion.div>
@@ -365,11 +365,15 @@ const FeaturesSection = () => {
       <section
         id="our-features"
         ref={part2Ref}
-        className=" border-zinc-300 pt-10 dark:text-white max-w-7xl flex mx-auto max-md:flex-col max-xl:px-5"
+        className=" border-zinc-300 pt-10 dark:text-white max-w-7xl flex mx-auto max-md:flex-col max-xl:px-5 pb-10"
       >
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          viewport={{ once: true }} // 'once: false' allows re-triggering on scroll
           ref={section2Ref}
-          className={` h-fit max-w-2xl text-start max-md:text-center mx-auto max-xl:w-1/2 `}
+          className={` h-full max-w-2xl text-start max-md:text-center mx-auto max-xl:w-1/2 `}
         >
           <h2 className="md:text-6xl text-4xl tracking-tight mb-6 max-md:mb-5 w-full ">
             Ensure You Receive{" "}
@@ -381,7 +385,7 @@ const FeaturesSection = () => {
             or a festival, we've got you covered from start to finish.
             Experience stress-free planning like never before!"
           </p>
-        </div>
+        </motion.div>
 
         <motion.div
           ref={section3Ref}
@@ -417,129 +421,212 @@ const FeaturesSection = () => {
   );
 };
 
+
 const ClientTestimonial = () => {
-  const testimonial = [
+  const testimonials = [
     {
       name: "John Doe",
       image: "https://readymadeui.com/profile_2.webp",
       description: "Founder of Rubik",
-      review:
-        "The service was amazing. I never had to wait that long for my food. The staff was friendly and attentive, and the delivery was impressively prompt.",
+      review: "The service was amazing. I never had to wait that long for my food. The staff was friendly and attentive, and the delivery was impressively prompt.",
     },
     {
       name: "Jatin Vishwakarma",
       image: "https://readymadeui.com/profile_2.webp",
-      description: "Founder of Rubik",
-      review:
-        "The service was amazing. I never had to wait that long for my food. The staff was friendly and attentive, and the delivery was impressively prompt.",
+      description: "CTO of TechCorp",
+      review: "Absolutely phenomenal experience from start to finish. The quality exceeded our expectations and the team was incredibly professional.",
     },
     {
       name: "Faizal Ahmed",
       image: "https://readymadeui.com/profile_2.webp",
-      description: "Founder of Rubik",
-      review:
-        "The service was amazing. I never had to wait that long for my food. The staff was friendly and attentive, and the delivery was impressively prompt.",
+      description: "Marketing Director",
+      review: "We've seen a significant improvement in our metrics since using this service. Highly recommend to anyone looking for top-notch performance.",
     },
     {
       name: "Paxwa Unknown",
       image: "https://readymadeui.com/profile_2.webp",
-      description: "Founder of Rubik",
-      review:
-        "The service was amazing. I never had to wait that long for my food. The staff was friendly and attentive, and the delivery was impressively prompt.",
+      description: "Product Manager",
+      review: "The attention to detail and customer focus is unparalleled. It's rare to find a service that delivers so consistently well.",
     },
     {
       name: "Sujal Unknown",
       image: "https://readymadeui.com/profile_2.webp",
-      description: "Founder of Rubik",
-      review:
-        "The service was amazing. I never had to wait that long for my food. The staff was friendly and attentive, and the delivery was impressively prompt.",
+      description: "UX Designer",
+      review: "The intuitive interface and responsive support made implementation a breeze. Our team adopted it immediately with no learning curve.",
     },
   ];
-  // Duplicate the testimonial array to create a seamless loop
-  const testimonials = [...testimonial, ...testimonial];
 
+  // Create infinite loop by duplicating items
+  const duplicatedTestimonials = [...testimonials, ...testimonials];
   const scrollRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      const cardWidth = scrollRef.current.scrollWidth / testimonials.length;
-      const maxScrollLeft =
-        scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
-      if (scrollRef.current.scrollLeft >= maxScrollLeft) {
-        scrollRef.current.scrollLeft = 0;
+  const scrollTo = (direction) => {
+    if (!scrollRef.current) return;
+    
+    const container = scrollRef.current;
+    const cardWidth = container.scrollWidth / duplicatedTestimonials.length;
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    
+    if (direction === 'right') {
+      if (container.scrollLeft >= maxScrollLeft - cardWidth) {
+        container.scrollLeft = 0;
       } else {
-        scrollRef.current.scrollBy({ left: cardWidth * 1, behavior: "smooth" });
+        container.scrollBy({ left: cardWidth * 2, behavior: 'smooth' });
+      }
+    } else {
+      if (container.scrollLeft <= cardWidth) {
+        container.scrollLeft = maxScrollLeft;
+      } else {
+        container.scrollBy({ left: -cardWidth * 2, behavior: 'smooth' });
       }
     }
   };
 
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      const cardWidth = scrollRef.current.scrollWidth / testimonials.length;
-      if (scrollRef.current.scrollLeft <= 0) {
-        scrollRef.current.scrollLeft =
-          scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
-      } else {
-        scrollRef.current.scrollBy({
-          left: -cardWidth * 1,
-          behavior: "smooth",
-        });
-      }
-    }
-  };
-
+  // Auto-scroll effect
   useEffect(() => {
     const interval = setInterval(() => {
-      scrollRight();
-    }, 3000);
+      if (!isDragging) {
+        scrollTo('right');
+      }
+    }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isDragging]);
+
+  // Mouse drag handlers for better UX
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
 
   return (
-    <div className="dark:bg-[#1a1a1a] dark:text-white ">
-      <div className=" text-center">
-        <h2 className="md:text-4xl text-3xl font-extrabold mb-10 ">
-          What our <span className="text-blue-600">Happy Client</span> say
-        </h2>
-      </div>
-      <div className="md:py-16 gap-8 max-w-7xl max-md:max-w-lg mx-auto relative">
-        <div className="bg-blue-100 max-w-[80%] max-md:w-[100vw] max-sm:w-full max-xs:w-full h-full w-full inset-0 mx-auto rounded-3xl absolute max-md:hidden"></div>
-        <div
-          className="flex gap-9 flex-nowrap w-full overflow-x-hidden pl-5  "
-          ref={scrollRef}
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+    <section className="dark:bg-[#1a1a1a] dark:text-white py-4 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
         >
-          <div className="w-36 h-full bg-gradient-to-r dark:from-[#1a1a1a] to-[#1a1a1a]/0 absolute left-0 top-0 z-10 max-md:hidden  "></div>
-          {testimonials?.map((item, index) => (
-            <div
+          <h2 className="text-3xl sm:text-4xl font-bold">
+            What our <span className="text-blue-600">Happy Clients</span> say
+          </h2>
+          <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Don't just take our word for it - hear from our satisfied customers
+          </p>
+        </motion.div>
+
+        <div className="relative">
+          {/* Background element */}
+          <div className="hidden md:block absolute inset-0 -z-10">
+            <div className="bg-blue-100/50 dark:bg-blue-900/10 h-full w-[80%] mx-auto rounded-3xl"></div>
+          </div>
+
+          {/* Navigation buttons */}
+          <button 
+            onClick={() => scrollTo('left')}
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-20 bg-white dark:bg-zinc-800 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+            aria-label="Previous testimonial"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <button 
+            onClick={() => scrollTo('right')}
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-20 bg-white dark:bg-zinc-800 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+            aria-label="Next testimonial"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Testimonial cards container */}
+          <div
+            ref={scrollRef}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            className="flex gap-6 overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {/* Left fade effect */}
+            <div className="hidden md:block absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-white dark:from-[#1a1a1a] to-transparent z-10 pointer-events-none"></div>
+            
+            {/* Testimonial cards */}
+            {duplicatedTestimonials.map((item, index) => (
+              <motion.div
+                key={`${item.name}-${index}`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                viewport={{ once: true }}
+                className="flex-shrink-0 w-80 sm:w-96 p-6 rounded-xl bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm border border-gray-200 dark:border-zinc-700 shadow-sm snap-center"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={item.image}
+                    className="w-12 h-12 rounded-full object-cover"
+                    alt={item.name}
+                    loading="lazy"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-lg">{item.name}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{item.description}</p>
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <svg className="w-5 h-5 text-yellow-400 mb-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <p className="text-gray-700 dark:text-gray-300">{item.review}</p>
+                </div>
+              </motion.div>
+            ))}
+            
+            {/* Right fade effect */}
+            <div className="hidden md:block absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-white dark:from-[#1a1a1a] to-transparent z-10 pointer-events-none"></div>
+          </div>
+        </div>
+
+        {/* Mobile indicators */}
+        <div className="flex justify-center gap-2 mt-8 md:hidden">
+          {testimonials.map((_, index) => (
+            <button
               key={index}
-              className="h-auto flex-shrink-0 max-w-96 max-md:max-w-full lg:p-6 p-4 rounded-md mx-auto dark:bg-zinc-600/70 dark:text-white backdrop-blur-xl bg-black/10 relative  max-md:w-[full] "
-            >
-              <div>
-                <img
-                  src={item.image}
-                  className="w-12 h-12 rounded-full"
-                  alt={item.name}
-                  loading="lazy"
-                />
-                <h4 className="whitespace-nowrap font-semibold mt-2">
-                  {item.name}
-                </h4>
-                <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-300 font-['Founders_Grotesk_Condensed']">
-                  {item.description}
-                </p>
-              </div>
-              <div className="mt-4 font-['Founders_Grotesk_Condensed']">
-                <p>{item.review}</p>
-              </div>
-            </div>
+              className="w-2 h-2 rounded-full bg-gray-300 dark:bg-zinc-600"
+              aria-label={`Go to testimonial ${index + 1}`}
+            />
           ))}
-          <div className="w-36 h-full bg-gradient-to-l dark:from-[#1a1a1a] to-[#1a1a1a]/0 absolute right-0 top-0 z-10 max-md:hidden"></div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
+
 
 const TeamSection = () => {
   const teamMembers = [
@@ -585,7 +672,13 @@ const TeamSection = () => {
 
   return (
     <section className="relative py-20 ">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        viewport={{ once: true }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-blue-500 ">
             Our Creative Team
@@ -598,10 +691,17 @@ const TeamSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 justify-center">
           {teamMembers.map((member, index) => (
-            <FlipTeamCard member={member} key={index} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <FlipTeamCard member={member} key={index} />
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

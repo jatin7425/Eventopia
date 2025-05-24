@@ -310,7 +310,7 @@ const MyCalendar = () => {
                     : subWeeks(currentDate, 1)
                 )
               }
-              className="px-2 pt-2 pb-1 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full dark:text-white bg-blue-600 "
+              className="px-2 pt-2 pb-1 rounded-full text-white bg-blue-500 hover:bg-blue-700 "
             >
               ←
             </button>
@@ -325,7 +325,7 @@ const MyCalendar = () => {
                     : addWeeks(currentDate, 1)
                 )
               }
-              className="px-2 pt-2 pb-1 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full dark:text-white bg-blue-600 "
+              className="px-2 pt-2 pb-1 rounded-full text-white bg-blue-500 hover:bg-blue-700 "
             >
               →
             </button>

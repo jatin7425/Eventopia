@@ -15,26 +15,26 @@ import { FaTimes } from "react-icons/fa";
 import SideBar from "../component/Navbar/SideBar";
 
 const cardVariants = {
-  hidden: { y: 50, opacity: 0 },
+  hidden: { y: 20, opacity: 0, },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
       duration: 0.9,
-      ease: "easeOut",
+      ease: "easeInOut",
       bounce: 0.4,
     },
   },
 };
 
 const footerVariants = {
-  hidden: { y: 50, opacity: 0 },
+  hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
       duration: 0.8,
-      ease: "easeOut",
+      ease: "easeInOut",
       bounce: 0.4,
     },
   },
@@ -81,97 +81,99 @@ const EventSelection = () => {
   };
 
   return (
-    <div className=" overflow-hidden min-h-screen font-['Founders_Grotesk']">
+    <div className=" overflow-hidden min-h-screen font-['Founders_Grotesk'] ">
       {/* Navbar */}
-      <div className="h-20 w-full">
+      <div className="h-20 w-screen">
         <NavBar homeLink="/" aniDelay={0.7} contactLink="/contactus" />
         <SideBar homeLink="/" contactLink="/contactus" />
       </div>
 
-      {showCreateEventForm && (
-        <CreateEventForm
-          category={category}
-          handleShowCreateEventForm={handleShowCreateEventForm}
-        />
-      )}
+      <div className="w-full h-full flex flex-col items-center justify-center">
+        {showCreateEventForm && (
+          <CreateEventForm
+            category={category}
+            handleShowCreateEventForm={handleShowCreateEventForm}
+          />
+        )}
 
-      {/* Hero Section */}
-      <motion.section
-        initial={{ opacity: 0, y: -100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="bg-white h-[20vw] overflow-hidden dark:bg-[#1a1a1a]"
-      >
-        <motion.div className="container mx-auto px-6 py-5 flex flex-col justify-center items-center h-full overflow-hidden">
-          <h1 className="text-4xl font-bold mb-6 pt-5 ">
-            We Help You To{" "}
-            <span className="text-blue-500">Create Unforgettable</span> Events
-          </h1>
-          <p className="text-zinc-600 dark:text-zinc-400 font-['Founders_Grotesk_Condensed']">
-            Stay ahead with the latest trends and insights in event management.
-          </p>
-        </motion.div>
-      </motion.section>
+        {/* Hero Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="bg-white h-[20vw] overflow-hidden dark:bg-[#1a1a1a] "
+        >
+          <motion.div className="container mx-auto px-6 py-5 flex flex-col justify-center items-center h-full overflow-hidden">
+            <h1 className="text-4xl font-bold mb-6 pt-5 ">
+              We Help You To{" "}
+              <span className="text-blue-500">Create Unforgettable</span> Events
+            </h1>
+            <p className="text-zinc-600 dark:text-zinc-400 font-['Founders_Grotesk_Condensed']">
+              Stay ahead with the latest trends and insights in event
+              management.
+            </p>
+          </motion.div>
+        </motion.section>
 
-      {/* Blog Grid */}
-      <section className="h-full container mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-        {cards.map((post, index) => (
-          <div
-            onClick={() => {
-              handleShowCreateEventForm();
-              setCategory(post.category);
-            }}
-            key={index}
-            className="relative w-full "
-          >
-            <motion.div
-              initial="hidden"
-              whileInView={"visible"}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
-              viewport={{ once: false, amount: 0.2 }} // 'once: false' allows re-triggering on scroll
-              variants={cardVariants}
-              custom={index}
-              className="h-full bg-white dark:bg-zinc-800 shadow-lg dark:shadow-white/10 rounded overflow-hidden group z-[3] my-4"
+        {/* Blog Grid */}
+        <section className="h-full max-w-7xl container grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+          {cards.map((post, index) => (
+            <div
+              onClick={() => {
+                handleShowCreateEventForm();
+                setCategory(post.category);
+              }}
+              key={index}
+              className="relative w-full "
             >
-              <div className="h-48 bg-zinc-300">
-                <img
-                  src={post.img}
-                  alt={post.alt}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-              <div className="p-4 flex flex-col justify-between h-fit">
-                <span className="text-lg -mb-2 text-[#6366F1] dark:text-zinc-400 font-semibold">
-                  {post.category}
-                </span>
-                <h3 className="text-[22px] font-bold mt-4 -mb-2 ">
-                  {post.title}
-                </h3>
-                <div className="flex items-center  gap-1 mt-2">
-                  <div className="group flex items-center justify-center gap-1">
-                    <BorderAnimaButton
-                      title={"Create Event"}
-                      textColor={"text-zinc-700 , dark:text-zinc-400"}
-                      borderColor={
-                        "border-zinc-400 group-hover:border-zinc-900 dark:group-hover:border-zinc-100 dark:border-zinc-400"
-                      }
-                      hoverTextColor={
-                        "group-hover:text-black , dark:group-hover:text-white dark:text-zinc-300"
-                      }
-                      h={"h-10"}
-                    />
-                    <div className="text-zinc-500 mt-[6px] group-hover:text-blue-600 dark:group-hover:text-blue-500 -rotate-45 dark:text-zinc-400">
-                      <FaArrowRight size={18} />
+              <motion.div
+                initial="hidden"
+                whileInView={"visible"}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                viewport={{ once: false, amount: 0.2 }} // 'once: false' allows re-triggering on scroll
+                variants={cardVariants}
+                custom={index}
+                className="h-full bg-white dark:bg-zinc-800 shadow-lg dark:shadow-white/10 rounded overflow-hidden group z-[3] my-4"
+              >
+                <div className="h-48 bg-zinc-300">
+                  <img
+                    src={post.img}
+                    alt={post.alt}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="p-4 flex flex-col justify-between h-fit">
+                  <span className="text-lg -mb-2 text-[#6366F1] dark:text-zinc-400 font-semibold">
+                    {post.category}
+                  </span>
+                  <h3 className="text-[22px] font-bold mt-4 -mb-2 ">
+                    {post.title}
+                  </h3>
+                  <div className="flex items-center  gap-1 mt-2">
+                    <div className="group flex items-center justify-center gap-1">
+                      <BorderAnimaButton
+                        title={"Create Event"}
+                        textColor={"text-zinc-700 , dark:text-zinc-400"}
+                        borderColor={
+                          "border-zinc-400 group-hover:border-zinc-900 dark:group-hover:border-zinc-100 dark:border-zinc-400"
+                        }
+                        hoverTextColor={
+                          "group-hover:text-black , dark:group-hover:text-white dark:text-zinc-300"
+                        }
+                        h={"h-10"}
+                      />
+                      <div className="text-zinc-500 mt-[6px] group-hover:text-blue-600 dark:group-hover:text-blue-500 -rotate-45 dark:text-zinc-400">
+                        <FaArrowRight size={18} />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
-        ))}
-      </section>
-
+              </motion.div>
+            </div>
+          ))}
+        </section>
+      </div>
       {/* Footer */}
       <motion.div
         ref={footerRef}
