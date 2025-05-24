@@ -30,7 +30,10 @@ const userSchema = new mongoose.Schema(
             default: [{
                 type: "WelcomeMessage",
                 message: "Welcome to our platform!",
-                seen: false
+                seen: false,
+                _id: new mongoose.Types.ObjectId(), // ✅ Required _id
+                createdAt: Date.now(),
+                updatedAt: Date.now()
             }]
         },
         notificationCount: { type: Number, default: 0 },

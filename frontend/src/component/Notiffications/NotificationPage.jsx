@@ -77,14 +77,12 @@ const NotificationItem = ({
     }
   };
 
+  console.log(notification)
+
   return (
     <div
       {...handlers}
-      className={`p-4 bg-white dark:bg-zinc-800 ${swiped ? "opacity-50" : ""} ${
-        !notification.seen ? "bg-blue-50 dark:bg-zinc-700" : ""
-      } ${
-        !isMobile ? "hover:bg-zinc-50 dark:hover:bg-zinc-700" : ""
-      } transition-colors flex sm:items-center justify-between max-sm:flex-col gap-2`}
+      className={`p-4 bg-white dark:bg-zinc-800 ${swiped ? "opacity-50" : ""} ${notification.seen ? "bg-zinc-100 dark:bg-zinc-600" : "bg-blue-50 dark:bg-zinc-700 shadow-lg"} ${isMobile ? "" : "hover:bg-zinc-50 dark:hover:bg-zinc-700"} transition-colors flex sm:items-center justify-between max-sm:flex-col gap-2`}
     >
       <div className="flex items-center gap-4 flex-1">
         <NotificationIcon type={notification.type} />
@@ -125,9 +123,8 @@ const NotificationItem = ({
       {!["WelcomeMessage", "Message", 'OrderUpdate'].includes(notification.type) &&
         (notification.seen === false ? (
           <div
-            className={`flex gap-2 ${
-              notification.seen ? "opacity-0" : "opacity-100"
-            } 
+            className={`flex gap-2 ${notification.seen ? "opacity-0" : "opacity-100"
+              } 
           transition-opacity mx-2 max-sm:w-full`}
           >
             <button
@@ -151,9 +148,8 @@ const NotificationItem = ({
           </div>
         ) : (
           <div
-            className={`flex gap-2 transition-opacity mx-2 max-sm:hidden ${
-              notification.seen ? "opacity-100" : "opacity-0"
-            } `}
+            className={`flex gap-2 transition-opacity mx-2 max-sm:hidden ${notification.seen ? "opacity-100" : "opacity-0"
+              } `}
           >
             <div
               className="text-green-500 hover:text-green-700 flex items-center 
@@ -248,6 +244,7 @@ const NotificationPage = () => {
     notificationFilters,
     setFilters,
     getNotification,
+    seeNotification,
   } = useNotification();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -255,6 +252,9 @@ const NotificationPage = () => {
 
   useEffect(() => {
     getNotification();
+    if ((notifications?.TotalUnSeenNotifications > 0)) {
+      seeNotification();
+    }
   }, [filters]);
 
   const handleSearch = debounce((query) => {
@@ -412,18 +412,18 @@ const NotificationPage = () => {
                             notifications.Stats.latestDate,
                             "day"
                           ) && (
-                            <>
-                              {" - "}
-                              {moment(notifications.Stats.latestDate).isSame(
-                                moment(),
-                                "day"
-                              )
-                                ? "Today"
-                                : moment(notifications.Stats.latestDate).format(
+                              <>
+                                {" - "}
+                                {moment(notifications.Stats.latestDate).isSame(
+                                  moment(),
+                                  "day"
+                                )
+                                  ? "Today"
+                                  : moment(notifications.Stats.latestDate).format(
                                     "MMM D YYYY"
                                   )}
-                            </>
-                          )}
+                              </>
+                            )}
                         </>
                       )}
                   </div>
@@ -460,11 +460,10 @@ const NotificationPage = () => {
                     <button
                       key={i + 1}
                       onClick={() => setFilters({ page: i + 1 })}
-                      className={`px-3 py-1 rounded ${
-                        filters.page === i + 1
-                          ? "bg-blue-500 text-white"
-                          : "bg-zinc-200 dark:bg-zinc-700"
-                      }`}
+                      className={`px-3 py-1 rounded ${filters.page === i + 1
+                        ? "bg-blue-500 text-white"
+                        : "bg-zinc-200 dark:bg-zinc-700"
+                        }`}
                     >
                       {i + 1}
                     </button>

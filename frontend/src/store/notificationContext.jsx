@@ -39,12 +39,21 @@ export function NotificationProvider({ children }) {
         }
     }
 
+    const seeNotification = async () => {
+        try {
+            const res = await axiosInstance.patch('/notification/seeNotification')
+            console.log(res)
+            getNotification()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const getNotificationFilters = async () => {
         try {
             const res = await axiosInstance.get('/notification/getFilters');
             setNotificationFilters(res)
         } catch (error) {
-
         }
     }
 
@@ -64,7 +73,8 @@ export function NotificationProvider({ children }) {
             setFilters,
             setNotifications,
             getNotification,
-            getNotificationFilters
+            getNotificationFilters,
+            seeNotification
         }}>
             {children}
         </NotificationContext.Provider>

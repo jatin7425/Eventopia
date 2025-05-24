@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 export const getNotification = async (req, res) => {
     try {
-        const user = req.user;
+        const { user } = req;
         const {
             page = 1,
             limit = 20,
@@ -23,7 +23,9 @@ export const getNotification = async (req, res) => {
         // Build filter conditions
         const matchConditions = [];
 
-        if (type) matchConditions.push({ $eq: ["$$notif.type", type] });
+        if (type) {
+            matchConditions.push({ $eq: ["$$notif.type", type] });
+        }
 
         if (sender) {
             if (!mongoose.Types.ObjectId.isValid(sender)) {
@@ -39,14 +41,20 @@ export const getNotification = async (req, res) => {
             const start = startDate && new Date(startDate);
             const end = endDate && new Date(endDate);
 
-            if (start && !isNaN(start)) dateConditions.push({
-                $gte: ["$$notif.createdAt", start]
-            });
-            if (end && !isNaN(end)) dateConditions.push({
-                $lte: ["$$notif.createdAt", end]
-            });
+            if (start && !isNaN(start)) {
+                dateConditions.push({
+                    $gte: ["$$notif.createdAt", start]
+                });
+            }
+            if (end && !isNaN(end)) {
+                dateConditions.push({
+                    $lte: ["$$notif.createdAt", end]
+                });
+            }
 
-            if (dateConditions.length) matchConditions.push({ $and: dateConditions });
+            if (dateConditions.length) {
+                matchConditions.push({ $and: dateConditions });
+            }
         }
 
         if (search) {
@@ -241,7 +249,7 @@ export const getNotification = async (req, res) => {
 
 export const getNotificationFilters = async (req, res) => {
     try {
-        const user = req.user;
+        const { user } = req;
 
         const pipeline = [
             { $match: { _id: user._id } },
@@ -360,5 +368,28 @@ export const getNotificationFilters = async (req, res) => {
             message: "Internal server error",
             error: error.message
         });
+    }
+};
+
+export const SeeNotification = async (req, res) => {
+    try {
+        const { user } = req;
+
+        // CORRECTED: Use "notification" (singular) to match schema
+        const result = await User.updateOne(
+            { _id: user._id },
+            { $set: { "notification.$[].seen": true } } // ✅ Proper path
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({
+                message: "User not found or notifications already marked as seen."
+            });
+        }
+
+        res.status(200).json({ message: "All notifications marked as seen." });
+    } catch (error) {
+        console.error("Error in SeeNotification Controller:", error.message);
+        res.status(500).json({ message: "Internal Server Error." });
     }
 };

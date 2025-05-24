@@ -66,7 +66,7 @@ const ProfileDashboard = () => {
 };
 
 const Sidebar = ({ selectedSideBarElement, userData }) => {
-  const { notifications } = useNotification();
+  const { notifications, seeNotification } = useNotification();
   const { logout } = useAuth();
   const isOnline = useOnlineStatus();
   const { page } = useParams();
@@ -77,6 +77,12 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
   useEffect(() => {
     setActiveIcon(page);
   }, [page]);
+
+  const setSeeNotification = () => {
+    if (notifications?.TotalUnSeenNotification > 0) {
+      seeNotification();
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -114,11 +120,10 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
       <div
         onClick={toggleSidebar}
         className={`flex items-center justify-between px-4 py-2 absolute text-xl top-3 cursor-pointer lg:hidden rounded-full text-white
-        ${
-          isSidebarOpen
+        ${isSidebarOpen
             ? "max-lg:-translate-x-0 right-0 "
             : "max-lg:translate-x-full -right-4 backdrop-blur-md "
-        }`}
+          }`}
       >
         {isSidebarOpen ? (
           <CgCross
@@ -143,27 +148,25 @@ const Sidebar = ({ selectedSideBarElement, userData }) => {
         <nav>
           <ul className="space-y-4 max-lg:space-y-2 mt-4 px-3 py-3">
             {sideBarElements.map((item, index) => (
-              <li key={index}>
+              <li key={index} onClick={item?.title.toLowerCase == 'Notifications'.toLowerCase && setSeeNotification}>
                 <Link
                   onClick={() => setActiveIcon(item.link)}
                   to={`/user/${item.link}`}
-                  className={`flex items-center gap-3 py-2 px-4 rounded-lg font-medium transition group 
-                    ${
-                      activeIcon === item.link
-                        ? "bg-blue-700 text-white dark:text-zinc-100"
-                        : "text-zinc-700 dark:text-zinc-400 hover:bg-blue-600 hover:text-zinc-100 dark:hover:text-zinc-100"
+                  className={`flex items-center justify-start gap-3 py-2 px-4 rounded-lg font-medium transition group 
+                    ${activeIcon === item.link
+                      ? "bg-blue-700 text-white dark:text-zinc-100"
+                      : "text-zinc-700 dark:text-zinc-400 hover:bg-blue-600 hover:text-zinc-100 dark:hover:text-zinc-100"
                     }`}
                 >
                   <span
-                    className={`text-xl ${
-                      activeIcon === item.link
-                        ? "text-zinc-100"
-                        : "text-zinc-700 dark:text-zinc-400 group-hover:text-white"
-                    }`}
+                    className={`text-xl ${activeIcon === item.link
+                      ? "text-zinc-100"
+                      : "text-zinc-700 dark:text-zinc-400 group-hover:text-white"
+                      }`}
                   >
                     {item.icon}
                   </span>
-                  <span className="-mb-2 text-lg">{item.title}</span>
+                  <span className="text-lg">{item.title}</span>
                   {item.link === "notifications" && (
                     <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 pt-1 rounded-full">
                       {notifications?.TotalUnSeenNotification}
