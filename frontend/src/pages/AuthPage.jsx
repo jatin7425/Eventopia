@@ -107,7 +107,7 @@ function AuthPage() {
               >
                 <form
                   onSubmit={handleSubmit}
-                  className="h-full flex flex-col text-zinc-600 dark:text-white w-full"
+                  className="h-full flex flex-col text-zinc-300 dark:text-white w-full"
                 >
                   {isSignPage && (
                     <>
@@ -122,8 +122,8 @@ function AuthPage() {
                             type="text"
                             value={fullName}
                             onChange={(e) => setFullname(e.target.value)}
-                            placeholder="Jassica ranvers"
-                            className="mb-6 py-2 px-3  rounded-md bg-transparent border-zinc-600 dark:border-white border-[1px]"
+                            placeholder="Full Name"
+                            className="mb-6 py-2 px-3 text-black rounded-md bg-transparent bg-white border-zinc-600 dark:border-white border-[1px]"
                           />
                         </div>
 
@@ -137,8 +137,8 @@ function AuthPage() {
                             type="text"
                             value={userName}
                             onChange={(e) => setUserName(e.target.value)}
-                            placeholder="Jass057"
-                            className="mb-6 py-2 px-3  rounded-md bg-transparent border-zinc-600 dark:border-white border-[1px]"
+                            placeholder="user.name"
+                            className="mb-6 py-2 px-3 text-black rounded-md bg-transparent bg-white border-zinc-600 dark:border-white border-[1px]"
                           />
                         </div>
                       </div>
@@ -176,7 +176,7 @@ function AuthPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="xyz@example.com"
-                      className="mb-6 py-2 px-3 rounded-md text-black border-zinc-600 dark:border-white border-[1px]"
+                      className="mb-6 py-2 px-3 rounded-md bg-white text-black border-zinc-600 dark:border-white border-[1px]"
                     />
 
                     {/* Password input */}
@@ -190,19 +190,19 @@ function AuthPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="******"
-                        className="w-full py-2 px-3 rounded-md bg-transparent border-zinc-600 dark:border-white border-[1px]"
+                        className="w-full py-2 px-3 rounded-md bg-transparent text-black bg-white border-zinc-600 dark:border-white border-[1px]"
                       />
                       {showPassword ? (
                         <GoEye
                           size={30}
                           onClick={() => setShowPassword(false)}
-                          className="absolute top-1/2 text-black -translate-y-1/2 right-3 cursor-pointer"
+                          className="absolute top-1/2  text-black -translate-y-1/2 right-3 cursor-pointer"
                         />
                       ) : (
                         <GoEyeClosed
                           size={30}
                           onClick={() => setShowPassword(true)}
-                          className="absolute top-1/2 text-black -translate-y-1/2 right-3 cursor-pointer"
+                          className="absolute top-1/2  text-black -translate-y-1/2 right-3 cursor-pointer"
                         />
                       )}
                     </div>
@@ -221,19 +221,19 @@ function AuthPage() {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           placeholder="******"
-                          className="w-full py-2 px-3 rounded-md bg-transparent border-zinc-600 dark:border-white border-[1px]"
+                          className="w-full py-2 px-3 rounded-md bg-transparent text-black bg-white border-zinc-600 dark:border-white border-[1px]"
                         />
                         {showPassword2 ? (
                           <GoEye
                             size={30}
                             onClick={() => setShowPassword2(false)}
-                            className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
+                            className="absolute top-1/2 text-black -translate-y-1/2 right-3 cursor-pointer"
                           />
                         ) : (
                           <GoEyeClosed
                             size={30}
                             onClick={() => setShowPassword2(true)}
-                            className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
+                            className="absolute top-1/2 text-black -translate-y-1/2 right-3 cursor-pointer"
                           />
                         )}
                       </div>
@@ -259,12 +259,16 @@ function AuthPage() {
                     </div>
 
                     {/* <!-- Forgot password link --> */}
-                    <a
-                      href="#!"
-                      className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
-                    >
-                      Forgot password
-                    </a>
+                    {!isSignPage ? (
+                      <a
+                        href="/forgetpasswordemail"
+                        className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
+                      >
+                        Forgot password
+                      </a>
+                    ) : (
+                      <></>
+                    )}
                   </div>
 
                   {/* <!-- Submit button --> */}

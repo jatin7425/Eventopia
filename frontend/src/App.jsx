@@ -17,6 +17,7 @@ import ContactUsPage from "./pages/ContactUsPage";
 import EventDetailsPage from "./component/Events/EventDetails/EventDetailsPage";
 import SelectEventPage from "./component/Events/EventDetails/SelectEventPage";
 import ProcessUrl from "./pages/ProcessUrl";
+import ForgetPassword from "./component/ForgetPassword/ForgetPasswordEmail";
 
 const App = () => {
   const locomotiveScroll = new LocomotiveScroll();
@@ -29,6 +30,7 @@ const App = () => {
     >
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/forgetpasswordemail" element={<ForgetPassword />} />
         <Route path="/user/:page" element={<ProfileDashboard />} />
         <Route path="/" element={<WelcomePage />} />
         <Route path="/eventSelection" element={<EventSelection />} />
