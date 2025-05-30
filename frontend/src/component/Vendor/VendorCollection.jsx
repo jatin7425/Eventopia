@@ -90,6 +90,7 @@ const VendorsCollection = () => {
             <option value="Food">Food</option>
             <option value="Decoration">Decoration</option>
             <option value="Hotel">Hotel</option>
+            <option value="Travel">Travel</option>
           </select>
         </div>
       </div>
@@ -127,14 +128,6 @@ const VendorsCollection = () => {
                   <BannerEditor text={vendor.ShopName} />
                 )}
               </div>
-
-              {/* <img
-                src={getProductImage(
-                  vendor?.ShopBanner || vendor?.ShopLogo || DefaultImg
-                )}
-                alt="Product"
-                className="w-full h-32 bg-zinc-300 text-black object-cover mt-2 rounded-lg" loading="lazy"
-              /> */}
 
               <p className="dark:text-zinc-400 text-zinc-600 mt-3">
                 Location: {vendor?.ShopLocation}

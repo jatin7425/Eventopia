@@ -43,7 +43,7 @@ const vendorSchema = new mongoose.Schema(
         ShopCategory: {
             type: String,
             required: true,
-            enum: ["Bakery", "Food", "Decoration", "Hotel", "Banquet Hall"],
+            enum: ["Bakery", "Food", "Decoration", "Hotel", "Travel"],
         },
         ShopLogo: {
             type: String,

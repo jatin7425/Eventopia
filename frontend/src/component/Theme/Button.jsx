@@ -56,7 +56,7 @@ export const ButtonBtmUp = ({
 
       {/* Text */}
       <span
-        className={`relative z-10 transition-colors ease-in-out duration-500 group-hover:${hoverTextColor} ${display} font-['Founders_Grotesk'] uppercase font-light leading-none text-[1rem] `}
+        className={`relative transition-colors ease-in-out duration-500 group-hover:${hoverTextColor} ${display} font-['Founders_Grotesk'] uppercase font-light leading-none text-[1rem] `}
       >
         {title}
       </span>

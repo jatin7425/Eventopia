@@ -9,267 +9,225 @@ import { axiosInstance } from "../../lib/axios";
 import { FaEdit, FaPlus, FaTimes, FaTimesCircle } from "react-icons/fa";
 import vendorDefaultBanner from "../../assets/vendorDefaultBanner.jpg";
 import vendorDefaultLogo from "../../assets/vendorDefaultLogo.jpg";
-import gsap from "gsap";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function VendorDashboard() {
-  const {
-    addVendor,
-    updateVendor,
-    deleteVendor,
-    isVendorLoading,
-    setIsVendorLoading,
-  } = useVendor();
   const { user } = useAuth();
   const { vendorId } = useParams();
-  
-  // Fetch a single vendor by ID
+  const { addVendor, updateVendor, deleteVendor, fetchVendorProducts } =
+    useVendor();
+
   const [vendorList, setVendorList] = useState([]);
+  const [vendor, setVendor] = useState(null);
+  const [currentVendor, setCurrentVendor] = useState(null);
+  const [openVendorList, setOpenVendorList] = useState(false);
+  const [openAddVendorForm, setOpenAddVendorForm] = useState(false);
+  const [openBannerForm, setOpenBannerForm] = useState(false);
+  const [hoveringOnBanner, setHoveringOnBanner] = useState(false);
 
-  const fetchVendorById = async (vendorId) => {
-    setIsVendorLoading(true);
-    try {
-      const res = await axiosInstance.get(`/vendor/getVendorById/${vendorId}`);
-      // console.log(res?.data?.Products)
-      setVendorList((prev) => [...prev, res?.data]);
-    } catch (error) {
-      console.error("Error fetching vendor", error);
-      toast.error("Failed to fetch vendor");
-    } finally {
-      setIsVendorLoading(false);
-    }
-  };
-
+  // Fetch vendor data
   useEffect(() => {
-    user?.vendorOwnerShip.forEach(async (vendorId) => {
-      await fetchVendorById(vendorId);
-    });
+    const fetchVendorById = async (vendorId) => {
+      try {
+        const res = await axiosInstance.get(
+          `/vendor/getVendorById/${vendorId}`
+        );
+        setVendorList((prev) => [...prev, res?.data]);
+      } catch (error) {
+        console.error("Error fetching vendor", error);
+        toast.error("Failed to fetch vendor");
+      }
+    };
+
+    if (user?.vendorOwnerShip?.length > 0) {
+      user.vendorOwnerShip.forEach((vendorId) => {
+        fetchVendorById(vendorId);
+      });
+    }
   }, [user]);
 
-  const [vendor, setVendor] = useState();
-  const [currentVendor, setCurrentVendor] = useState();
-
+  // Set current vendor
   useEffect(() => {
-    if (vendorId) {
-      const vendor = vendorList.find((vendor) => vendor.data._id === vendorId);
-      if (vendor) {
-        setVendor(vendor.data);
-        setCurrentVendor(vendorId);
+    if (vendorList.length > 0) {
+      if (vendorId) {
+        const foundVendor = vendorList.find((v) => v.data._id === vendorId);
+        if (foundVendor) {
+          setVendor(foundVendor.data);
+          setCurrentVendor(vendorId);
+        }
       } else {
         setVendor(vendorList[0]?.data);
         setCurrentVendor(vendorList[0]?.data?._id);
       }
-    } else {
-      setVendor(vendorList[0]?.data);
-      setCurrentVendor(vendorList[0]?.data?._id);
     }
-  }, [vendorList]);
+  }, [vendorList, vendorId]);
 
-  const [OpenAddVenderForm, setOpenAddVenderForm] = useState(false);
-  const handleOpenAddVenderForm = () =>
-    setOpenAddVenderForm(!OpenAddVenderForm);
-  if (user?.vendorOwnerShip?.length == 0) {
+  // No vendors case
+  if (user?.vendorOwnerShip?.length === 0) {
     return (
-      <div className="min-h-screen relative w-full dark:bg-[#1a1a1a] flex items-center justify-center dark:text-white p-6">
-        {OpenAddVenderForm && <AddVendorForm />}
-        <div className="flex flex-col gap-5 items-center justify-center">
-          <h1 className="text-3xl font-bold text-center">
-            It's seems like you don't have any shop online for service, sell
-            your services and products online, help people to manage their
-            events.
+      <div className="min-h-screen w-full dark:bg-[#1a1a1a] flex items-center justify-center p-6">
+        <AnimatePresence>
+          {openAddVendorForm && (
+            <AddVendorForm onClose={() => setOpenAddVendorForm(false)} />
+          )}
+        </AnimatePresence>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col gap-5 items-center text-center max-w-md"
+        >
+          <h1 className="text-3xl font-bold">
+            It seems like you don't have any shops yet
           </h1>
-          <p className="text-gray-400 text-center">
-            You haven't joined any vendors yet. Please join some to manage your
-            shop.
+          <p className="text-gray-400">
+            Start selling your products and services online by creating a shop.
           </p>
-          <button
-            onClick={handleOpenAddVenderForm}
-            className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg w-max"
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setOpenAddVendorForm(true)}
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
           >
-            Join a Vendor
-          </button>
-        </div>
+            Create Your First Shop
+          </motion.button>
+        </motion.div>
       </div>
     );
   }
 
-  const [openVenderList, setOpenVenderList] = useState(false);
-  const handleOpenVenderList = () => setOpenVenderList(!openVenderList);
-
-  const RenderVenderList = () => {
-    const listRef = useRef([]);
-    const vendorRefs = useRef([]);
-    
-    vendorList.forEach((vendors) => {
-      if (!listRef.current.some((v) => v.data._id === vendors.data._id)) {
-        listRef.current.push(vendors);
-      }
-    });
-    useEffect(() => {
-      // Animate each h1 element with a delay of 100ms
-      vendorRefs.current.forEach((ref, index) => {
-        gsap.fromTo(ref, { opacity: 0 }, { opacity: 1, delay: index * 0.15 });
-      });
-    }, [listRef.current]);
-
+  if (!vendor) {
     return (
-      <div className="h-[280px] flex flex-col gap-4 relative pl-2 ">
-        <div className="py-1 px-3">
-          <h1
-            onClick={handleOpenAddVenderForm}
-            className={`text-lg cursor-pointer text-white hover:text-blue-500 rounded font-['Gilroy'] `}
-          >
-            Create new Shop
-          </h1>
-        </div>
-        {listRef.current?.map((vendor, index) => (
-          <div className="h-fit w-full relative flex items-center justify-start  ">
-            <Link
-              to={`/user/myVendors/${vendor?.data?._id}`}
-              ref={(el) => (vendorRefs.current[index] = el)}
-              key={vendor?.data?._id || index} // Use unique ID if available
-              onClick={() => {
-                setVendor(vendorList[index]?.data);
-                setCurrentVendor(vendorList[index]?.data?._id);
-              }}
-              className=""
-            >
-              <span
-                className={` w-full py-5 px-3 cursor-pointer ${
-                  currentVendor === vendor?.data?._id
-                    ? "bg-blue-600 rounded-r-lg absolute h-6 w-[190px] -left-2 -top-[5px] z-[-10] "
-                    : ""
-                }`}
-              ></span>
-              <span
-                className={` text-lg cursor-pointer -ml-4 text-zinc-800 dark:text-zinc-100 font-['Gilroy'] ${
-                  currentVendor === vendor?.data?._id
-                    ? "pl-8 text-zinc-100  "
-                    : ""
-                }`}
-              >
-                {vendor?.data?.ShopName}
-              </span>
-            </Link>
-          </div>
-        ))}
+      <div className="min-h-screen dark:bg-[#1a1a1a] flex items-center justify-center">
+        Loading...
       </div>
     );
-  };
-
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    if (openVenderList) {
-      gsap.to(containerRef.current, {
-        duration: 0.3,
-        minWidth: "200px",
-        minHeight: "280px",
-        scaleY: 1,
-      });
-    } else {
-      gsap.to(containerRef.current, {
-        duration: 0.3,
-        minWidth: "0px",
-        minHeight: "0px",
-        scaleY: 1,
-      });
-    }
-  }, [openVenderList]);
-
-  const [openBannerForm, setOpenBannerForm] = useState(false);
-  const [HoveringOnBanner, setHoveringOnBanner] = useState(false);
-  const handleOpenBannerForm = () => setOpenBannerForm(!openBannerForm);
-  const handleHoverBanner = () => setHoveringOnBanner(!HoveringOnBanner);
+  }
 
   return (
     <div className="min-h-screen w-full dark:bg-[#1a1a1a] text-gray-600 bg-zinc-300 dark:text-white">
-      {OpenAddVenderForm && (
-        <AddVendorForm handleOpenAddVenderForm={handleOpenAddVenderForm} />
-      )}
-      <div className="flex items-center gap-5 sticky top-0 w-full bg-white dark:bg-zinc-800 px-6 py-4 z-10">
-        <div>
-          <h1 className="text-3xl font-bold capitalize max-sm:text-lg">
-            {vendor?.ShopName && `${vendor?.ShopName}'s`} Dashboard
-          </h1>
-          <p className="dark:text-gray-400 text-gray-500 max-sm:hidden">
-            Manage your shop, products, and services
-          </p>
-        </div>
-        <div
-          ref={containerRef}
-          className={`rounded-md border bg-white/80 backdrop-blur-sm dark:bg-zinc-800 border-gray-500 absolute right-5 top-8 z-[99]`}
-        >
-          <div
-            className="p-2 w-full cursor-pointer"
-            onClick={handleOpenVenderList}
-          >
-            <FaPlus
-              className={`${
-                openVenderList ? "rotate-45" : ""
-              } transition-all duration-100`}
-            />
+      <AnimatePresence>
+        {openAddVendorForm && (
+          <AddVendorForm onClose={() => setOpenAddVendorForm(false)} />
+        )}
+        {openBannerForm && (
+          <BannerForm
+            vendorId={vendor?._id}
+            onClose={() => setOpenBannerForm(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Header */}
+      <div className="sticky top-0 w-full bg-white dark:bg-zinc-800 px-6 py-4 z-10 shadow-sm">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold capitalize">
+              {vendor?.ShopName}'s Dashboard
+            </h1>
+            <p className="dark:text-gray-400 text-gray-500">
+              Manage your shop, products, and services
+            </p>
           </div>
 
-          <div
-            className={`${
-              openVenderList ? "" : "hidden"
-            } transition-all duration-300 pb-2 pr-2 max-h-96 h-max overflow-y-auto`}
-          >
-            <RenderVenderList />
-          </div>
+          <motion.div className="relative">
+            <button
+              onClick={() => setOpenVendorList(!openVendorList)}
+              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-700"
+            >
+              <FaPlus
+                className={`transition-transform ${
+                  openVendorList ? "rotate-45" : ""
+                }`}
+              />
+            </button>
+
+            <AnimatePresence>
+              {openVendorList && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="absolute right-0 mt-2 w-64 bg-white dark:bg-zinc-800 rounded-lg shadow-lg z-20 border border-gray-200 dark:border-zinc-700"
+                >
+                  <VendorList
+                    vendors={vendorList}
+                    currentVendor={currentVendor}
+                    onSelect={(vendor) => {
+                      setVendor(vendor.data);
+                      setCurrentVendor(vendor.data._id);
+                      setOpenVendorList(false);
+                    }}
+                    onCreateNew={() => {
+                      setOpenVendorList(false);
+                      setOpenAddVendorForm(true);
+                    }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </div>
       </div>
-      <div className={`relative `}>
-        <div className="flex items-center justify-center">
-          <div
-            onMouseEnter={handleHoverBanner}
-            onMouseLeave={handleHoverBanner}
-            className={`absolute top-0 left-0 w-full h-full ${
-              HoveringOnBanner && "bg-black/50"
-            } flex items-center justify-center`}
-          >
-            {HoveringOnBanner && (
-              <div
-                className="text-white bg-white/30 px-2 py-1 rounded-lg text-xl cursor-pointer m-2 whitespace-nowrap flex justify-center items-center gap-2"
-                onClick={handleOpenBannerForm}
-              >
-                <FaEdit /> Edit the banner
-              </div>
-            )}
-          </div>
 
+      {/* Banner Section */}
+      <div className="relative ">
+        <motion.div
+          onMouseEnter={() => setHoveringOnBanner(true)}
+          onMouseLeave={() => setHoveringOnBanner(false)}
+          className="relative"
+        >
           <img
             src={
               vendor?.ShopBanner
                 ? `${BASE_URL}${vendor?.ShopBanner}`
                 : vendorDefaultBanner
             }
-            alt="Shop Logo"
-            className="w-full max-sm:h-60 sm:aspect-3/1 object-cover"
+            alt="Shop Banner"
+            className="w-full h-64 object-cover"
             loading="lazy"
           />
-        </div>
-        {openBannerForm && (
-          <BannerForm
-            handleOpenBannerForm={handleOpenBannerForm}
-            vendorId={vendor?._id}
-          />
-        )}
-        <div className="p-4 dark:bg-zinc-800 bg-white  dark:text-white rounded-lg mt-6 sm:mx-6 mx-2 text-md max-md:text-sm max-sm:text-xs absolute sm:-bottom-4 -bottom-8 left-0 right-0">
+
+          <AnimatePresence>
+            {hoveringOnBanner && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/50 flex items-center justify-center"
+              >
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setOpenBannerForm(true)}
+                  className="flex items-center gap-2 text-white bg-white/30 px-4 py-2 rounded-lg"
+                >
+                  <FaEdit /> <span className="-mb-2">Edit Banner</span>
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Shop Info */}
+        <motion.div
+          className="p-4 dark:bg-zinc-800 bg-white "
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           <p>
             <strong>Email:</strong> {vendor?.ShopEmail}
           </p>
           <p>
             <strong>Phone:</strong> {vendor?.ShopPhone}
           </p>
-          <p className="max-sm:hidden">
+          <p>
             <strong>Description:</strong> {vendor?.ShopDescription}
           </p>
-        </div>
+        </motion.div>
       </div>
-      <br />
-      <br />
-      <div className="sm:p-6 p-2 pt-0">
+
+      {/* Main Content */}
+      <div className="">
         <VendorProductManager
           currentvendor={currentVendor}
           vendorProducts={vendor?.Products}
@@ -279,7 +237,38 @@ export default function VendorDashboard() {
   );
 }
 
-const AddVendorForm = ({ handleOpenAddVenderForm }) => {
+// Vendor List Component
+const VendorList = ({ vendors, currentVendor, onSelect, onCreateNew }) => {
+  return (
+    <div className="py-2">
+      <button
+        onClick={onCreateNew}
+        className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center gap-2"
+      >
+        <FaPlus /> <span className="-mb-[5px]">Create New Shop</span>
+      </button>
+
+      <div className="max-h-64 overflow-y-auto">
+        {vendors.map((vendor) => (
+          <button
+            key={vendor.data._id}
+            onClick={() => onSelect(vendor)}
+            className={`w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center ${
+              currentVendor === vendor.data._id
+                ? "bg-blue-100 dark:bg-blue-900"
+                : ""
+            }`}
+          >
+            {vendor.data.ShopName}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Add Vendor Form Component
+const AddVendorForm = ({ onClose }) => {
   const [step, setStep] = useState(1);
   const [shopCategory, setShopCategory] = useState("");
   const [formData, setFormData] = useState({
@@ -295,337 +284,295 @@ const AddVendorForm = ({ handleOpenAddVenderForm }) => {
   const { addVendor } = useVendor();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files ? files[0] : value,
+    });
   };
 
-  const handleCategoryChange = (e) => {
-    setShopCategory(e.target.value);
-  };
-
-  const handleNext = () => {
-    if (step < 3) {
-      setStep(step + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData, shopCategory);
-    addVendor({ formData, shopCategory });
-  };
-
-  const handleClose = () => {
-    handleOpenAddVenderForm();
+    try {
+      await addVendor({ formData, shopCategory });
+      toast.success("Shop created successfully!");
+      onClose();
+    } catch (error) {
+      toast.error("Failed to create shop");
+      console.error(error);
+    }
   };
 
   return (
-    <>
-      <div className="max-w-xl w-[90%] mx-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 bg-white/90 backdrop-blur-sm dark:bg-zinc-800 shadow-lg dark:shadow-white/10 rounded-lg mt-10 z-30">
-        <button onClick={handleClose} className="absolute top-4 right-4 p-2">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        className="relative bg-white dark:bg-zinc-800 rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-700"
+        >
           <FaTimes />
         </button>
-        <h1 className="text-3xl font-semibold text-center text-gray-700 dark:text-gray-200 mb-8">
-          Add Vendor
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-6 ">
-          {/* Step 1: Basic Shop Details */}
-          {step === 1 && (
-            <div>
-              <div className="grid grid-cols-1 gap-6">
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="ShopName"
-                    className="text-lg text-gray-600 dark:text-gray-300 "
-                  >
-                    Shop Name
-                  </label>
+
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Create New Shop
+          </h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Step 1 */}
+            {step === 1 && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="block mb-1">Shop Name</label>
                   <input
-                    id="ShopName"
                     name="ShopName"
-                    type="text"
                     value={formData.ShopName}
                     onChange={handleChange}
-                    className="px-3 py-3 outline-none rounded-md bg-zinc-700/20 "
-                    placeholder="Enter Shop Name"
+                    className="w-full p-2 border rounded dark:bg-zinc-700"
+                    required
                   />
                 </div>
-
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="ShopPhone"
-                    className="text-lg text-gray-600 dark:text-gray-300"
-                  >
-                    Shop Phone
-                  </label>
+                <div>
+                  <label className="block mb-1">Phone</label>
                   <input
-                    id="ShopPhone"
                     name="ShopPhone"
-                    type="tel"
                     value={formData.ShopPhone}
                     onChange={handleChange}
-                    className="px-3 py-3 outline-none rounded-md bg-zinc-700/20 "
-                    placeholder="Enter Phone Number"
+                    className="w-full p-2 border rounded dark:bg-zinc-700"
+                    required
                   />
                 </div>
-
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="ShopEmail"
-                    className="text-lg text-gray-600 dark:text-gray-300"
-                  >
-                    Shop Email
-                  </label>
+                <div>
+                  <label className="block mb-1">Email</label>
                   <input
-                    id="ShopEmail"
                     name="ShopEmail"
                     type="email"
                     value={formData.ShopEmail}
                     onChange={handleChange}
-                    className="px-3 py-3 outline-none rounded-md bg-zinc-700/20 "
-                    placeholder="Enter Email"
+                    className="w-full p-2 border rounded dark:bg-zinc-700"
+                    required
                   />
                 </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
 
-          {/* Step 2: Address & Description */}
-          {step === 2 && (
-            <div>
-              <div className="grid grid-cols-1 gap-6">
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="ShopAddress"
-                    className="text-lg text-gray-600 dark:text-gray-300"
-                  >
-                    Shop Address
-                  </label>
+            {/* Step 2 */}
+            {step === 2 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="block mb-1">Address</label>
                   <input
-                    id="ShopAddress"
                     name="ShopAddress"
-                    type="text"
                     value={formData.ShopAddress}
                     onChange={handleChange}
-                    className="px-3 py-3 outline-none rounded-md bg-zinc-700/20 "
-                    placeholder="Enter Address"
+                    className="w-full p-2 border rounded dark:bg-zinc-700"
+                    required
                   />
                 </div>
-
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="ShopDescription"
-                    className="text-lg text-gray-600 dark:text-gray-300"
-                  >
-                    Shop Description
-                  </label>
+                <div>
+                  <label className="block mb-1">Description</label>
                   <textarea
-                    id="ShopDescription"
                     name="ShopDescription"
                     value={formData.ShopDescription}
                     onChange={handleChange}
-                    className="px-3 py-3 outline-none rounded-md bg-zinc-700/20 "
-                    placeholder="Enter a description of your shop"
+                    className="w-full p-2 border rounded dark:bg-zinc-700"
+                    rows={3}
                   />
                 </div>
-
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="ShopLocation"
-                    className="text-lg text-gray-600 dark:text-gray-300"
-                  >
-                    Shop Location
-                  </label>
+                <div>
+                  <label className="block mb-1">Location</label>
                   <input
-                    id="ShopLocation"
                     name="ShopLocation"
-                    type="text"
                     value={formData.ShopLocation}
                     onChange={handleChange}
-                    className="px-3 py-3 outline-none rounded-md bg-zinc-700/20 "
-                    placeholder="Enter Location"
+                    className="w-full p-2 border rounded dark:bg-zinc-700"
                   />
                 </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
 
-          {/* Step 3: Category & Logo */}
-          {step === 3 && (
-            <div>
-              <div className="flex flex-col">
-                <label
-                  htmlFor="ShopCategory"
-                  className="text-lg text-gray-600 dark:text-gray-300"
-                >
-                  Shop Category
-                </label>
-                <select
-                  name="ShopCategory"
-                  value={shopCategory}
-                  onChange={handleCategoryChange}
-                  className="px-3 py-3 outline-none rounded-md bg-zinc-700/20 "
-                >
-                  <option value="">Select Category</option>
-                  <option value="bakery">Bakery</option>
-                  <option value="food">Food</option>
-                  <option value="decoration">Decoration</option>
-                  <option value="hotel">Hotel</option>
-                  <option value="banquet">Banquet Hall</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col mt-6">
-                <label
-                  htmlFor="ShopLogo"
-                  className="text-lg text-gray-600 dark:text-gray-300"
-                >
-                  Shop Logo
-                </label>
-                <input
-                  id="ShopLogo"
-                  name="ShopLogo"
-                  type="file"
-                  onChange={(e) =>
-                    setFormData({ ...formData, ShopLogo: e.target.files[0] })
-                  }
-                  className="px-3 py-3 outline-none rounded-md bg-zinc-700/20 "
-                />
-              </div>
-              {formData?.ShopLogo && (
-                <div className="flex flex-col mt-6">
-                  <img
-                    src={URL.createObjectURL(formData?.ShopLogo)}
-                    alt="Shop Logo"
-                    className="w-24 h-24 rounded-full object-cover"
-                    loading="lazy"
-                  />
+            {/* Step 3 */}
+            {step === 3 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="block mb-1">Category</label>
+                  <select
+                    value={shopCategory}
+                    onChange={(e) => setShopCategory(e.target.value)}
+                    className="w-full p-2 border rounded dark:bg-zinc-700"
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    <option value="bakery">Bakery</option>
+                    <option value="food">Food</option>
+                    <option value="decoration">Decoration</option>
+                    <option value="hotel">Hotel</option>
+                  </select>
                 </div>
+                <div>
+                  <label className="block mb-1">Logo</label>
+                  <input
+                    type="file"
+                    name="ShopLogo"
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded dark:bg-zinc-700"
+                  />
+                  {formData.ShopLogo && (
+                    <img
+                      src={URL.createObjectURL(formData.ShopLogo)}
+                      alt="Preview"
+                      className="mt-2 h-24 w-24 rounded-full object-cover"
+                    />
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            <div className="flex justify-between pt-4">
+              {step > 1 && (
+                <motion.button
+                  type="button"
+                  onClick={() => setStep(step - 1)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded"
+                >
+                  Back
+                </motion.button>
+              )}
+
+              {step < 3 ? (
+                <motion.button
+                  type="button"
+                  onClick={() => setStep(step + 1)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded ml-auto"
+                >
+                  Next
+                </motion.button>
+              ) : (
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded ml-auto"
+                >
+                  Create Shop
+                </motion.button>
               )}
             </div>
-          )}
-
-          {/* Pagination Controls */}
-          <div className="flex justify-between mt-6">
-            {step > 1 && (
-              <button
-                type="button"
-                onClick={handlePrev}
-                className="btn-secondary"
-              >
-                Previous
-              </button>
-            )}
-
-            {step < 3 ? (
-              <button
-                type="button"
-                onClick={handleNext}
-                className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 "
-              >
-                Next
-              </button>
-            ) : (
-              <button
-                type="submit"
-                className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 "
-              >
-                Submit
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
-      <div className="w-screen h-screen fixed top-0 left-0 z-20 bg-gray-500/10 backdrop-blur-lg"></div>
-    </>
+          </form>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
-const BannerForm = ({ handleOpenBannerForm, vendorId }) => {
-  const [formData, setFormData] = useState({
-    ShopBanner: null,
-  });
-
+// Banner Form Component
+const BannerForm = ({ vendorId, onClose }) => {
+  const [bannerFile, setBannerFile] = useState(null);
   const { addBannerToVendor } = useVendor();
 
-  const handleChange = (e) => {
-    const { name, type, files, value } = e.target;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!bannerFile) {
+      toast.error("Please select a banner image");
+      return;
+    }
 
-    if (type === "file") {
-      setFormData({ ...formData, [name]: files[0] }); // ✅ Store File object
-    } else {
-      setFormData({ ...formData, [name]: value });
+    const formData = new FormData();
+    formData.append("ShopBanner", bannerFile);
+
+    try {
+      await addBannerToVendor(vendorId, formData);
+      toast.success("Banner updated successfully!");
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update banner");
+      console.error(error);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData); // ✅ Now correctly logs file
-
-    // Convert formData to FormData object for upload
-    const data = new FormData();
-    data.append("ShopBanner", formData.ShopBanner);
-
-    addBannerToVendor(vendorId, data);
-  };
-
   return (
-    <>
-      <div className="max-w-xl w-[90%] mx-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 bg-white/90 backdrop-blur-sm dark:bg-zinc-800 shadow-xl rounded-lg mt-10 z-20">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        className="relative bg-white dark:bg-zinc-800 rounded-xl shadow-xl max-w-md w-full"
+      >
         <button
-          onClick={handleOpenBannerForm}
-          className="absolute top-4 right-4 p-2"
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-700"
         >
-          <FaTimesCircle size={20} />
+          <FaTimes />
         </button>
-        <h1 className="text-3xl font-semibold text-center text-gray-700 dark:text-gray-200 mb-8 ">
-          Add Banner
-        </h1>
-        {formData?.ShopBanner && (
-          <div className="flex flex-col mt-6">
-            <img
-              src={URL.createObjectURL(formData.ShopBanner)}
-              alt="Shop Banner"
-              className="w-full aspect-3/1 object-cover"
-              loading="lazy"
-            />
-          </div>
-        )}
-        <br />
-        <form
-          className="flex flex-col gap-6 justify-center items-center w-full"
-          onSubmit={handleSubmit}
-        >
-          <div className="flex flex-col">
-            <label
-              htmlFor="ShopBanner"
-              className="text-lg text-gray-600 dark:text-gray-300"
+
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-6 text-center">Update Banner</h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block mb-2">Select Banner Image</label>
+              <input
+                type="file"
+                onChange={(e) => setBannerFile(e.target.files[0])}
+                className="w-full p-2 border rounded dark:bg-zinc-700"
+                accept="image/*"
+              />
+            </div>
+
+            {bannerFile && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-4"
+              >
+                <label className="block mb-2">Preview</label>
+                <img
+                  src={URL.createObjectURL(bannerFile)}
+                  alt="Banner Preview"
+                  className="w-full h-40 object-cover rounded"
+                />
+              </motion.div>
+            )}
+
+            <motion.button
+              type="submit"
+              whileTap={{ scale: 0.95 }}
+              className="w-full py-2 bg-blue-600 text-white rounded mt-4"
             >
-              Shop Banner
-            </label>
-            <input
-              type="file"
-              id="ShopBanner"
-              onChange={handleChange}
-              name="ShopBanner"
-              className="px-3 py-3 outline-none rounded-md bg-zinc-700/20  w-full"
-            />
-          </div>
-          <button
-            type="submit"
-            className="px-6 py-3 bg-blue-600 rounded-md hover:bg-blue-700 "
-          >
-            Submit
-          </button>
-        </form>
-      </div>
-      <div className="w-screen h-screen fixed top-0 left-0 z-10 bg-gray-500/10 backdrop-blur-lg"></div>
-    </>
+              Update Banner
+            </motion.button>
+          </form>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };

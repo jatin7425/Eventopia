@@ -231,9 +231,6 @@ const EventManager = ({ }) => {
       <div className="min-h-56 h-[20vw] flex pb-4 md:mx-10 mx-5 text-5xl font-bold overflow-hidden">
         <motion.div
           className="relative text-sm min-h-24 w-full p-2 overflow-x-auto border-2 mt-5 border-gray-300 dark:border-zinc-600 rounded-lg  flex items-center justify-center overflow-hidden"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
         >
           <motion.div
             className={
@@ -253,7 +250,6 @@ const EventManager = ({ }) => {
                     ? "bg-zinc-200 dark:bg-zinc-800"
                     : "")
                 }
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{}}
                 onClick={(e) => {
