@@ -225,7 +225,7 @@ export const checkAuth = async (req, res) => {
             email: user.email,
             profilePicture: user.profilePicture,
             vendorOwnerShip: user.vendorOwnerShip,
-
+            address: user.address,
             event: events.map(event => ({
                 _id: event._id,
                 name: event.name,

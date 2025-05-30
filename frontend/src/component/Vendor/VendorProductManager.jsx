@@ -37,6 +37,7 @@ const Header = ({ searchTerm, setSearchTerm }) => {
 // ProductForm Component for adding/editing products including image URL
 const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   const { addProduct, updateProduct } = useVendor();
+  const [IsImageALink, setIsImageALink] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -45,6 +46,8 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
     image: null, // Changed from imageUrl to image
   });
   const [imagePreview, setImagePreview] = useState("");
+
+  const toggleIsImageALink = () => setIsImageALink(!IsImageALink)
 
   useEffect(() => {
     if (editingProduct) {
@@ -68,10 +71,16 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     if (type === "file") {
-      setFormData((prev) => ({
-        ...prev,
-        image: files[0],
-      }));
+      if (IsImageALink) {
+        setFormData((prev) => ({
+          ...prev,
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          image: files[0],
+        }));
+      }
       // Create preview URL
       setImagePreview(URL.createObjectURL(files[0]));
     } else {
@@ -114,24 +123,24 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           available: formData.available,
         };
 
-        // If there's a new image, process it with metadata
-        if (formData.image) {
-          const fileData = await processFile(formData.image);
-          updateData.image = {
-            data: fileData.base64,
-            metadata: {
-              filename: fileData.name,
-              contentType: fileData.type,
-              size: fileData.size,
-              lastModified: fileData.lastModified,
-            },
-          };
+        if (IsImageALink) {
+          if (formData.image) {
+            updateData.image = formData.image
+          }
+        } else {
+          if (formData.image) {
+            const fileData = await processFile(formData.image);
+            updateData.image = {
+              data: fileData.base64,
+              metadata: {
+                filename: fileData.name,
+                contentType: fileData.type,
+                size: fileData.size,
+                lastModified: fileData.lastModified,
+              },
+            };
+          }
         }
-
-        console.log("Update data being sent:", {
-          ...updateData,
-          image: updateData.image ? "base64_data_exists" : "no_image",
-        }); // Debug log without flooding console
 
         await updateProduct(currentvendor, editingProduct._id, updateData);
       } else {
@@ -141,13 +150,16 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           return;
         }
 
-        const fileData = await processFile(formData.image);
+        const fileData = ''
+        if (!IsImageALink) {
+          fileData = await processFile(formData.image);
+        }
         const productData = {
           name: formData.name,
           price: formData.price,
           description: formData.description,
           available: formData.available,
-          image: {
+          image: IsImageALink ? formData.image : {
             data: fileData.base64,
             metadata: {
               filename: fileData.name,
@@ -157,11 +169,6 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
             },
           },
         };
-
-        console.log("New product data being sent:", {
-          ...productData,
-          image: "base64_data_exists",
-        }); // Debug log without flooding console
 
         await addProduct(currentvendor, productData);
         setFormData({
@@ -213,13 +220,26 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           onChange={handleChange}
           className="p-2 rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none"
         />
-        <input
-          type="file"
-          name="image"
-          onChange={handleChange}
-          accept="image/*"
-          className="p-2 rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none"
-        />
+        <div className="rounded overflow-hidden dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white flex items-center">
+          <input
+            type="text"
+            name="image"
+            value={formData.image}
+            placeholder="https://example.com/image.png"
+            onChange={handleChange}
+            className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink? 'w-full p-2':'w-0 p-0 outline-none'}`}
+          />
+          <div className="h-full px-2 py-2 bg-blue-500 whitespace-nowrap cursor-pointer" onClick={toggleIsImageALink}>
+            {IsImageALink? "<< Upload file" : "Upload Link >>"}
+          </div>
+          <input
+            type="file"
+            name="image"
+            onChange={handleChange}
+            accept="image/*"
+            className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink? 'w-0':'w-full p-2'}`}
+          />
+        </div>
         <div className="flex flex-col gap-2">
           <label className="dark:text-white">
             {editingProduct
@@ -357,11 +377,10 @@ const ProductList = ({
           <button
             key={pageNum}
             onClick={() => onPageChange(pageNum)}
-            className={`mx-1 mt-5 px-3 py-1 rounded ${
-              currentPage === pageNum
-                ? "bg-blue-500 dark:bg-blue-600 text-white"
-                : "bg-gray-600"
-            }`}
+            className={`mx-1 mt-5 px-3 py-1 rounded ${currentPage === pageNum
+              ? "bg-blue-500 dark:bg-blue-600 text-white"
+              : "bg-gray-600"
+              }`}
           >
             {pageNum}
           </button>
@@ -434,11 +453,10 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
         <div className="relative flex items-center gap-1 py- bg-transparent rounded-lg max-sm:mt-8 mb-3 font-['Gilroy'] font-bold ">
           {/* Shop Button  */}
           <button
-            className={`relative px-4 py-2 rounded-md ${
-              shop
-                ? "text-white bg-blue-500 shadow-md"
-                : "text-gray-500 dark:text-gray-400 bg-transparent"
-            } transition-all duration-300`}
+            className={`relative px-4 py-2 rounded-md ${shop
+              ? "text-white bg-blue-500 shadow-md"
+              : "text-gray-500 dark:text-gray-400 bg-transparent"
+              } transition-all duration-300`}
             onClick={handleShop}
           >
             {shop ? (
@@ -454,11 +472,10 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
 
           {/* Manage Orders Button */}
           <button
-            className={`relative px-4 py-2 rounded-md ${
-              manageOrder
-                ? "text-white bg-blue-500 shadow-md"
-                : "text-gray-500 dark:text-gray-400 bg-transparent"
-            } transition-all duration-300`}
+            className={`relative px-4 py-2 rounded-md ${manageOrder
+              ? "text-white bg-blue-500 shadow-md"
+              : "text-gray-500 dark:text-gray-400 bg-transparent"
+              } transition-all duration-300`}
             onClick={handleManageOrder}
           >
             {manageOrder ? (
@@ -532,7 +549,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             exit={{ opacity: 0, y: -20 }}
             className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4 font-['Gilroy']"
           >
-            <VendorColaborator/>
+            <VendorColaborator />
           </motion.div>
         )}
       </main>

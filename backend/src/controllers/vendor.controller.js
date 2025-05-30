@@ -4,6 +4,7 @@ import Event from "../models/event.model.js";
 import mongoose from "mongoose";
 import path from 'path';
 import fs from 'fs';
+import axios from 'axios';
 import orderModel from "../models/order.model.js";
 
 
@@ -260,69 +261,87 @@ export const addBannerToVendor = async (req, res) => {
 
 // **Add a product to a vendor**
 export const addProductToVendor = async (req, res) => {
+    let newImagePath = null;
     try {
-        const { id } = req.params; // Vendor ID
+        const { id } = req.params;
         const { user } = req;
         const product = req.body;
 
         const vendor = await Vendor.findById(id);
-
         if (!vendor) {
-            // Delete uploaded file if vendor not found
             if (req.file) {
                 deleteOldImage(req.file.path);
             }
             return res.status(404).json({
                 success: false,
-                message: "Vendor not found",
+                message: "Vendor not found"
             });
         }
 
-        // Ensure the user is the owner or a collaborator
-        if (vendor.owner.toString() !== user._id.toString() && vendor.collaborators.toString() !== user._id.toString()) {
+        // Authorization
+        const isOwner = vendor.owner.toString() === user._id.toString();
+        const isCollaborator = vendor.collaborators.some(c =>
+            c.toString() === user._id.toString()
+        );
+        if (!isOwner && !isCollaborator) {
             return res.status(403).json({
                 success: false,
-                message: "You do not have permission to add a product to this vendor",
+                message: "You don't have permission to add products"
             });
         }
 
+        // Image validation
         if (!product.image) {
             return res.status(400).json({
                 success: false,
-                message: "Product image is required",
+                message: "Product image is required"
             });
         }
-        const { data } = product.image;
 
-        // Remove the data:image/xxx;base64, prefix
-        const base64Data = data.split(';base64,').pop();
+        let relativePath;
+        // Handle URL image
+        if (typeof product.image === 'string' && product.image.startsWith('http')) {
+            relativePath = product.image;
+        }
+        // Handle Base64 image
+        else if (typeof product.image === 'object' && product.image.data) {
+            const { data } = product.image;
+            const base64Data = data.split(';base64,').pop();
 
-        // Generate unique filename
-        const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
-        const relativePath = `/uploads/products/${uniqueFilename}`;
-        const fullPath = path.join(process.cwd(), 'public', relativePath);
+            const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+            relativePath = `/uploads/products/${uniqueFilename}`;
+            const fullPath = path.join(process.cwd(), 'public', relativePath);
+            newImagePath = fullPath;
 
-        // Ensure directory exists
-        const uploadDir = path.dirname(fullPath);
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
+            // Create directory if needed
+            const uploadDir = path.dirname(fullPath);
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            }
+
+            // Save image
+            fs.writeFileSync(fullPath, base64Data, { encoding: 'base64' });
+        }
+        else {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid image format. Use Base64 or URL"
+            });
         }
 
-        // Delete old image if exists
-        if (product.productImage) {
+        // Delete old image if exists (local only)
+        if (product.productImage && !product.productImage.startsWith('http')) {
             deleteOldImage(product.productImage);
         }
 
-        // Save new image
-        fs.writeFileSync(fullPath, base64Data, { encoding: 'base64' });
-
+        // Create new product
         const newProduct = {
             productName: product.name,
             productDescription: product.description,
             productPrice: product.price,
             productImage: relativePath,
             available: product.available,
-        }
+        };
 
         vendor.Products.push(newProduct);
         await vendor.save();
@@ -333,10 +352,15 @@ export const addProductToVendor = async (req, res) => {
             data: vendor,
         });
     } catch (error) {
-        // Delete uploaded file if error occurs
+        // Cleanup new image on error
+        if (newImagePath && fs.existsSync(newImagePath)) {
+            fs.unlinkSync(newImagePath);
+        }
+        // Cleanup middleware file
         if (req.file) {
             deleteOldImage(req.file.path);
         }
+
         res.status(400).json({
             success: false,
             message: "Error adding product",
@@ -375,89 +399,82 @@ export const getVendorProducts = async (req, res) => {
 
 // **Update a product**
 export const updateProduct = async (req, res) => {
+    let newImagePath = null;
     try {
         const { vendorId, productId } = req.params;
         const updateData = req.body;
         const userId = req.user._id;
 
-        // Find vendor and validate ownership
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
-            return res.status(404).json({ success: false, message: "Vendor not found" });
+            return res.status(404).json({
+                success: false,
+                message: "Vendor not found"
+            });
         }
 
-        // Find product
         const product = vendor.Products.id(productId);
         if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found" });
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            });
         }
 
-        // Check authorization
-        if (vendor.owner.toString() !== userId.toString()) {
-            return res.status(403).json({ success: false, message: "Unauthorized" });
+        // Authorization
+        const isOwner = vendor.owner.toString() === userId.toString();
+        const isCollaborator = vendor.collaborators.some(c =>
+            c.toString() === userId.toString()
+        );
+        if (!isOwner && !isCollaborator) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized"
+            });
         }
 
-        // Create update object
         const updateFields = {};
+        if (updateData.name) updateFields["Products.$.productName"] = updateData.name;
+        if (updateData.description) updateFields["Products.$.productDescription"] = updateData.description;
+        if (updateData.price) updateFields["Products.$.productPrice"] = updateData.price;
+        if (updateData.available !== undefined) updateFields["Products.$.available"] = updateData.available;
 
-        // Update basic fields if provided
-        if (updateData.name) {
-            updateFields["Products.$.productName"] = updateData.name;
-        };
-        if (updateData.description) {
-            updateFields["Products.$.productDescription"] = updateData.description;
-        };
-        if (updateData.price) {
-            updateFields["Products.$.productPrice"] = updateData.price;
-        };
-        if (updateData.available !== undefined) {
-            updateFields["Products.$.available"] = updateData.available;
-        };
-
-        // Handle image update if provided
-        if (updateData.image && updateData.image.data) {
-            try {
+        // Handle image update
+        if (updateData.image) {
+            // URL image
+            if (typeof updateData.image === 'string' && updateData.image.startsWith('http')) {
+                updateFields["Products.$.productImage"] = updateData.image;
+            }
+            // Base64 image
+            else if (typeof updateData.image === 'object' && updateData.image.data) {
                 const { data } = updateData.image;
                 const base64Data = data.split(';base64,').pop();
-                if (!base64Data || base64Data.includes('Image file not found')) {
-                    updateFields["Products.$.productImage"] = product.productImage;
-                } else {
-                    const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
-                    const relativePath = `/uploads/products/${uniqueFilename}`;
-                    const fullPath = path.join(process.cwd(), 'public', relativePath);
 
-                    const uploadDir = path.dirname(fullPath);
-                    if (!fs.existsSync(uploadDir)) {
-                        fs.mkdirSync(uploadDir, { recursive: true });
-                    }
+                const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+                const relativePath = `/uploads/products/${uniqueFilename}`;
+                const fullPath = path.join(process.cwd(), 'public', relativePath);
+                newImagePath = fullPath;
 
-                    // Delete old image
-                    if (product.productImage) {
-                        const oldImagePath = path.join(process.cwd(), 'public', product.productImage);
-                        if (fs.existsSync(oldImagePath)) {
-                            deleteOldImage(product.productImage);
-                        }
-                    }
-
-                    // Save new image
-                    fs.writeFileSync(fullPath, base64Data, { encoding: 'base64' });
-
-                    // Set new image path
-                    updateFields["Products.$.productImage"] = relativePath;
+                const uploadDir = path.dirname(fullPath);
+                if (!fs.existsSync(uploadDir)) {
+                    fs.mkdirSync(uploadDir, { recursive: true });
                 }
-            } catch (error) {
+
+                // Save new image
+                fs.writeFileSync(fullPath, base64Data, { encoding: 'base64' });
+                updateFields["Products.$.productImage"] = relativePath;
+            }
+            else {
                 return res.status(400).json({
                     success: false,
-                    message: "Error processing image",
-                    error: error.message
+                    message: "Invalid image format. Use Base64 or URL"
                 });
             }
         } else {
-            // No new image: explicitly retain the old image path
             updateFields["Products.$.productImage"] = product.productImage;
         }
 
-        // Update the product
+        // Perform update
         const updatedVendor = await Vendor.findOneAndUpdate(
             { _id: vendorId, "Products._id": productId },
             { $set: updateFields },
@@ -465,28 +482,41 @@ export const updateProduct = async (req, res) => {
         );
 
         if (!updatedVendor) {
+            // Cleanup if update failed
+            if (newImagePath && fs.existsSync(newImagePath)) {
+                fs.unlinkSync(newImagePath);
+            }
             return res.status(404).json({
                 success: false,
                 message: "Product update failed"
             });
         }
 
-        // Get the updated product
+        // Delete old image AFTER successful update (local only)
+        if (updateData.image && product.productImage && !product.productImage.startsWith('http')) {
+            deleteOldImage(product.productImage);
+        }
+
+        // Find updated product
         const updatedProduct = updatedVendor.Products.find(
             p => p._id.toString() === productId
         );
 
-        return res.status(200).json({
+        res.status(200).json({
             success: true,
             message: "Product updated successfully",
             data: updatedProduct
         });
 
     } catch (error) {
-        console.error("Error in updateProduct:", error);
-        return res.status(500).json({
+        // Cleanup new image on error
+        if (newImagePath && fs.existsSync(newImagePath)) {
+            fs.unlinkSync(newImagePath);
+        }
+
+        res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Internal server error",
             error: error.message
         });
     }

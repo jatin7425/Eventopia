@@ -24,7 +24,7 @@ const ProductCollection = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [showQuantityInput, setShowQuantityInput] = useState(false);
+  const [showQuantityInput, setShowQuantityInput] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [limit, setlimit] = useState(5);
   const BASE_URL = "http://127.0.0.1:3000";
@@ -49,9 +49,27 @@ const ProductCollection = () => {
     }
   };
 
-  const getProductImage = (image) => {
-    if (!image) return null;
-    return image.startsWith("data:image") ? image : `${BASE_URL}${image}`;
+  // Improved image handling function
+  const getImageUrl = (image) => {
+    if (!image) return DefaultImg;
+    
+    // Handle full URLs
+    if (image.startsWith("http://") || image.startsWith("https://")) {
+      return image;
+    }
+    
+    // Handle base64 images
+    if (image.startsWith("data:image")) {
+      return image;
+    }
+    
+    // Handle relative paths
+    if (image.startsWith("/")) {
+      return `${BASE_URL}${image}`;
+    }
+    
+    // Handle other cases
+    return `${BASE_URL}/${image}`;
   };
 
   const cardVariants2 = {
@@ -70,8 +88,18 @@ const ProductCollection = () => {
   const toggleQuantityInput = (productId) => {
     setShowQuantityInput((prev) => ({
       ...prev,
-      [productId]: !prev[productId], // Toggle only the clicked product
+      [productId]: !prev[productId],
     }));
+  };
+
+  const handleAddToCart = (productId) => {
+    addToCart(productId, quantity);
+    // Reset quantity input after adding
+    setShowQuantityInput((prev) => ({
+      ...prev,
+      [productId]: false,
+    }));
+    setQuantity(1);
   };
 
   return (
@@ -83,11 +111,10 @@ const ProductCollection = () => {
       <div className="px-20">
         {vendor && (
           <div className="mb-6 rounded-xl overflow-hidden shadow-lg relative">
-            {/* Banner with overlay */}
             <div className="relative h-60 w-full">
-              {getProductImage(vendor.ShopBanner) ? (
+              {vendor.ShopBanner ? (
                 <img
-                  src={getProductImage(vendor.ShopBanner)}
+                  src={getImageUrl(vendor.ShopBanner)}
                   alt="shop banner"
                   className="w-full h-full object-cover absolute inset-0"
                   loading="lazy"
@@ -101,7 +128,6 @@ const ProductCollection = () => {
               )}
             </div>
 
-            {/* Content */}
             <div className="relative px-6 pb-6 -mt-16 z-[20]">
               <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-md">
                 <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2">
@@ -181,13 +207,16 @@ const ProductCollection = () => {
               transition={{ duration: 0.3 }}
               className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col"
             >
-              {/* Product Image */}
               <div className="relative h-60 overflow-hidden border-b border-zinc-400 ">
                 <img
-                  src={getProductImage(product?.productImage) || DefaultImg}
+                  src={getImageUrl(product?.productImage)}
                   alt={product?.productName}
                   className="w-full h-full object-contain bg-zinc-400 text-black "
                   loading="lazy"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = DefaultImg;
+                  }}
                 />
                 {!product?.available && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -198,7 +227,6 @@ const ProductCollection = () => {
                 )}
               </div>
 
-              {/* Product Info */}
               <div className="p-4 flex-1 flex flex-col">
                 <div className="flex-1">
                   <h4 className="text-lg font-bold text-zinc-900 dark:text-white mb-1 line-clamp-2">
@@ -232,7 +260,6 @@ const ProductCollection = () => {
                     )}
                   </div>
 
-                  {/* Action Buttons */}
                   {product?.available ? (
                     showQuantityInput[product._id] ? (
                       <motion.div
@@ -246,12 +273,12 @@ const ProductCollection = () => {
                             type="number"
                             min="1"
                             value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
+                            onChange={(e) => setQuantity(Number(e.target.value))}
                             className="flex-1 p-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                           <button
                             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-                            onClick={() => addToCart(product._id, quantity)}
+                            onClick={() => handleAddToCart(product._id)}
                           >
                             Add
                           </button>
@@ -306,7 +333,6 @@ const ProductCollection = () => {
         </div>
 
         <div className="flex items-center justify-between ">
-          {/* Pagination Controls */}
           <div className="flex items-center justify-center my-10 gap-2">
             <button
               className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
@@ -327,30 +353,32 @@ const ProductCollection = () => {
             </button>
           </div>
 
-          {/* Custom Page Limit */}
           <div>
-            <form className="w-full flex justify-center items-center flex-col">
+            <div className="w-full flex justify-center items-center flex-col">
               <div>
                 <input
                   type="number"
                   name="limit"
                   id="limit"
                   placeholder="Custom Page Limit"
-                  max={totalPages > 15 ? 15 : totalPages}
+                  min="1"
+                  max="50"
                   value={limit}
                   onChange={(e) => {
-                    setlimit(Number(e.currentTarget.value));
+                    const value = Math.min(Math.max(Number(e.target.value), 1), 50);
+                    setlimit(value);
                   }}
                   className="m-auto inline-block bg-zinc-500/10 p-2 rounded-md"
                 />
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => setPage(1)}
                   className="bg-blue-500 text-white px-4 py-2 rounded ml-2"
                 >
                   Set
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
         <br />
