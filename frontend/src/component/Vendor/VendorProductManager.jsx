@@ -255,25 +255,30 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           />
         </div>
 
-        <div className="rounded overflow-hidden dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white flex items-center">
-          <input
-            type="text"
-            name="image"
-            value={formData.image}
-            placeholder="https://example.com/image.png"
-            onChange={handleChange}
-            className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink ? 'w-full p-2' : 'w-0 p-0 outline-none'}`}
-          />
-          <div className="h-full px-2 py-2 bg-blue-500 whitespace-nowrap cursor-pointer" onClick={toggleIsImageALink}>
-            {IsImageALink ? "<< Upload file" : "Upload Link >>"}
+        <div>
+          <label className="block text-sm font-medium mb-1 dark:text-gray-300">
+            Price
+          </label>
+          <div className={`rounded overflow-hidden dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white flex items-center h=max ${IsImageALink ? '' : 'p-[.4px]'}`}>
+            <input
+              type="text"
+              name="image"
+              value={formData.image}
+              placeholder="https://example.com/image.png"
+              onChange={handleChange}
+              className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink ? 'w-full p-2' : 'w-0 p-0'}`}
+            />
+            <div className="h-full px-3 py-2 flex items-center justify-center bg-blue-500 whitespace-nowrap cursor-pointer rounded-lg" onClick={toggleIsImageALink}>
+              {IsImageALink ? "<< Upload file" : "Upload Link >>"}
+            </div>
+            <input
+              type="file"
+              name="image"
+              onChange={handleChange}
+              accept="image/*"
+              className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink ? 'w-0' : 'w-full p-2'}`}
+            />
           </div>
-          <input
-            type="file"
-            name="image"
-            onChange={handleChange}
-            accept="image/*"
-            className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink ? 'w-0' : 'w-full p-2'}`}
-          />
         </div>
 
         {imagePreview && (
