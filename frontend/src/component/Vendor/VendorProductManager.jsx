@@ -423,14 +423,12 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
               <ProductForm
                 editingProduct={editingProduct}
                 onCancel={() => setEditingProduct(null)}
                 currentvendor={currentvendor}
               />
-
+              <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
               <ProductList
                 products={vendorProducts}
                 onEdit={setEditingProduct}
