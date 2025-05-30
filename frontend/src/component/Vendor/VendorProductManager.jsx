@@ -35,6 +35,7 @@ const Header = ({ searchTerm, setSearchTerm }) => {
 // ProductForm Component
 const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   const { addProduct, updateProduct } = useVendor();
+  const [IsImageALink, setIsImageALink] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -45,7 +46,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   const [imagePreview, setImagePreview] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const hello = hello
+  const toggleIsImageALink = () => setIsImageALink(!IsImageALink)
 
   useEffect(() => {
     if (editingProduct) {
@@ -71,13 +72,19 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-
     if (type === "file") {
-      const file = files[0];
-      if (file) {
-        setFormData((prev) => ({ ...prev, image: file }));
-        setImagePreview(URL.createObjectURL(file));
+      if (IsImageALink) {
+        setFormData((prev) => ({
+          ...prev,
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          image: files[0],
+        }));
       }
+      // Create preview URL
+      setImagePreview(URL.createObjectURL(files[0]));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -104,25 +111,28 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
 
-    setIsSubmitting(true);
+    // Function to get file metadata and base64
+    const processFile = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const fileData = {
+            base64: reader.result,
+            type: file.type,
+            name: file.name,
+            size: file.size,
+            lastModified: file.lastModified,
+          };
+          resolve(fileData);
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
+    };
 
     try {
-      const processFile = (file) => {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () =>
-            resolve({
-              base64: reader.result,
-              type: file.type,
-              name: file.name,
-              size: file.size,
-            });
-          reader.readAsDataURL(file);
-        });
-      };
-
+      // If editing product
       if (editingProduct) {
         const updateData = {
           name: formData.name,
@@ -131,41 +141,54 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           available: formData.available,
         };
 
-        if (formData.image) {
-          const fileData = await processFile(formData.image);
-          updateData.image = {
-            data: fileData.base64,
-            metadata: {
-              filename: fileData.name,
-              contentType: fileData.type,
-              size: fileData.size,
-            },
-          };
+        if (IsImageALink) {
+          if (formData.image) {
+            updateData.image = formData.image
+          }
+        } else {
+          if (formData.image) {
+            const fileData = await processFile(formData.image);
+            updateData.image = {
+              data: fileData.base64,
+              metadata: {
+                filename: fileData.name,
+                contentType: fileData.type,
+                size: fileData.size,
+                lastModified: fileData.lastModified,
+              },
+            };
+          }
         }
 
         await updateProduct(currentvendor, editingProduct._id, updateData);
-        toast.success("Product updated successfully");
       } else {
-        const fileData = await processFile(formData.image);
+        // For new product
+        if (!formData.image) {
+          toast.error("Please select an image");
+          return;
+        }
+
+        const fileData = ''
+        if (!IsImageALink) {
+          fileData = await processFile(formData.image);
+        }
         const productData = {
           name: formData.name,
           price: formData.price,
           description: formData.description,
           available: formData.available,
-          image: {
+          image: IsImageALink ? formData.image : {
             data: fileData.base64,
             metadata: {
               filename: fileData.name,
               contentType: fileData.type,
               size: fileData.size,
+              lastModified: fileData.lastModified,
             },
           },
         };
 
         await addProduct(currentvendor, productData);
-        toast.success("Product added successfully");
-
-        // Reset form only for new products
         setFormData({
           name: "",
           price: "",
@@ -175,13 +198,9 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
         });
         setImagePreview("");
       }
-
-      setEditingProduct(null);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error in handleSubmit:", error);
       toast.error("Failed to process product");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -236,17 +255,24 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1 dark:text-gray-300">
-            {editingProduct ? "Update Image (optional)" : "Product Image"}
-          </label>
+        <div className="rounded overflow-hidden dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white flex items-center">
+          <input
+            type="text"
+            name="image"
+            value={formData.image}
+            placeholder="https://example.com/image.png"
+            onChange={handleChange}
+            className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink ? 'w-full p-2' : 'w-0 p-0 outline-none'}`}
+          />
+          <div className="h-full px-2 py-2 bg-blue-500 whitespace-nowrap cursor-pointer" onClick={toggleIsImageALink}>
+            {IsImageALink ? "<< Upload file" : "Upload Link >>"}
+          </div>
           <input
             type="file"
             name="image"
             onChange={handleChange}
             accept="image/*"
-            className="w-full p-2 rounded-lg border dark:border-zinc-700 dark:bg-zinc-700 bg-zinc-100"
-            required={!editingProduct}
+            className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink ? 'w-0' : 'w-full p-2'}`}
           />
         </div>
 
@@ -283,8 +309,8 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
             {isSubmitting
               ? "Processing..."
               : editingProduct
-              ? "Update Product"
-              : "Add Product"}
+                ? "Update Product"
+                : "Add Product"}
           </button>
 
           {editingProduct && (
@@ -357,11 +383,10 @@ const ProductList = ({
             <button
               key={i + 1}
               onClick={() => onPageChange(i + 1)}
-              className={`px-4 py-2 rounded-md ${
-                currentPage === i + 1
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 dark:bg-zinc-700 dark:text-gray-300"
-              }`}
+              className={`px-4 py-2 rounded-md ${currentPage === i + 1
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 dark:bg-zinc-700 dark:text-gray-300"
+                }`}
             >
               {i + 1}
             </button>
@@ -404,11 +429,10 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center px-4 py-2 rounded-t-lg mr-2 transition ${
-                activeTab === tab.id
-                  ? "bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-medium"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700"
-              }`}
+              className={`flex items-center px-4 py-2 rounded-t-lg mr-2 transition ${activeTab === tab.id
+                ? "bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-medium"
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700"
+                }`}
             >
               {tab.icon}
               <span className="-mb-2">{tab.label}</span>
