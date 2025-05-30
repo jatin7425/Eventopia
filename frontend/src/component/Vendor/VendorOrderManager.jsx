@@ -105,9 +105,9 @@ const VendorOrderManager = ({ vendorId }) => {
   };
 
   return (
-    <div className="p-4">
+    <div className=" ">
       <motion.h2
-        className="text-2xl font-bold mb-6 text-white"
+        className="text-2xl font-bold mb-6 text-black dark:text-white"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -120,7 +120,7 @@ const VendorOrderManager = ({ vendorId }) => {
         <div className="hidden md:flex gap-4 h-[60vh]">
           {/* Events List - Always visible on desktop */}
           <motion.div
-            className="dark:bg-zinc-800 w-1/2 rounded-lg overflow-y-auto shadow-lg"
+            className="dark:bg-zinc-800 bg-white w-1/2 rounded-lg overflow-y-auto"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, type: "spring" }}
@@ -131,12 +131,11 @@ const VendorOrderManager = ({ vendorId }) => {
                   <motion.div
                     key={event.eventID}
                     onClick={() => handleSelectedEvent(event)}
-                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={`${
                       selectedEvent?.eventID === event.eventID
                         ? "bg-white dark:bg-zinc-700 ring-2 ring-blue-500"
-                        : "bg-white dark:bg-zinc-800 hover:bg-zinc-750"
+                        : "bg-white dark:bg-zinc-800 "
                     } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     layout
                   >
@@ -175,7 +174,7 @@ const VendorOrderManager = ({ vendorId }) => {
 
           {/* Orders Panel - Always visible on desktop */}
           <motion.div
-            className="dark:bg-zinc-800 w-1/2 rounded-lg overflow-y-auto shadow-lg"
+            className="dark:bg-zinc-800 w-1/2 rounded-lg overflow-y-auto "
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, type: "spring", delay: 0.1 }}
@@ -209,7 +208,7 @@ const VendorOrderManager = ({ vendorId }) => {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3 }}
-                          className="dark:bg-zinc-700 p-4 rounded-lg shadow border border-zinc-600"
+                          className="dark:bg-zinc-700 p-4 rounded-lg border border-zinc-600"
                           whileHover={{ scale: 1.01 }}
                         >
                           <div className="flex justify-between items-start">
@@ -333,7 +332,7 @@ const VendorOrderManager = ({ vendorId }) => {
           <AnimatePresence>
             {showEventList && (
               <motion.div
-                className="dark:bg-zinc-800 rounded-lg overflow-y-auto shadow-lg mb-4"
+                className="dark:bg-zinc-800 rounded-lg overflow-y-auto mb-4"
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
@@ -349,7 +348,7 @@ const VendorOrderManager = ({ vendorId }) => {
                       className={`${
                         selectedEvent?.eventID === event.eventID
                           ? "dark:bg-zinc-700 ring-2 ring-blue-500"
-                          : "dark:bg-zinc-800 hover:bg-zinc-750"
+                          : "dark:bg-zinc-800 hover:bg-zinc-700"
                       } cursor-pointer p-4 rounded-lg transition-all duration-200 border border-zinc-700`}
                     >
                       <h3 className="text-lg font-semibold text-white">
@@ -394,7 +393,7 @@ const VendorOrderManager = ({ vendorId }) => {
           <AnimatePresence>
             {showOrderPanel && selectedEvent && (
               <motion.div
-                className="dark:bg-zinc-800 rounded-lg overflow-y-auto shadow-lg max-h-[75vh]"
+                className="dark:bg-zinc-800 rounded-lg overflow-y-auto max-h-[75vh]"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
@@ -431,7 +430,7 @@ const VendorOrderManager = ({ vendorId }) => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="bg-zinc-700 p-4 rounded-lg shadow border border-zinc-600"
+                      className="bg-zinc-700 p-4 rounded-lg border border-zinc-600"
                     >
                       <div className="flex justify-between items-start">
                         <div>
@@ -500,7 +499,7 @@ const VendorOrderManager = ({ vendorId }) => {
         <AnimatePresence>
           {selectedEvent && (
             <motion.div
-              className="dark:bg-zinc-800 rounded-lg p-6 shadow-lg border border-zinc-700"
+              className="dark:bg-zinc-800 rounded-lg p-6 border border-zinc-700"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}

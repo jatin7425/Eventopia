@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { VendorProductCard } from "../ComponentsUtils/ProductCard";
 import { motion } from "framer-motion";
 import VendorOrderManager from "./VendorOrderManager";
+import { MoveLeft, MoveRight } from "lucide-react";
 
 // Header Component
 const Header = ({ searchTerm, setSearchTerm }) => {
@@ -35,7 +36,7 @@ const Header = ({ searchTerm, setSearchTerm }) => {
 // ProductForm Component
 const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   const { addProduct, updateProduct } = useVendor();
-  const [IsImageALink, setIsImageALink] = useState(false)
+  const [IsImageALink, setIsImageALink] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -46,7 +47,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   const [imagePreview, setImagePreview] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const toggleIsImageALink = () => setIsImageALink(!IsImageALink)
+  const toggleIsImageALink = () => setIsImageALink(!IsImageALink);
 
   useEffect(() => {
     if (editingProduct) {
@@ -143,7 +144,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
 
         if (IsImageALink) {
           if (formData.image) {
-            updateData.image = formData.image
+            updateData.image = formData.image;
           }
         } else {
           if (formData.image) {
@@ -168,7 +169,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           return;
         }
 
-        const fileData = ''
+        const fileData = "";
         if (!IsImageALink) {
           fileData = await processFile(formData.image);
         }
@@ -177,15 +178,17 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           price: formData.price,
           description: formData.description,
           available: formData.available,
-          image: IsImageALink ? formData.image : {
-            data: fileData.base64,
-            metadata: {
-              filename: fileData.name,
-              contentType: fileData.type,
-              size: fileData.size,
-              lastModified: fileData.lastModified,
-            },
-          },
+          image: IsImageALink
+            ? formData.image
+            : {
+                data: fileData.base64,
+                metadata: {
+                  filename: fileData.name,
+                  contentType: fileData.type,
+                  size: fileData.size,
+                  lastModified: fileData.lastModified,
+                },
+              },
         };
 
         await addProduct(currentvendor, productData);
@@ -237,7 +240,7 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full p-2 rounded-lg border dark:border-zinc-700 dark:bg-zinc-700 bg-zinc-100"
+            className="w-full p-2 resize-none rounded-lg border dark:border-zinc-700 dark:bg-zinc-700 bg-zinc-100"
           />
         </div>
 
@@ -255,28 +258,44 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
           />
         </div>
 
-        <div>
+        <div className="overflow-hidden">
           <label className="block text-sm font-medium mb-1 dark:text-gray-300">
             Price
           </label>
-          <div className={`rounded overflow-hidden dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white flex items-center h=max ${IsImageALink ? '' : 'p-[.4px]'}`}>
+          <div
+            className={`rounded overflow-hidden dark:bg-zinc-800 text-gray-600 bg-zinc-200 dark:text-white flex items-center h=max ${
+              IsImageALink ? "" : "p-[.4px]"
+            }`}
+          >
             <input
               type="text"
               name="image"
               value={formData.image}
               placeholder="https://example.com/image.png"
               onChange={handleChange}
-              className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink ? 'w-full p-2' : 'w-0 p-0'}`}
+              className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none transition-all duration-300 ease-linear ${
+                IsImageALink ? "w-full p-2" : "w-0 opacity-0 p-0"
+              }`}
             />
-            <div className="h-full px-3 py-2 flex items-center justify-center bg-blue-500 whitespace-nowrap cursor-pointer rounded-lg" onClick={toggleIsImageALink}>
-              {IsImageALink ? "<< Upload file" : "Upload Link >>"}
+
+            <div
+              className="h-full px-3 py-2 flex items-center justify-center bg-blue-500 whitespace-nowrap cursor-pointer rounded-md"
+              onClick={toggleIsImageALink}
+            >
+              <span className="flex items-center gap-2 ">
+                {IsImageALink ? <MoveLeft /> : <MoveRight />}{" "}
+                <span className="-mb-[5px]">{IsImageALink ? " Upload file" : "Upload Link "}</span>
+              </span>
             </div>
+
             <input
               type="file"
               name="image"
               onChange={handleChange}
               accept="image/*"
-              className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink ? 'w-0' : 'w-full p-2'}`}
+              className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${
+                IsImageALink ? "w-0" : "w-full p-2"
+              }`}
             />
           </div>
         </div>
@@ -314,8 +333,8 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
             {isSubmitting
               ? "Processing..."
               : editingProduct
-                ? "Update Product"
-                : "Add Product"}
+              ? "Update Product"
+              : "Add Product"}
           </button>
 
           {editingProduct && (
@@ -364,7 +383,7 @@ const ProductList = ({
   }
 
   return (
-    <div className="mt-6">
+    <div className="my-6">
       <h2 className="text-2xl font-bold mb-4 dark:text-white">Your Products</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -388,10 +407,11 @@ const ProductList = ({
             <button
               key={i + 1}
               onClick={() => onPageChange(i + 1)}
-              className={`px-4 py-2 rounded-md ${currentPage === i + 1
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 dark:bg-zinc-700 dark:text-gray-300"
-                }`}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === i + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 dark:bg-zinc-700 dark:text-gray-300"
+              }`}
             >
               {i + 1}
             </button>
@@ -426,7 +446,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-zinc-900 p-4 md:p-6">
+    <div className="min-h-screen bg-white dark:bg-zinc-900 ">
       <div className="max-w-7xl mx-auto">
         {/* Navigation Tabs */}
         <div className="flex overflow-x-auto pb-2 mb-6 scrollbar-hide">
@@ -434,10 +454,11 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center px-4 py-2 rounded-t-lg mr-2 transition ${activeTab === tab.id
-                ? "bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-medium"
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700"
-                }`}
+              className={`flex items-center px-4 py-2 rounded-t-lg mr-2 transition ${
+                activeTab === tab.id
+                  ? "bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-medium"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700"
+              }`}
             >
               {tab.icon}
               <span className="-mb-2">{tab.label}</span>
@@ -446,7 +467,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
         </div>
 
         {/* Content Area */}
-        <div className=" rounded-lg shadow-md">
+        <div className=" rounded-lg ">
           {/* Shop Tab */}
           {activeTab === "shop" && (
             <motion.div

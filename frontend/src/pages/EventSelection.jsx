@@ -67,13 +67,6 @@ const EventSelection = () => {
       img: business,
       alt: "Business Event",
     },
-    {
-      category: "Concert",
-      title:
-        "Elevated Live Concert – Comprehensive Concert Planning & Operations",
-      img: travel,
-      alt: "Travel Event",
-    },
   ];
 
   const handleShowCreateEventForm = () => {

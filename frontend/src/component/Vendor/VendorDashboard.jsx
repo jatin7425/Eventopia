@@ -104,7 +104,7 @@ export default function VendorDashboard() {
   }
 
   return (
-    <div className="min-h-screen w-full dark:bg-[#1a1a1a] text-gray-600 bg-zinc-300 dark:text-white">
+    <div className="min-h-screen w-full dark:bg-[#1a1a1a] text-gray-600 bg-white dark:text-white">
       <AnimatePresence>
         {openAddVendorForm && (
           <AddVendorForm onClose={() => setOpenAddVendorForm(false)} />
