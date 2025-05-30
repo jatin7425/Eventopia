@@ -26,12 +26,12 @@ export const VendorProductCard = ({
   return (
     <div className="md:max-w-xs xs:max-w-full xs:h-fit md:h-full xs:flex md:flex-col min-w-72 w-full h-full rounded-lg overflow-hidden shadow-lg m-4 relative bg-white dark:bg-[#333333] dark:shadow-zinc-700">
       <div className="relative">
-        <div className="absolute flex flex-col gap-2 top-2 right-2 p-2 bg-black/10 text-white rounded-2xl">
-          <button className="bg-black/10 rounded-full p-2" onClick={Edit}>
+        <div className="absolute flex flex-col gap-2 top-2 right-2 p-2 bg-black/30 text-white rounded-2xl">
+          <button className="bg-black/20 rounded-full p-2" onClick={Edit}>
             <FaEdit />
           </button>
 
-          <button className="bg-black/10 rounded-full p-2" onClick={destroy}>
+          <button className="bg-black/20 rounded-full p-2" onClick={destroy}>
             <RiDeleteBin6Line />
           </button>
         </div>
