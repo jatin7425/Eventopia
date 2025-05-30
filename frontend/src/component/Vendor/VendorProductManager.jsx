@@ -1,12 +1,23 @@
 // VendorProductManager.js
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaUserFriends, FaHome, FaHamburger } from "react-icons/fa";
+import {
+  FaSearch,
+  FaUserFriends,
+  FaHamburger,
+  FaPizzaSlice,
+  FaHome,
+  FaStar,
+} from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
 import { useVendor } from "../../store/vendorContext";
 import toast from "react-hot-toast";
 import { VendorProductCard } from "../ComponentsUtils/ProductCard";
+import { ButtonBtmUp } from "../Theme/Button";
 import { motion } from "framer-motion";
 import VendorOrderManager from "./VendorOrderManager";
+import VendorColaborator from "../Colaborator/VendorColaborator";
 
+// Header Component
 const Header = ({ searchTerm, setSearchTerm }) => {
   return (
     <header className="dark:bg-zinc-800 bg-zinc-100 text-gray-600 dark:text-white shadow-md p-4 rounded-lg mb-4">
@@ -24,12 +35,8 @@ const Header = ({ searchTerm, setSearchTerm }) => {
   );
 };
 
-const ProductForm = ({
-  editingProduct,
-  onCancel,
-  currentvendor,
-  onSuccess,
-}) => {
+// ProductForm Component
+const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
   const { addProduct, updateProduct } = useVendor();
   const [formData, setFormData] = useState({
     name: "",
@@ -52,20 +59,16 @@ const ProductForm = ({
       });
       setImagePreview(editingProduct.productImage || "");
     } else {
-      resetForm();
+      setFormData({
+        name: "",
+        price: "",
+        description: "",
+        available: true,
+        image: null,
+      });
+      setImagePreview("");
     }
   }, [editingProduct]);
-
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      price: "",
-      description: "",
-      available: true,
-      image: null,
-    });
-    setImagePreview("");
-  };
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -143,7 +146,6 @@ const ProductForm = ({
 
         await updateProduct(currentvendor, editingProduct._id, updateData);
         toast.success("Product updated successfully");
-        onSuccess();
       } else {
         const fileData = await processFile(formData.image);
         const productData = {
@@ -163,9 +165,19 @@ const ProductForm = ({
 
         await addProduct(currentvendor, productData);
         toast.success("Product added successfully");
-        resetForm();
-        onSuccess();
+
+        // Reset form only for new products
+        setFormData({
+          name: "",
+          price: "",
+          description: "",
+          available: true,
+          image: null,
+        });
+        setImagePreview("");
       }
+
+      setEditingProduct(null);
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to process product");
@@ -267,7 +279,7 @@ const ProductForm = ({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition disabled:opacity-50"
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
           >
             {isSubmitting
               ? "Processing..."
@@ -291,6 +303,7 @@ const ProductForm = ({
   );
 };
 
+// ProductList Component
 const ProductList = ({
   products,
   onEdit,
@@ -360,35 +373,22 @@ const ProductList = ({
   );
 };
 
+// Main Component
 const VendorProductManager = ({ currentvendor, vendorProducts }) => {
-  const { deleteProduct, fetchVendorProducts } = useVendor();
+  const { deleteProduct } = useVendor();
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeTab, setActiveTab] = useState("shop");
-  const [refreshKey, setRefreshKey] = useState(0);
   const itemsPerPage = 6;
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState("shop");
 
   const handleDeleteProduct = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       await deleteProduct(currentvendor, id);
       toast.success("Product deleted successfully");
-      refreshProducts();
     }
-  };
-
-  const refreshProducts = async () => {
-    try {
-      await fetchVendorProducts(currentvendor);
-      setRefreshKey((prev) => prev + 1);
-    } catch (error) {
-      console.error("Error refreshing products:", error);
-    }
-  };
-
-  const handleFormSuccess = () => {
-    setEditingProduct(null);
-    refreshProducts();
   };
 
   const tabs = [
@@ -397,13 +397,10 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
   ];
 
   return (
-    <div
-      className="min-h-screen bg-gray-100 dark:bg-zinc-900 p-4 md:p-6"
-      key={refreshKey}
-    >
+    <div className="min-h-screen bg-gray-100 dark:bg-zinc-900 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Navigation Tabs */}
-        <div className="flex overflow-x-auto pb-2  scrollbar-hide">
+        <div className="flex overflow-x-auto pb-2 scrollbar-hide">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -421,7 +418,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
         </div>
 
         {/* Content Area */}
-        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md p-4 md:p-6">
+        <div className=" rounded-lg shadow-md">
           {/* Shop Tab */}
           {activeTab === "shop" && (
             <motion.div
@@ -435,7 +432,6 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
                 editingProduct={editingProduct}
                 onCancel={() => setEditingProduct(null)}
                 currentvendor={currentvendor}
-                onSuccess={handleFormSuccess}
               />
 
               <ProductList
