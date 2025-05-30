@@ -227,7 +227,7 @@ export default function VendorDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="">
+      <div className="p-6">
         <VendorProductManager
           currentvendor={currentVendor}
           vendorProducts={vendor?.Products}

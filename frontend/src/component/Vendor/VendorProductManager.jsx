@@ -14,7 +14,6 @@ import { VendorProductCard } from "../ComponentsUtils/ProductCard";
 import { ButtonBtmUp } from "../Theme/Button";
 import { motion } from "framer-motion";
 import VendorOrderManager from "./VendorOrderManager";
-import VendorColaborator from "../Colaborator/VendorColaborator";
 
 // Header Component for product manager
 const Header = ({ searchTerm, setSearchTerm }) => {
