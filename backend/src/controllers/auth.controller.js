@@ -217,6 +217,8 @@ export const checkAuth = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         const events = await Event.find({ _id: { $in: user.event } });
+                
+        const pendingEvents = events.filter((event) => event.status === "Pending");
 
         const UserWithEvents = {
             _id: user._id,
@@ -225,7 +227,7 @@ export const checkAuth = async (req, res) => {
             email: user.email,
             profilePicture: user.profilePicture,
             vendorOwnerShip: user.vendorOwnerShip,
-            address: user.address,
+
             event: events.map(event => ({
                 _id: event._id,
                 name: event.name,

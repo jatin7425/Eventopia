@@ -5,9 +5,9 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../store/auth";
 import { motion } from "framer-motion";
 
-const ProfileSetting = ({ userData }) => {
-  const { updateprofile, resetPassword } = useAuth();
-  // console.log(userData)
+const ProfileSetting = () => {
+  const { updateprofile, resetPassword, userdata, user } = useAuth();
+  // console.log(user)
   // States for Password Reset Tab (case 2)
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -22,18 +22,24 @@ const ProfileSetting = ({ userData }) => {
   const [postcode, setPostcode] = useState("");
   const [country, setCountry] = useState("");
 
-  // Update state when userData is available/changed
   useEffect(() => {
-    if (userData) {
-      setFullName(userData.fullName || "");
-      setPhone(userData.contact || "");
-      setEmail(userData.email || "");
-      setCity(userData?.address?.[0]?.city || "");
-      setStateField(userData?.address?.[0]?.state || "");
-      setPostcode(userData?.address?.[0]?.pincode || "");
-      setCountry(userData?.address?.[0]?.country || "");
+    userdata();
+  }, []);
+
+  // console.log(user)
+
+  // Update state when user is available/changed
+  useEffect(() => {
+    if (user) {
+      setFullName(user.fullName || "");
+      setPhone(user.contact || "");
+      setEmail(user.email || "");
+      setCity(user?.address?.[0]?.city || "");
+      setStateField(user?.address?.[0]?.state || "");
+      setPostcode(user?.address?.[0]?.pincode || "");
+      setCountry(user?.address?.[0]?.country || "");
     }
-  }, [userData]);
+  }, [user]);
 
   // Password field handlers
   const handleOldPasswordChange = (e) => {
@@ -60,7 +66,7 @@ const ProfileSetting = ({ userData }) => {
 
     // Perform your password update logic here
     resetPassword(oldPassword, newPassword);
-    
+
     // Reset password fields if needed
     setOldPassword("");
     setNewPassword("");
@@ -329,7 +335,7 @@ const ProfileSetting = ({ userData }) => {
                       Full Name
                     </th>
                     <td className="w-full xs:px-10 p-2 max-xs:bg-zinc-400/10 rounded-md">
-                      {userData?.fullName || "loading..."}
+                      {user?.fullName || "loading..."}
                     </td>
                   </tr>
                   <tr className="w-full max-xs:flex max-xs:flex-col">
@@ -337,7 +343,7 @@ const ProfileSetting = ({ userData }) => {
                       Username
                     </th>
                     <td className="w-full xs:px-10 p-2 max-xs:bg-zinc-400/10 rounded-md">
-                      {userData?.userName || "loading..."}
+                      {user?.userName || "loading..."}
                     </td>
                   </tr>
                   <tr className="w-full max-xs:flex max-xs:flex-col">
@@ -345,7 +351,7 @@ const ProfileSetting = ({ userData }) => {
                       Email
                     </th>
                     <td className="w-full xs:px-10 p-2 max-xs:bg-zinc-400/10 rounded-md">
-                      {userData?.email || "loading..."}
+                      {user?.email || "loading..."}
                     </td>
                   </tr>
                   <tr className="w-full max-xs:flex max-xs:flex-col">
@@ -353,7 +359,7 @@ const ProfileSetting = ({ userData }) => {
                       Phone Number
                     </th>
                     <td className="w-full xs:px-10 p-2 max-xs:bg-zinc-400/10 rounded-md">
-                      {userData?.contact || "loading..."}
+                      {user?.contact || "loading..."}
                     </td>
                   </tr>
                 </table>
@@ -365,7 +371,7 @@ const ProfileSetting = ({ userData }) => {
                   <tr className="w-full">
                     <th className="text-start w-max whitespace-nowrap">City</th>
                     <td className="w-full px-10">
-                      {userData?.address?.[0]?.city || "loading..."}
+                      {user?.address?.[0]?.city || "loading..."}
                     </td>
                   </tr>
                   <tr className="w-full">
@@ -373,7 +379,7 @@ const ProfileSetting = ({ userData }) => {
                       State
                     </th>
                     <td className="w-full px-10">
-                      {userData?.address?.[0]?.state || "loading..."}
+                      {user?.address?.[0]?.state || "loading..."}
                     </td>
                   </tr>
                   <tr className="w-full">
@@ -381,7 +387,7 @@ const ProfileSetting = ({ userData }) => {
                       Pin Code
                     </th>
                     <td className="w-full px-10">
-                      {userData?.address?.[0]?.pincode || "loading..."}
+                      {user?.address?.[0]?.pincode || "loading..."}
                     </td>
                   </tr>
                   <tr className="w-full">
@@ -389,7 +395,7 @@ const ProfileSetting = ({ userData }) => {
                       Country
                     </th>
                     <td className="w-full px-10">
-                      {userData?.address?.[0]?.country || "loading..."}
+                      {user?.address?.[0]?.country || "loading..."}
                     </td>
                   </tr>
                 </table>
@@ -418,6 +424,8 @@ const ProfileSetting = ({ userData }) => {
     }
   };
 
+  console.log(user)
+
   return (
     <div className="w-full h-full bg-zinc-100 dark:bg-[#1a1a1a] flex flex-col items-center justify-center overflow-y-auto">
       {/* Main Content */}
@@ -430,7 +438,7 @@ const ProfileSetting = ({ userData }) => {
           <div className="text-center flex flex-col items-center justify-center">
             <div className="relative size-28 rounded-full bg-red-500 flex items-center justify-center">
               <img
-                src={userData?.profilePicture}
+                src={user?.profilePicture}
                 alt="User Avatar"
                 className="w-full aspect-square object-cover mx-auto rounded-full border-4 border-white shadow-lg"
                 loading="lazy"
@@ -439,9 +447,9 @@ const ProfileSetting = ({ userData }) => {
                 <FaCamera />
               </button>
             </div>
-            <h2 className="mt-4 text-xl font-semibold">{userData?.fullName}</h2>
+            <h2 className="mt-4 text-xl font-semibold">{user?.fullName}</h2>
             <p className="text-md -mb-1 text-zinc-400">
-              User Name: {userData?.userName}
+              User Name: {user?.userName}
             </p>
           </div>
           <div className="mt-6 space-y-4 text-md -mb-1 w-full">
@@ -450,7 +458,7 @@ const ProfileSetting = ({ userData }) => {
                 Event Organised
               </span>
               <span className="font-bold text-zinc-500 dark:text-zinc-300">
-                32
+                {user?.totalEvents}
               </span>
             </div>
             <div className="flex justify-between">
@@ -458,13 +466,7 @@ const ProfileSetting = ({ userData }) => {
                 Pending Events
               </span>
               <span className="font-bold  text-zinc-500 dark:text-zinc-300">
-                26
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-black/70 dark:text-zinc-300">Coins</span>
-              <span className="font-bold  text-zinc-500 dark:text-zinc-300">
-                6
+                {user?.totalPendingEvents}
               </span>
             </div>
           </div>

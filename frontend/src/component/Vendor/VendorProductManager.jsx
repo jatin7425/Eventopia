@@ -3,17 +3,14 @@ import React, { useState, useEffect } from "react";
 import {
   FaSearch,
   FaHamburger,
-  FaPizzaSlice,
   FaHome,
-  FaStar,
 } from "react-icons/fa";
-import { FiLogOut } from "react-icons/fi";
 import { useVendor } from "../../store/vendorContext";
 import toast from "react-hot-toast";
 import { VendorProductCard } from "../ComponentsUtils/ProductCard";
-import { ButtonBtmUp } from "../Theme/Button";
 import { motion } from "framer-motion";
 import VendorOrderManager from "./VendorOrderManager";
+import { SquarePen } from "lucide-react";
 
 // Header Component for product manager
 const Header = ({ searchTerm, setSearchTerm }) => {
@@ -185,108 +182,120 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
     }
   };
 
+const [formOpen, setFormOpen] = useState(false)
+
+const handleFormOpen = ()=>{
+  setFormOpen(!formOpen)
+}
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="dark:bg-zinc-800 bg-white shadow-md p-4 rounded-lg mt-4 font-['Gilroy']"
+      className="bg-white dark:bg-zinc-800 shadow-md rounded-lg p-4 mb-6"
     >
-      <h2 className="text-lg font-semibold mb-2 dark:text-white">
+      <h2 className="text-xl font-bold mb-4 dark:text-white cursor-pointer" onClick={handleFormOpen}>
         {editingProduct ? "Edit Product" : "Add New Product"}
+        <SquarePen className="" />
       </h2>
-      <div className="flex flex-col gap-2">
-        <input
-          type="text"
-          name="name"
-          placeholder="Product Name"
-          value={formData.name}
-          onChange={handleChange}
-          className="p-2 rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none"
-        />
-        <textarea
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          cols={30}
-          className="p-2 rounded resize-none dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none"
-        />
-        <input
-          type="text"
-          name="price"
-          placeholder="Price (e.g., ₹19.99)"
-          value={formData.price}
-          onChange={handleChange}
-          className="p-2 rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none"
-        />
-        <div className="rounded overflow-hidden dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white flex items-center">
+
+      <div className="grid gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1 dark:text-gray-300">
+            Product Name
+          </label>
           <input
             type="text"
-            name="image"
-            value={formData.image}
-            placeholder="https://example.com/image.png"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
-            className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink? 'w-full p-2':'w-0 p-0 outline-none'}`}
+            className="w-full p-2 rounded-lg border dark:border-zinc-700 dark:bg-zinc-700 bg-zinc-100"
+            required
           />
-          <div className="h-full px-2 py-2 bg-blue-500 whitespace-nowrap cursor-pointer" onClick={toggleIsImageALink}>
-            {IsImageALink? "<< Upload file" : "Upload Link >>"}
-          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1 dark:text-gray-300">
+            Description
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows={3}
+            className="w-full p-2 rounded-lg border dark:border-zinc-700 dark:bg-zinc-700 bg-zinc-100"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1 dark:text-gray-300">
+            Price
+          </label>
+          <input
+            type="text"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            className="w-full p-2 rounded-lg border dark:border-zinc-700 dark:bg-zinc-700 bg-zinc-100"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1 dark:text-gray-300">
+            {editingProduct ? "Update Image (optional)" : "Product Image"}
+          </label>
           <input
             type="file"
             name="image"
             onChange={handleChange}
             accept="image/*"
-            className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none ${IsImageALink? 'w-0':'w-full p-2'}`}
+            className="w-full p-2 rounded-lg border dark:border-zinc-700 dark:bg-zinc-700 bg-zinc-100"
+            required={!editingProduct}
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <label className="dark:text-white">
-            {editingProduct
-              ? "Don't upload new image, if you want to update the image, click on the update button"
-              : ""}
-          </label>
-          <label className="dark:text-white">Product Image Preview:</label>
-          {imagePreview && (
+
+        {imagePreview && (
+          <div className="mt-2">
+            <label className="block text-sm font-medium mb-1 dark:text-gray-300">
+              Image Preview
+            </label>
             <img
               src={imagePreview}
-              alt="Product preview"
-              className="w-32 h-32 object-cover rounded mt-2"
-              loading="lazy"
+              alt="Preview"
+              className="h-32 object-contain rounded-lg border dark:border-zinc-700"
             />
-          )}
-        </div>
-        <div className="flex items-center gap-2">
+          </div>
+        )}
+
+        <div className="flex items-center">
           <input
             type="checkbox"
             name="available"
             checked={formData.available}
             onChange={handleChange}
-            className="accent-red-500"
+            className="h-4 w-4 text-blue-600 rounded"
           />
-          <label className="dark:text-white">Available</label>
+          <label className="ml-2 text-sm dark:text-gray-300">Available</label>
         </div>
-        <div className="flex gap-2">
-          <button type="submit" className="flex-1">
-            <ButtonBtmUp
-              title={editingProduct ? "Update +" : "Add +"}
-              bgColor="bg-blue-600"
-              textColor="text-white"
-              hoverBgColor="bg-blue-700"
-              hoverTextColor="text-white"
-              rounded="rounded-lg"
-              w="w-full"
-              h="h-10"
-              p="px-4 "
-              display="max-md:hidden"
-              displayTitle2="md:hidden"
-              title2="+"
-            />{" "}
+
+        <div className="flex gap-3 mt-2">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
+          >
+            {isSubmitting
+              ? "Processing..."
+              : editingProduct
+              ? "Update Product"
+              : "Add Product"}
           </button>
+
           {editingProduct && (
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 bg-red-500 text-white p-2 rounded"
+              className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition"
             >
               Cancel
             </button>

@@ -34,8 +34,8 @@ export default function VendorDashboard() {
         );
         setVendorList((prev) => [...prev, res?.data]);
       } catch (error) {
-        console.error("Error fetching vendor", error);
-        toast.error("Failed to fetch vendor");
+        // console.error("Error fetching vendor", error);
+        // toast.error("Failed to fetch vendor");
       }
     };
 
@@ -239,6 +239,12 @@ export default function VendorDashboard() {
 
 // Vendor List Component
 const VendorList = ({ vendors, currentVendor, onSelect, onCreateNew }) => {
+  
+  const uniqueVendors = vendors.filter(
+    (vendor, index, self) =>
+      index === self.findIndex((v) => v.data._id === vendor.data._id)
+  );
+
   return (
     <div className="py-2">
       <button
@@ -249,7 +255,7 @@ const VendorList = ({ vendors, currentVendor, onSelect, onCreateNew }) => {
       </button>
 
       <div className="max-h-64 overflow-y-auto">
-        {vendors.map((vendor) => (
+        {uniqueVendors.map((vendor) => (
           <button
             key={vendor.data._id}
             onClick={() => onSelect(vendor)}

@@ -1,21 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
-import { FaCoins } from "react-icons/fa";
 import { IoMdNotifications } from "react-icons/io";
 import { FaShop } from "react-icons/fa6";
 import { BsCalendar4Event } from "react-icons/bs";
 import { CgCross, CgHome, CgProfile } from "react-icons/cg";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { useAuth } from "../store/auth";
-import { MdOutlineEventNote } from "react-icons/md";
-import { BsFillCalendarDateFill } from "react-icons/bs";
 import { ThemeToggle } from "../component/Theme/ToggleTheme";
 import ProfileSetting from "../component/ProfileOption/ProfileSetting";
 import NotificationPage from "../component/Notiffications/NotificationPage";
 import { ButtonBtmUp } from "../component/Theme/Button";
 import EventManager from "../component/Events/EventManager";
-import SubscriptionAds from "../component/ComponentsUtils/SubscriptionAds";
 import { Menu } from "lucide-react";
-import VendorProductsComponent from "../component/Vendor/VendorProductsComponent";
 import VendorDashboard from "../component/Vendor/VendorDashboard";
 import { useNotification } from "../store/notificationContext";
 
@@ -33,7 +28,7 @@ const ProfileDashboard = () => {
   const renderCurrentPage = (currentPage) => {
     switch (currentPage) {
       case "profile":
-        return <ProfileSetting userData={user} />;
+        return <ProfileSetting />;
       case "notifications":
         return <NotificationPage />;
       case "home":
@@ -49,7 +44,7 @@ const ProfileDashboard = () => {
       case "myVendors":
         return <VendorDashboard />;
       default:
-        return <ProfileSetting userData={user} />;
+        return <ProfileSetting />;
     }
   };
 
