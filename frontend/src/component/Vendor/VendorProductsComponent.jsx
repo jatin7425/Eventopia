@@ -235,7 +235,7 @@ const VendorProductsComponent = ({ cart }) => {
   return (
     <div className="flex h-fit bg-white dark:bg-[#1a1a1a] min-h-screen text-white">
       <main className="xl:w-3/5 w-full  p-8 flex flex-col gap-6 overflow-y-auto">
-        <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        
 
         <div className="w-full h-full">
           <CartCard cart={cart} />

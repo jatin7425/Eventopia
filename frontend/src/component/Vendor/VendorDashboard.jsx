@@ -210,9 +210,6 @@ export default function VendorDashboard() {
         {/* Shop Info */}
         <motion.div
           className="p-4 dark:bg-zinc-800 bg-white "
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
         >
           <p>
             <strong>Email:</strong> {vendor?.ShopEmail}

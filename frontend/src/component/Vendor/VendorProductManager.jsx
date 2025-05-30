@@ -18,7 +18,7 @@ import { MoveLeft, MoveRight } from "lucide-react";
 // Header Component
 const Header = ({ searchTerm, setSearchTerm }) => {
   return (
-    <header className="dark:bg-zinc-800 bg-zinc-100 text-gray-600 dark:text-white shadow-md p-4 rounded-lg mb-4">
+    <header className="dark:bg-zinc-800 bg-zinc-100 text-gray-600 dark:text-white shadow-md p-4 rounded-lg mb-4 font-['Gilroy'] ">
       <div className="flex items-center space-x-2">
         <FaSearch className="text-gray-400" />
         <input
@@ -273,8 +273,8 @@ const ProductForm = ({ editingProduct, onCancel, currentvendor }) => {
               value={formData.image}
               placeholder="https://example.com/image.png"
               onChange={handleChange}
-              className={`rounded dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none transition-all duration-300 ease-linear ${
-                IsImageALink ? "w-full p-2" : "w-0 opacity-0 p-0"
+              className={`rounded h-full dark:bg-zinc-700 text-gray-600 bg-zinc-200 dark:text-white outline-none transition-all duration-300 ease-linear ${
+                IsImageALink ? "w-full  p-2" : "w-0 opacity-0 p-0"
               }`}
             />
 
