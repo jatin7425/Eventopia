@@ -10,6 +10,7 @@ import { FaEdit, FaPlus, FaTimes, FaTimesCircle } from "react-icons/fa";
 import vendorDefaultBanner from "../../assets/vendorDefaultBanner.jpg";
 import vendorDefaultLogo from "../../assets/vendorDefaultLogo.jpg";
 import gsap from "gsap";
+import { motion } from "framer-motion";
 
 export default function VendorDashboard() {
   const {
@@ -114,17 +115,17 @@ export default function VendorDashboard() {
     }, [listRef.current]);
 
     return (
-      <div className="h-[280px] flex flex-col gap-4 relative pl-2 ">
-        <div className="py-1 px-3">
+      <div className="h-full flex flex-col relative items-center ">
+        <div className="border-y border-gray-300 w-full">
           <h1
             onClick={handleOpenAddVenderForm}
-            className={`text-lg cursor-pointer text-white hover:text-blue-500 rounded font-['Gilroy'] `}
+            className={`text-lg cursor-pointer text-white hover:bg-blue-600 rounded font-['Gilroy'] py-3 px-3 flex items-center gap-2 `}
           >
-            Create new Shop
+            <FaPlus /> Create new Shop
           </h1>
         </div>
         {listRef.current?.map((vendor, index) => (
-          <div className="h-fit w-full relative flex items-center justify-start  ">
+          <div className="h-fit w-full relative flex items-center px-3 py-2 ">
             <Link
               to={`/user/myVendors/${vendor?.data?._id}`}
               ref={(el) => (vendorRefs.current[index] = el)}
@@ -133,24 +134,9 @@ export default function VendorDashboard() {
                 setVendor(vendorList[index]?.data);
                 setCurrentVendor(vendorList[index]?.data?._id);
               }}
-              className=""
+              className="text-xl hover:bg-blue-600 rounded-md w-full px-3 py-1"
             >
-              <span
-                className={` w-full py-5 px-3 cursor-pointer ${
-                  currentVendor === vendor?.data?._id
-                    ? "bg-blue-600 rounded-r-lg absolute h-6 w-[190px] -left-2 -top-[5px] z-[-10] "
-                    : ""
-                }`}
-              ></span>
-              <span
-                className={` text-lg cursor-pointer -ml-4 text-zinc-800 dark:text-zinc-100 font-['Gilroy'] ${
-                  currentVendor === vendor?.data?._id
-                    ? "pl-8 text-zinc-100  "
-                    : ""
-                }`}
-              >
-                {vendor?.data?.ShopName}
-              </span>
+              <span className="-mb-2">{vendor?.data?.ShopName}</span>
             </Link>
           </div>
         ))}
@@ -165,7 +151,7 @@ export default function VendorDashboard() {
       gsap.to(containerRef.current, {
         duration: 0.3,
         minWidth: "200px",
-        minHeight: "280px",
+        minHeight: "200",
         scaleY: 1,
       });
     } else {
@@ -212,13 +198,13 @@ export default function VendorDashboard() {
             />
           </div>
 
-          <div
+          <motion.div
             className={`${
               openVenderList ? "" : "hidden"
-            } transition-all duration-300 pb-2 pr-2 max-h-96 h-max overflow-y-auto`}
+            } transition-all duration-300 max-h-96 h-max overflow-y-auto`}
           >
             <RenderVenderList />
-          </div>
+          </motion.div>
         </div>
       </div>
       <div className={`relative `}>

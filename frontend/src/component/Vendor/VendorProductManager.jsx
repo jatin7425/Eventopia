@@ -8,14 +8,11 @@ import {
   FaHome,
   FaStar,
 } from "react-icons/fa";
-import { FiLogOut } from "react-icons/fi";
 import { useVendor } from "../../store/vendorContext";
 import toast from "react-hot-toast";
 import { VendorProductCard } from "../ComponentsUtils/ProductCard";
-import { ButtonBtmUp } from "../Theme/Button";
 import { motion } from "framer-motion";
 import VendorOrderManager from "./VendorOrderManager";
-import VendorColaborator from "../Colaborator/VendorColaborator";
 
 // Header Component
 const Header = ({ searchTerm, setSearchTerm }) => {
@@ -400,7 +397,7 @@ const VendorProductManager = ({ currentvendor, vendorProducts }) => {
     <div className="min-h-screen bg-gray-100 dark:bg-zinc-900 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Navigation Tabs */}
-        <div className="flex overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex overflow-x-auto pb-2 mb-6 scrollbar-hide">
           {tabs.map((tab) => (
             <button
               key={tab.id}

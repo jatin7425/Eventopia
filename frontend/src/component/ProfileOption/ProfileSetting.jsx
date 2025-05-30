@@ -160,11 +160,6 @@ const ProfileSetting = ({ userData }) => {
                   value={confirmNewPassword}
                 />
               </div>
-              <div className="w-full p-1">
-                <Link to={"/resetPassword"} className="text-blue-600">
-                  Forgot Password
-                </Link>
-              </div>
               <div className="w-full p-2">
                 <button
                   type="submit"
@@ -425,14 +420,6 @@ const ProfileSetting = ({ userData }) => {
 
   return (
     <div className="w-full h-full bg-zinc-100 dark:bg-[#1a1a1a] flex flex-col items-center justify-center overflow-y-auto">
-      {/* Header / Cover Section */}
-      <div className="relative flex items-center bg-zinc-400 dark:bg-zinc-700 w-full h-28 md:h-[20vmin]">
-        <button className="absolute top-4 right-4 bg-white dark:bg-blue-600 dark:text-zinc-200 text-zinc-700 py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition">
-          <FaCamera className="inline-block mr-2 relative" />
-          Change Cover
-        </button>
-      </div>
-
       {/* Main Content */}
       <div
         className="md:flex justify-around gap-4 max-md:p-4 p-3 w-full flex-col md:flex-row bg-white dark:bg-[#1a1a1a] rounded-lg h-max"
