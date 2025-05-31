@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useEvent } from "../../store/eventContext";
 import { BASE_URL } from "../../config/urls";
+import { ArrowLeft } from "lucide-react";
 
 const MyOrders = ({ eventId }) => {
   const { getOrdered, OrderedProduct } = useEvent();
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [IsVendorSelected, setIsVendorSelected] = useState(false);
   const [uniqueVendors, setUniqueVendors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const toggleIsVendorSelected = () => setIsVendorSelected(!IsVendorSelected)
 
   useEffect(() => {
     if (eventId) {
@@ -79,36 +83,11 @@ const MyOrders = ({ eventId }) => {
             </h2>
             <p className="text-zinc-600 dark:text-zinc-300">
               {selectedVendor
-                ? `Viewing orders from ${
-                    uniqueVendors.find((v) => v.id === selectedVendor)?.name ||
-                    "vendor"
-                  }`
+                ? `Viewing orders from ${uniqueVendors.find((v) => v.id === selectedVendor)?.name ||
+                "vendor"
+                }`
                 : "All your orders in one place"}
             </p>
-          </div>
-
-          <div className="relative w-full md:w-64 mt-4 md:mt-0">
-            <input
-              type="text"
-              placeholder="Search orders..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <svg
-              className="absolute left-3 top-2.5 h-5 w-5 text-zinc-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
           </div>
         </div>
 
@@ -117,20 +96,19 @@ const MyOrders = ({ eventId }) => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 max-h-full ">
+          <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 max-h-full relative">
             {/* Vendor List */}
-            <div className="w-full lg:w-1/4 h-full bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col ">
+            <div className={`w-full lg:w-1/4 h-full bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col ${IsVendorSelected && 'max-lg:hidden'} `}>
               <div className="flex justify-between items-center mb-4 sticky top-0 dark:bg-zinc-800 bg-white rounded-xl p-4">
                 <h3 className="text-lg font-semibold text-zinc-800 dark:text-white">
                   Vendors
                 </h3>
                 <button
-                  onClick={() => setSelectedVendor(null)}
-                  className={`text-sm px-3 py-1 rounded-full ${
-                    !selectedVendor
-                      ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                      : "hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                  }`}
+                  onClick={() => { setSelectedVendor(null); toggleIsVendorSelected() }}
+                  className={`text-sm px-3 py-1 rounded-full ${!selectedVendor
+                    ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                    : "hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                    }`}
                 >
                   All
                 </button>
@@ -142,12 +120,11 @@ const MyOrders = ({ eventId }) => {
                     {uniqueVendors.map((vendor) => (
                       <div
                         key={vendor.id}
-                        onClick={() => setSelectedVendor(vendor.id)}
+                        onClick={() => { setSelectedVendor(vendor.id); toggleIsVendorSelected() }}
                         className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all
-                          ${
-                            selectedVendor === vendor.id
-                              ? "bg-blue-50 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-800"
-                              : "hover:bg-zinc-50 dark:hover:bg-zinc-700 border border-transparent"
+                          ${selectedVendor === vendor.id
+                            ? "bg-blue-50 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-800"
+                            : "hover:bg-zinc-50 dark:hover:bg-zinc-700 border border-transparent"
                           }`}
                       >
                         <div>
@@ -170,13 +147,13 @@ const MyOrders = ({ eventId }) => {
                 )}
               </div>
             </div>
-
             {/* Orders List */}
-            <div className="flex-1 flex flex-col h-full w-full overflow-y-scroll  ">
+            <div className={`flex-1 flex flex-col h-full w-full overflow-y-scroll  ${!IsVendorSelected && 'max-lg:hidden'} `}>
               <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex-1 flex flex-col">
                 {vendorOrders.length > 0 ? (
                   <div className="flex-1 flex flex-col ">
-                    <div className="flex justify-between items-center p-4 sticky top-0 bg-white dark:bg-zinc-800 rounded-xl ">
+                    {IsVendorSelected && <div className=" p-2 px-4 cursor-pointer flex whitespace-nowrap gap-1" onClick={toggleIsVendorSelected}> <ArrowLeft /> back</div>}
+                    <div className="flex justify-between items-center pb-4 px-4 sticky top-0 bg-white dark:bg-zinc-800 rounded-xl ">
                       <h3 className="text-lg font-semibold text-zinc-800 dark:text-white">
                         {selectedVendor
                           ? `Orders (${vendorOrders.length})`
@@ -292,8 +269,8 @@ const MyOrders = ({ eventId }) => {
                         {searchTerm
                           ? "No orders match your search criteria"
                           : selectedVendor
-                          ? "This vendor has no orders yet"
-                          : "You haven't placed any orders yet"}
+                            ? "This vendor has no orders yet"
+                            : "You haven't placed any orders yet"}
                       </p>
                     </div>
                   </div>

@@ -40,8 +40,6 @@ const EventManager = ({ }) => {
     setEventId(selectedEvent?._id);
   };
 
-  console.log(events)
-
   // Initialize events & selected event
   useEffect(() => {
     if (user?.event?.length > 0) {
