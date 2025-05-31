@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
                 type: "WelcomeMessage",
                 message: "Welcome to our platform!",
                 seen: false,
-                _id: new mongoose.Types.ObjectId(), // ✅ Required _id
+                _id: new mongoose.Types.ObjectId(),
                 createdAt: Date.now(),
                 updatedAt: Date.now()
             }]
