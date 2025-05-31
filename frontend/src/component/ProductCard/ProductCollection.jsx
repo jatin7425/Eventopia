@@ -52,22 +52,22 @@ const ProductCollection = () => {
   // Improved image handling function
   const getImageUrl = (image) => {
     if (!image) return DefaultImg;
-    
+
     // Handle full URLs
     if (image.startsWith("http://") || image.startsWith("https://")) {
       return image;
     }
-    
+
     // Handle base64 images
     if (image.startsWith("data:image")) {
       return image;
     }
-    
+
     // Handle relative paths
     if (image.startsWith("/")) {
       return `${BASE_URL}${image}`;
     }
-    
+
     // Handle other cases
     return `${BASE_URL}/${image}`;
   };
@@ -104,6 +104,14 @@ const ProductCollection = () => {
 
   return (
     <div className="">
+
+      <a
+        href="/user/myEvents"
+        className="fixed bottom-7 right-10 z-[999] bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg "
+      >
+        Next
+      </a>
+
       <div className="h-20 w-full">
         <NavBar homeLink="/" aniDelay={0.4} />
       </div>

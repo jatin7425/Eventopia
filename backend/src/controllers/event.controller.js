@@ -10,7 +10,7 @@ import orderModel from '../models/order.model.js';
 export const createEvent = async (req, res) => {
     try {
         const user = req.user;
-        const User = await User.findById(user._id);
+        const userDoc  = await User.findById(user._id);
         const { name, description, date, startTime, endTime, location, category, status, budget } = req.body;
 
         const event = new Event({
@@ -25,11 +25,11 @@ export const createEvent = async (req, res) => {
             budget,
             organizer: user._id
         });
-        User.event.push(event._id);
+        userDoc.event.push(event._id);
         await event.save();
-        await User.save();
-        User.eventToAttend.push(event._id);
-        await User.save();
+        await userDoc.save();
+        userDoc.eventToAttend.push(event._id);
+        await userDoc.save();
 
         res.status(201).json({ message: 'Event created successfully', event });
     } catch (error) {
